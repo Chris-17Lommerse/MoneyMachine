@@ -280,27 +280,31 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  iban:
-                    type: string
-                    example: NL91ABNA0417164300
+                $ref: '#/components/schemas/ATMBankAccountDTO'
         '400':
           description: Invalid IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
         '404':
           description: Bank account not found
-  /atm/withdraw:
-    post:
-      tags:
-      - ATM:
-      summary: Remove money from bankaccount
-      description: Remove money from bank account based on amount
-  /atm/deposit:
-    post:
-      tags:
-      - ATM:
-      summary: Add money to bankaccount
-      description: Add money to bank account based on amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+    /atm/withdraw:
+      post:
+        tags:
+        - ATM:
+        summary: Remove money from bankaccount
+        description: Remove money from bank account based on amount
+    /atm/deposit:
+      post:
+        tags:
+        - ATM:
+        summary: Add money to bankaccount
+        description: Add money to bank account based on amount
 components:
   schemas:
     bankAccount:
