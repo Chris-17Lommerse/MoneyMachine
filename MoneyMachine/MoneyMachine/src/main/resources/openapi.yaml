@@ -236,13 +236,48 @@ paths:
           - transaction:
       summary: Get all transactions 
       description: This can only be done by a logged in user with employee rights
-  /bankAcoounts:
+  /bankAccounts:
     get:
       tags:
       - bankAccount:
-    summary: Get all bankaccounts
-    description: This can only be viewed by a logged in user with employee rights
-    
+      summary: Get all bankaccounts
+      description: This can only be viewed by a logged in user with employee rights
+  /atm/login:
+    post:
+      tags:
+      - ATM:
+      summary: Login into ATM account
+      description: Gives user access to ATM
+  /atm/logout:
+    post:
+      tags:
+      - ATM:
+      summary: Logout ATM
+      description: Removes access from ATM
+  /atm/bankAccounts:
+    get:
+      tags:
+      - ATM:
+      summary: Get all bankaccounts owned by user
+      description: Returns bankaccount selectors that will be placed into the account selection box
+  /atm/bankAccount:
+    get:
+      tags:
+      - ATM:
+      summary: Gives ATM bankaccount information based on IBan
+      description: Gives ATM bankaccount information based on IBan and nothing more
+  /atm/withdraw:
+    post:
+      tags:
+      - ATM:
+      summary: Remove money from bankaccount
+      description: Remove money from bank account based on amount
+  /atm/deposit:
+    post:
+      tags:
+      - ATM:
+      summary: Add money to bankaccount
+      description: Add money to bank account based on amount
 components:
   schemas:
     bankAccount:
