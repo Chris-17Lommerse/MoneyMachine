@@ -260,12 +260,35 @@ paths:
       - ATM:
       summary: Get all bankaccounts owned by user
       description: Returns bankaccount selectors that will be placed into the account selection box
-  /atm/bankAccount:
+  /atm/bankAccount/{iban}:
     get:
       tags:
-      - ATM:
+        - ATM:
       summary: Gives ATM bankaccount information based on IBan
       description: Gives ATM bankaccount information based on IBan and nothing more
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to retrieve
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      responses:
+        '200':
+          description: Successful response with bank account information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  iban:
+                    type: string
+                    example: NL91ABNA0417164300
+        '400':
+          description: Invalid IBAN format
+        '404':
+          description: Bank account not found
   /atm/withdraw:
     post:
       tags:
