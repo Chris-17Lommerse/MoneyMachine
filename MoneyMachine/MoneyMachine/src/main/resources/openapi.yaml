@@ -43,6 +43,9 @@ tags:
   - name: bankAccount
     summary: bankaccount operations
     description: Operations for managing bankaccounts
+  - name: ATM
+    summary: ATM operations
+    description: Operations for withdrawing and depositing money for bankaccounts
 paths:
   /user/createWithList:
     post:
@@ -73,7 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorDTO"
   /user/login:
     get:
       tags:
@@ -122,7 +125,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorDTO"
   /user/logout:
     get:
       tags:
@@ -169,7 +172,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorDTO"
     put:
       tags:
         - user
@@ -203,7 +206,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorDTO"
     delete:
       tags:
         - user
@@ -229,41 +232,73 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorDTO"
   /transactions:
     get:
       tags:
-          - transaction:
+          - transaction
       summary: Get all transactions 
       description: This can only be done by a logged in user with employee rights
   /bankAccounts:
     get:
       tags:
-      - bankAccount:
+        - bankAccount
       summary: Get all bankaccounts
       description: This can only be viewed by a logged in user with employee rights
+
   /atm/login:
     post:
       tags:
-      - ATM:
+        - ATM
       summary: Login into ATM account
       description: Gives user access to ATM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ATMLoginDTO'
+        '401':
+          description: Unauthorized - wrong email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+
   /atm/logout:
     post:
       tags:
-      - ATM:
+        - ATM
       summary: Logout ATM
       description: Removes access from ATM
+      responses:
+        '204':
+          description: Successfully logged out
+        '401':
+          description: Unauthorized - no active session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+
   /atm/bankAccounts:
     get:
       tags:
-      - ATM:
+      - ATM
       summary: Get all bankaccounts owned by user
       description: Returns bankaccount selectors that will be placed into the account selection box
+
   /atm/bankAccount/{iban}:
     get:
       tags:
-        - ATM:
+        - ATM
       summary: Gives ATM bankaccount information based on IBan
       description: Gives ATM bankaccount information based on IBan and nothing more
       parameters:
@@ -281,30 +316,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ATMBankAccountDTO'
+
         '400':
           description: Invalid IBAN format
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
+
         '404':
           description: Bank account not found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-    /atm/withdraw:
-      post:
-        tags:
-        - ATM:
-        summary: Remove money from bankaccount
-        description: Remove money from bank account based on amount
-    /atm/deposit:
-      post:
-        tags:
-        - ATM:
-        summary: Add money to bankaccount
-        description: Add money to bank account based on amount
+
+  /atm/withdraw:
+    post:
+      tags:
+      - ATM
+      summary: Remove money from bankaccount
+      description: Remove money from bank account based on amount
+
+  /atm/deposit:
+    post:
+      tags:
+      - ATM
+      summary: Add money to bankaccount
+      description: Add money to bank account based on amount
+
 components:
   schemas:
     bankAccount:
@@ -385,10 +425,10 @@ components:
       properties:
         code:
           type: integer
-          example: 4001
+          example: 0
         message:
           type: string
-          example: "Insufficient funds"
+          example: "Example error message"
 
     BalanceUpdateDTO:
       type: object
@@ -464,17 +504,3 @@ components:
         userName:
           type: string
           example: "John Doe"
-
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
-          scopes:
-            "write:pets": modify pets in your account
-            "read:pets": read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
