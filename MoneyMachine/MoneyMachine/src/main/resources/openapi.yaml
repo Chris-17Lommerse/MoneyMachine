@@ -540,14 +540,10 @@ components:
           type: number
           format: decimal
           example: 1200.50
-        dailyWithdrawLimit:
+        singleTransferLimit:
           type: number
           format: decimal
           example: 500.00
-        dailyWithdrawLimitRemaining:
-          type: number
-          format: decimal
-          example: 300.00
         absoluteLimit:
           type: number
           format: decimal
