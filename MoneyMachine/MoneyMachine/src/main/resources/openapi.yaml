@@ -1,9 +1,9 @@
 openapi: 3.2.0
 info:
-  title: Free Bank of Haarlem - Project 2.4 (Code Generation)
+  title: MoneyMachine - Project 2.4 (Code Generation)
   description: |
 
-    Welcome to the **Free Bank of Haarlem** API. This project was made for the second year **InHolland - code generation course**. This documentation follows the **OpenAPI 3.0 Specification** and was built with a design-first approach.
+    Welcome to the **MoneyMachine** API. This project was made for the second year **InHolland - code generation course**. This documentation follows the **OpenAPI 3.0 Specification** and was built with a design-first approach.
 
     ### Key Features:
     * **RESTful Endpoints:** Predictable, resource-oriented URLs.
@@ -11,16 +11,15 @@ info:
     * **Consistency:** Standardized error responses (400, 401, 404, 500).
     
     ### Contact & Support:
-    For internal development support, contact the [Project 2.4 Dev Team](mailto:dev@haarlembank.nl).
+    For internal development support, contact the Project 2.4 Dev Team
+    - [Wessel Beun (729848)](mailto:729848@student.inholland.nl)
+    - [Chris Lommerse (728158)](mailto:728158@student.inholland.nl)
+    - [Adam Nasser (717582)](mailto:717582@student.inholland.nl)
+    - [Menno de Wever (728950)](mailto:728950@student.inholland.nl)
 
-    Some useful links:
-    - [The Bank Project repository](https://github.com/Chris-17Lommerse/Project-Code-Generatie-Bank-Applicatie-van-Chris-Wessel-Menno-en-Adam)
-    - [The source API definition for the Bank Project](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
-    - [OpenAPI 3.2 Specification](https://spec.openapis.org/oas/v3.2.0.html)
+    View our Github Repository: [The MoneyMachine repository](https://github.com/Chris-17Lommerse/MoneyMachine)
 
   termsOfService: https://swagger.io/terms/
-  contact:
-    email: dev@haarlembank.nl
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -609,14 +608,10 @@ components:
           type: number
           format: decimal
           example: 1200.50
-        dailyWithdrawLimit:
+        singleTransferLimit:
           type: number
           format: decimal
           example: 500.00
-        dailyWithdrawLimitRemaining:
-          type: number
-          format: decimal
-          example: 300.00
         absoluteLimit:
           type: number
           format: decimal
