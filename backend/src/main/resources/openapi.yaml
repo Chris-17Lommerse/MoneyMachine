@@ -196,7 +196,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-  /user/{user_id}:
+  /user/{userId}:
     get:
       tags:
         - user
@@ -204,7 +204,7 @@ paths:
       description: Get user details based on user ID.
       operationId: getUserById
       parameters:
-        - name: user_id
+        - name: userId
           in: path
           description: The ID of the user to fetch
           required: true
@@ -501,7 +501,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-  /bankAccount/{user_id}:
+  /bankAccount/{userId}:
     post:
       tags:
         - bankAccount
@@ -509,7 +509,7 @@ paths:
       description: Creates a new bank account for the selected user.
       operationId: createBankAccount
       parameters:
-        - name: user_id
+        - name: userId
           in: path
           required: true
           description: The ID of the user who will own the bank account
@@ -574,7 +574,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMBankAccountDTO'
+                $ref: '#/components/schemas/BankAccountDTO'
         '400':
           description: Bad Request - Invalid IBAN format
           content:
@@ -1085,14 +1085,14 @@ components:
     UserDTO:
       type: object
       properties:
-        user_id:
+        userId:
           type: integer
           format: int64
           example: 1
-        first_name:
+        firstName:
           type: string
           example: John
-        last_name:
+        lastName:
           type: string
           example: Doe
         email:
@@ -1101,17 +1101,17 @@ components:
         bsn:
           type: integer
           example: 123456789
-        phone_number:
+        phoneNumber:
           type: string
           example: +31612345678
         role:
           type: string
-          enum: [user, employee, admin]
+          enum: [customer, employee]
           example: user
-        is_active:
+        isActive:
           type: boolean
           example: true
-        is_approved:
+        isApproved:
           type: boolean
           example: true
 
@@ -1174,7 +1174,7 @@ components:
           type: number
           format: decimal
           example: 50.00
-        transaction_id:
+        transactionId:
           type: integer
           example: 123456
         iban:
@@ -1237,16 +1237,16 @@ components:
     TransactionDTO:
       type: object
       properties:
-        transaction_id:
+        transactionId:
           type: integer
           example: 1
-        initiating_user_id:
+        initiatingUserId:
           type: integer
           example: 2
-        from_account_iban: 
+        fromAccountIban: 
           type: string
           example: "NL91ABNA0417164300"
-        to_account_iban:
+        toAccountIban:
           type: string
           example: "NL91ABNA0417164300"
           description: The IBAN of the account the funds are transferred to
@@ -1257,7 +1257,7 @@ components:
         time: 
           type: string
           format: date-time
-        is_active: 
+        isActive: 
           type: boolean
           example: true
 
@@ -1275,7 +1275,7 @@ components:
         iban:
           type: string
           example: NL91ABNA0417164300
-        user_id:
+        userId:
           type: integer
           example: 1
         bankAccountType:
@@ -1298,7 +1298,7 @@ components:
           type: number
           format: decimal
           example: -1000.00
-        is_active:
+        isActive:
           type: boolean
           example: true
 
@@ -1306,18 +1306,18 @@ components:
       type: object
       required:
         - iban
-        - user_id
+        - userId
         - bankAccountType
         - balance
-        - single_transfer_limit
-        - daily_transfer_limit
+        - singleTransferLimit
+        - dailyTransferLimit
         - absoluteLimit
       properties:
         iban:
           type: string
           example: NL91ABNA0417164300
           description: International Bank Account Number
-        user_id:
+        userId:
           type: integer
           example: 1
           description: The ID of the user who will own the bank account
@@ -1331,12 +1331,12 @@ components:
           format: decimal
           example: 1000.00
           description: Initial balance for the account
-        single_transfer_limit:
+        singleTransferLimit:
           type: number
           format: decimal
           example: 5000.00
           description: Maximum amount for a single transfer
-        daily_transfer_limit:
+        dailyTransferLimit:
           type: number
           format: decimal
           example: 10000.00
@@ -1353,7 +1353,7 @@ components:
         iban:
           type: string
           example: NL91ABNA0417164300
-        user_id:
+        userId:
           type: integer
           example: 1
         bankAccountType:
@@ -1376,6 +1376,9 @@ components:
           type: number
           format: decimal
           example: -1000.00
+        isActive:
+          type: boolean
+          example: true
         createdAt:
           type: string
           format: date-time
@@ -1384,9 +1387,9 @@ components:
     DeleteBankAccountRequest:
       type: object
       required:
-        - is_active
+        - isActive
       properties:
-        is_active:
+        isActive:
           type: boolean
           example: false
           description: Flag to deactivate (false) or activate (true) the bank account
@@ -1394,22 +1397,22 @@ components:
     TransferLimitRequest:
       type: object
       required:
-        - single_transfer_limit
-        - daily_transfer_limit
-        - absolute_limit
+        - singleTransferLimit
+        - dailyTransferLimit
+        - absoluteLimit
         - iban
       properties:
-        single_transfer_limit:
+        singleTransferLimit:
           type: number
           format: decimal
           example: 5000.00
           description: New maximum amount for a single transfer
-        daily_transfer_limit:
+        dailyTransferLimit:
           type: number
           format: decimal
           example: 10000.00
           description: New maximum total amount that can be transferred in a day
-        absolute_limit:
+        absoluteLimit:
           type: number
           format: decimal
           example: -1000.00
@@ -1426,21 +1429,21 @@ components:
           type: string
           example: NL91ABNA0417164300
           description: International Bank Account Number
-        user_id:
+        userId:
           type: integer
           example: 1
           description: The ID of the user who owns the bank account
-        new_single_transfer_limit:
+        newSingleTransferTimit:
           type: number
           format: decimal
           example: 5000.00
           description: Updated maximum amount for a single transfer
-        new_daily_transfer_limit:
+        newDailyTransferLimit:
           type: number
           format: decimal
           example: 10000.00
           description: Updated maximum total amount that can be transferred in a day
-        new_absolute_transfer_limit:
+        newAbsoluteTransferLimit:
           type: number
           format: decimal
           example: -1000.00
@@ -1449,15 +1452,15 @@ components:
     BankAccountTransactionsDTO:
       type: object
       properties:
-        user_id:
+        userId:
           type: integer
           example: 1
           description: The ID of the user
-        first_name:
+        firstName:
           type: string
           example: "John"
           description: First name of the user
-        last_name:
+        lastName:
           type: string
           example: "Doe"
           description: Last name of the user
@@ -1471,14 +1474,14 @@ components:
       type: object
       required:
         - amount
-        - ToAccountIBAN
+        - toAccountIBAN
       properties:
         amount:
           type: number
           format: decimal
           example: 100.00
           description: Amount to transfer
-        ToAccountIBAN:
+        toAccountIBAN:
           type: string
           example: NL91ABNA0417164300
           description: IBAN of the destination account
