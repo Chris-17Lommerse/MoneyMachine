@@ -86,7 +86,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
       responses:
         '201':
           description: Users created successfully
@@ -95,7 +95,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: '#/components/schemas/UserDTO'
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -262,10 +262,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserDTO'
         '400':
           description: Bad Request - Invalid username supplied
           content:
@@ -309,13 +309,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserDTO'
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserDTO'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/UserDTO'
       responses:
         '200':
           description: Successful operation
@@ -383,7 +383,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-  /transactions:
+  /transaction:
     get:
       tags:
         - transaction
@@ -1032,46 +1032,6 @@ components:
         balance: 
           type: decimal
           examples: 3.14
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          examples: [10]
-        username:
-          type: string
-          examples: [theUser]
-        firstName:
-          type: string
-          examples: [John]
-        lastName:
-          type: string
-          examples: [James]
-        email:
-          type: string
-          examples: [john@email.com]
-        password:
-          type: string
-          examples: ['12345']
-        phone:
-          type: string
-          examples: ['12345']
-        userStatus:
-          type: integer
-          description: User Status
-          format: int32
-          examples: [1]
-      xml:
-        name: user
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
 
     UserOverviewDTO:
       type: object
@@ -1079,7 +1039,7 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/UserDTO'
           description: List of user objects
 
     UserDTO:
@@ -1099,8 +1059,8 @@ components:
           type: string
           example: john.doe@example.com
         bsn:
-          type: integer
-          example: 123456789
+          type: string
+          example: "123456789"
         phoneNumber:
           type: string
           example: +31612345678
