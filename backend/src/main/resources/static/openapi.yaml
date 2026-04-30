@@ -65,13 +65,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /user/createWithList:
     post:
       tags:
@@ -101,19 +101,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /user/login:
     get:
       tags:
@@ -160,19 +160,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Invalid credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /user/logout:
     get:
       tags:
@@ -189,13 +189,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /user/{userId}:
     get:
       tags:
@@ -223,25 +223,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /user/{username}:
     get:
       tags:
@@ -271,25 +271,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
     put:
       tags:
         - user
@@ -324,25 +324,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
     delete:
       tags:
         - user
@@ -364,25 +364,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /transaction:
     get:
       tags:
@@ -402,25 +402,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '403':
           description: Forbidden - Employee rights required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ForbiddenError'
         '404':
           description: Not Found - No transactions found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /transaction/bankAccount/{iban}:
     get:
       tags:
@@ -448,25 +448,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - No transactions found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /bankAccount:
     get:
       tags:
@@ -488,19 +488,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '403':
           description: Forbidden - Employee rights required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/ForbiddenError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /bankAccount/{userId}:
     post:
       tags:
@@ -534,25 +534,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /bankAccount/{iban}:
     get:
       tags:
@@ -580,25 +580,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
     put:
       tags:
         - bankAccount
@@ -631,25 +631,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /bankAccount/updateTransferLimit/{iban}:
     post:
       tags:
@@ -683,31 +683,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '422':
           description: Unprocessable Entity - Invalid limit values or business rule violation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnprocessableEntityError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /bankAccount/transfer/{iban}:
     post:
       tags:
@@ -741,31 +741,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Source or destination account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '422':
           description: Unprocessable Entity - Insufficient funds, limit exceeded, or invalid transfer
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnprocessableEntityError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /atm/login:
     post:
       tags:
@@ -791,19 +791,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - Wrong email or password
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /atm/logout:
     post:
       tags:
@@ -819,13 +819,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /atm/bankAccounts:
     get:
       tags:
@@ -845,13 +845,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /atm/bankAccount/{iban}:
     get:
       tags:
@@ -878,25 +878,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - User is not logged in
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
   /atm/withdraw/{iban}:
     post:
       tags:
@@ -930,31 +930,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - User is not logged in
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '422':
           description: Unprocessable Entity - Insufficient funds or limit exceeded
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnprocessableEntityError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
 
   /atm/deposit/{iban}:
     post:
@@ -989,31 +989,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/BadRequestError'
         '401':
           description: Unauthorized - User is not logged in
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnauthorizedError'
         '404':
           description: Not Found - Bank account not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/NotFoundError'
         '422':
           description: Unprocessable Entity - Invalid deposit amount
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/UnprocessableEntityError'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorDTO'
+                $ref: '#/components/schemas/InternalServerError'
 
 components:
   schemas:
@@ -1093,7 +1093,7 @@ components:
           format: decimal
           example: 50.00
 
-    ErrorDTO:
+    BadRequestError:
       type: object
       required:
         - code
@@ -1101,27 +1101,93 @@ components:
       properties:
         code:
           type: integer
-          description: HTTP status code
-          examples:
-            - 400
-            - 401
-            - 404
-            - 500
+          example: 400
         message:
           type: string
-          description: Human-readable error message
+          example: "Bad Request - Invalid input parameters"
         details:
           type: string
-          description: Additional error details
-      examples:
-        - code: 400
-          message: "Bad Request - Invalid input parameters"
-        - code: 401
-          message: "Unauthorized - Authentication required or invalid credentials"
-        - code: 404
-          message: "Not Found - Requested resource does not exist"
-        - code: 500
-          message: "Internal Server Error - An unexpected error occurred"
+          example: "The provided input does not meet the required validation rules."
+
+    UnauthorizedError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: "Unauthorized - Authentication required"
+        details:
+          type: string
+          example: "Please provide valid authentication credentials."
+
+    NotFoundError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: "Not Found - Requested resource does not exist"
+        details:
+          type: string
+          example: "The requested resource could not be found."
+
+    InternalServerError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 500
+        message:
+          type: string
+          example: "Internal Server Error - An unexpected error occurred"
+        details:
+          type: string
+          example: "Please try again later or contact support if the problem persists."
+
+    ForbiddenError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 403
+        message:
+          type: string
+          example: "Forbidden - Insufficient permissions"
+        details:
+          type: string
+          example: "You do not have the required permissions to access this resource."
+
+    UnprocessableEntityError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 422
+        message:
+          type: string
+          example: "Unprocessable Entity - Invalid data or business rule violation"
+        details:
+          type: string
+          example: "The provided data violates business rules or constraints."
 
     BalanceUpdateDTO:
       type: object
