@@ -1080,7 +1080,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMLoginDTO'
+                $ref: '#/components/schemas/LoginDTO'
+              example:
+                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                type: "atm"
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -1370,6 +1373,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: null
+                toAccountIban: "NL91ABNA0417164300"
+                message: "Depositing money in ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
