@@ -1277,6 +1277,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: "NL91ABNA0417164300"
+                toAccountIban: null
+                message: "Withdrawing from ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
@@ -1560,9 +1569,10 @@ components:
           type: number
           format: decimal
           example: 21.4
-        time: 
+        dateTime: 
           type: string
           format: date-time
+          example: "24-11-2026 14:45:12"
         isActive: 
           type: boolean
           example: true
