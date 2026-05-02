@@ -1159,7 +1159,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMBankAccountSelectorDTO'
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ATMBankAccountOptionDTO'
         '401':
           description: Unauthorized - User is not logged in
           content:
@@ -1202,7 +1204,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMBankAccountDTO'
+                $ref: '#/components/schemas/BankAccountDTO'
         '400':
           description: Bad Request - Invalid IBAN format
           content:
@@ -1532,36 +1534,6 @@ components:
           type: string
           example: NL91ABNA0417164300
 
-    ATMBankAccountDTO:
-      type: object
-      properties:
-        iban:
-          type: string
-          example: NL91ABNA0417164300
-        bankAccountType:
-          type: string
-          examples: [checking, savings]
-        balance:
-          type: number
-          format: decimal
-          example: 1200.50
-        singleTransferLimit:
-          type: number
-          format: decimal
-          example: 500.00
-        absoluteLimit:
-          type: number
-          format: decimal
-          example: -100.00
-
-    ATMBankAccountSelectorDTO:
-      type: object
-      properties:
-        bankAccounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ATMBankAccountOptionDTO'
-
     ATMBankAccountOptionDTO:
       type: object
       properties:
@@ -1572,18 +1544,15 @@ components:
           type: string
           examples: [checking, savings]
 
-    ATMLoginDTO:
+    LoginDTO:
       type: object
       properties:
-        ATMJWT:
+        jwt:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        expiresIn:
-          type: integer
-          example: 3600
-        userName:
+        type:
           type: string
-          example: "John Doe"
+          example: [website, atm]
 
     TransactionDTO:
       type: object
@@ -1601,6 +1570,10 @@ components:
           type: string
           example: "NL91ABNA0417164300"
           description: The IBAN of the account the funds are transferred to
+        message:
+          type: string
+          example: "Bought a car"
+          description: Displays why the transaction was done
         amount: 
           type: number
           format: decimal
