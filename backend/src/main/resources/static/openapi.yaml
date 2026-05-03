@@ -1080,7 +1080,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMLoginDTO'
+                $ref: '#/components/schemas/LoginDTO'
+              example:
+                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                type: "atm"
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -1159,7 +1162,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMBankAccountSelectorDTO'
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ATMBankAccountOptionDTO'
         '401':
           description: Unauthorized - User is not logged in
           content:
@@ -1202,7 +1207,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ATMBankAccountDTO'
+                $ref: '#/components/schemas/BankAccountDTO'
         '400':
           description: Bad Request - Invalid IBAN format
           content:
@@ -1274,7 +1279,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceUpdateDTO'
+                $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: "NL91ABNA0417164300"
+                toAccountIban: null
+                message: "Withdrawing from ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
@@ -1358,7 +1372,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceUpdateDTO'
+                $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: null
+                toAccountIban: "NL91ABNA0417164300"
+                message: "Depositing money in ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
@@ -1514,54 +1537,6 @@ components:
           type: string
           example: "The provided input does not meet the required validation rules."
 
-    BalanceUpdateDTO:
-      type: object
-      properties:
-        newBalance:
-          type: number
-          format: decimal
-          example: 950.00
-        amount:
-          type: number
-          format: decimal
-          example: 50.00
-        transactionId:
-          type: integer
-          example: 123456
-        iban:
-          type: string
-          example: NL91ABNA0417164300
-
-    ATMBankAccountDTO:
-      type: object
-      properties:
-        iban:
-          type: string
-          example: NL91ABNA0417164300
-        bankAccountType:
-          type: string
-          examples: [checking, savings]
-        balance:
-          type: number
-          format: decimal
-          example: 1200.50
-        singleTransferLimit:
-          type: number
-          format: decimal
-          example: 500.00
-        absoluteLimit:
-          type: number
-          format: decimal
-          example: -100.00
-
-    ATMBankAccountSelectorDTO:
-      type: object
-      properties:
-        bankAccounts:
-          type: array
-          items:
-            $ref: '#/components/schemas/ATMBankAccountOptionDTO'
-
     ATMBankAccountOptionDTO:
       type: object
       properties:
@@ -1572,18 +1547,15 @@ components:
           type: string
           examples: [checking, savings]
 
-    ATMLoginDTO:
+    LoginDTO:
       type: object
       properties:
-        ATMJWT:
+        jwt:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        expiresIn:
-          type: integer
-          example: 3600
-        userName:
+        type:
           type: string
-          example: "John Doe"
+          example: [website, atm]
 
     TransactionDTO:
       type: object
@@ -1601,13 +1573,18 @@ components:
           type: string
           example: "NL91ABNA0417164300"
           description: The IBAN of the account the funds are transferred to
+        message:
+          type: string
+          example: "Bought a car"
+          description: Displays why the transaction was done
         amount: 
           type: number
           format: decimal
           example: 21.4
-        time: 
+        dateTime: 
           type: string
           format: date-time
+          example: "24-11-2026 14:45:12"
         isActive: 
           type: boolean
           example: true
