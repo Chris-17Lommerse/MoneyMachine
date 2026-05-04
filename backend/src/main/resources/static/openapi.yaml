@@ -28,10 +28,8 @@ externalDocs:
   description: Find out more about Swagger
   url: https://swagger.io
 servers:
-  - url: https://petstore32.swagger.io/api/v3
+  - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
     description: Production server (OAS 3.2)
-  - url: https://petstore-staging.swagger.io/api/v3
-    description: Staging server
 tags:
   - name: user
     summary: User account operations
