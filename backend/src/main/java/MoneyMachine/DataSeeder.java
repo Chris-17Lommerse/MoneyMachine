@@ -24,13 +24,13 @@ public class DataSeeder implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        DepositTransaction depositTransaction = new DepositTransaction(1, new BigDecimal("10"), "Hello deposit!", true, 1);
+        DepositTransaction depositTransaction = new DepositTransaction(1, new BigDecimal("10"), "Hello deposit!", true, "NL91ABNA0417164300");
         transactionRepository.save(depositTransaction);
 
-        WithdrawTransaction withdrawTransaction = new WithdrawTransaction(1, new BigDecimal("10"), "Hello withdraw!", true, 1);
+        WithdrawTransaction withdrawTransaction = new WithdrawTransaction(1, new BigDecimal("10"), "Hello withdraw!", true, "NL91ABNA0417164300");
         transactionRepository.save(withdrawTransaction);
 
-        TransferTransaction transferTransaction = new TransferTransaction(1, new BigDecimal("10"), "Hello transfer!", true, 1, 2);
+        TransferTransaction transferTransaction = new TransferTransaction(1, new BigDecimal("10"), "Hello transfer!", true, "NL91ABNA0417164300", "NL91ABNA0417164300");
         transactionRepository.save(transferTransaction);
 
         for (Transaction transaction : transactionRepository.findAll()) {

@@ -13,12 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TransferTransaction extends Transaction {
 
-    public TransferTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, long fromAccountIban, long toAccountIban) {
+    public TransferTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, String fromAccountIban, String toAccountIban) {
         super(initiatingUserId, amount, message, isActive); 
         this.fromAccountIban = fromAccountIban;
         this.toAccountIban = toAccountIban;
     }
 
-    private long fromAccountIban;
-    private long toAccountIban;
+    private String fromAccountIban;
+    private String toAccountIban;
 }

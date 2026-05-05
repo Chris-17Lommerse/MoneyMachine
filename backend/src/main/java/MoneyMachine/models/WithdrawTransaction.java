@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WithdrawTransaction extends Transaction {
 
-    public WithdrawTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, long fromAccountIban) {
+    public WithdrawTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, String fromAccountIban) {
         super(initiatingUserId, amount, message, isActive); 
         this.fromAccountIban = fromAccountIban;
     }
 
-    private long fromAccountIban;
+    private String fromAccountIban;
 }

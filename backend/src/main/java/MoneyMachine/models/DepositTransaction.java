@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DepositTransaction extends Transaction {
 
-    public DepositTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, long toAccountIban) {
+    public DepositTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, String toAccountIban) {
         super(initiatingUserId, amount, message, isActive); 
         this.toAccountIban = toAccountIban;
     }
 
-    private long toAccountIban;
+    private String toAccountIban;
 }
