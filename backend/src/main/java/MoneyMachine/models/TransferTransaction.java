@@ -18,8 +18,8 @@ public class TransferTransaction extends Transaction {
     @ManyToOne
     private BankAccount toBankAccount;
 
-    public TransferTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, BankAccount fromBankAccount, BankAccount toBankAccount) {
-        super(initiatingUserId, amount, message, isActive); 
+    public TransferTransaction(User initiatingUser, BigDecimal amount, String message, boolean isActive, BankAccount fromBankAccount, BankAccount toBankAccount) {
+        super(initiatingUser, amount, message, isActive); 
         this.fromBankAccount = fromBankAccount;
         this.toBankAccount = toBankAccount;
     }

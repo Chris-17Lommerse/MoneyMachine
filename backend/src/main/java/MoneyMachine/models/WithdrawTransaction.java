@@ -3,6 +3,7 @@ package MoneyMachine.models;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +14,11 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WithdrawTransaction extends Transaction {
 
+    @ManyToOne
     private BankAccount fromBankAccount;
 
-    public WithdrawTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, BankAccount fromBankAccount) {
-        super(initiatingUserId, amount, message, isActive); 
+    public WithdrawTransaction(User initiatingUser, BigDecimal amount, String message, boolean isActive, BankAccount fromBankAccount) {
+        super(initiatingUser, amount, message, isActive); 
         this.fromBankAccount = fromBankAccount;
     }
 }

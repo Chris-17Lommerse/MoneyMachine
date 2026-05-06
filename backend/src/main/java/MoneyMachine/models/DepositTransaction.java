@@ -17,8 +17,8 @@ public class DepositTransaction extends Transaction {
     @ManyToOne
     private BankAccount toBankAccount;
 
-    public DepositTransaction(long initiatingUserId, BigDecimal amount, String message, boolean isActive, BankAccount toBankAccount) {
-        super(initiatingUserId, amount, message, isActive); 
+    public DepositTransaction(User initiatingUser, BigDecimal amount, String message, boolean isActive, BankAccount toBankAccount) {
+        super(initiatingUser, amount, message, isActive); 
         this.toBankAccount = toBankAccount;
     }
 }
