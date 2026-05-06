@@ -1,0 +1,1823 @@
+openapi: 3.0.3
+info:
+  title: MoneyMachine - Project 2.4 (Code Generation)
+  description: |
+
+    Welcome to the **MoneyMachine** API. This project was made for the second year **InHolland - code generation course**. This documentation follows the **OpenAPI 3.0 Specification** and was built with a design-first approach.
+
+    ### Key Features:
+    * **RESTful Endpoints:** Predictable, resource-oriented URLs.
+    * **Secure-by-Design:** All endpoints (except public info) require Authentication.
+    * **Consistency:** Standardized error responses (400, 401, 404, 500).
+    
+    ### Contact & Support:
+    For internal development support, contact the Project 2.4 Dev Team
+    - [Wessel Beun (729848)](mailto:729848@student.inholland.nl)
+    - [Chris Lommerse (728158)](mailto:728158@student.inholland.nl)
+    - [Adam Nasser (717582)](mailto:717582@student.inholland.nl)
+    - [Menno de Wever (728950)](mailto:728950@student.inholland.nl)
+
+    View our Github Repository: [The MoneyMachine repository](https://github.com/Chris-17Lommerse/MoneyMachine)
+
+  termsOfService: https://swagger.io/terms/
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: https://swagger.io
+servers:
+  - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
+    description: Production server (OAS 3.2)
+tags:
+  - name: user
+    summary: User account operations
+    description: Operations about user management and authentication
+  - name: transaction
+    summary: Transaction operations
+    description: Operations about recording transactions within the application
+  - name: bankAccount
+    summary: bankaccount operations
+    description: Operations for managing bankaccounts
+  - name: ATM
+    summary: ATM operations
+    description: Operations for withdrawing and depositing money for bankaccounts
+paths:
+  /user:
+    get:
+      tags:
+        - user
+      summary: Get all registered users
+      description: Returns a list of all registered users.
+      operationId: getUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOverviewDTO'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /user/createWithList:
+    post:
+      tags:
+        - user
+      summary: Creates list of users with given input array.
+      description: Creates list of users with given input array.
+      operationId: createUsersWithListInput
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserDTO'
+      responses:
+        '201':
+          description: Users created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system.
+      description: log user into the system.
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: true
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request - Invalid username or password supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session.
+      description: Log user out of system.
+      operationId: logoutUser
+      parameters: []
+      responses:
+        '200':
+          description: Successful operation
+        '401':
+          description: Unauthorized - User not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /user/{userId}:
+    get:
+      tags:
+        - user
+      summary: Get user by user ID.
+      description: Get user details based on user ID.
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '400':
+          description: Bad Request - Invalid user ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /user/{username}:
+    get:
+      tags:
+        - user
+      summary: Get user by user name.
+      description: Get user details based on username.
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be fetched. Use user1 for testing
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '400':
+          description: Bad Request - Invalid username supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+    put:
+      tags:
+        - user
+      summary: Update user.
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: The username to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent user in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Bad Request - Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+    delete:
+      tags:
+        - user
+      summary: Delete user.
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The username to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Successful operation - User deleted
+        '400':
+          description: Bad Request - Invalid username supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /transaction:
+    get:
+      tags:
+        - transaction
+      summary: Get all transactions
+      description: This can only be seen by a logged in employee
+      operationId: getTransactions
+      responses:
+        '200':
+          description: Successful operation - Transactions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionOverviewDTO'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '403':
+          description: Forbidden - Employee rights required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 403
+                type: FORBIDDEN
+                message: "Forbidden - Insufficient permissions"
+                details: "You do not have the required permissions to access this resource."
+        '404':
+          description: Not Found - No transactions found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /transaction/bankAccount/{iban}:
+    get:
+      tags:
+        - transaction
+        - bankAccount
+      summary: Get all transactions by IBAN number
+      description: Get all transactions from a bankaccount based on the selected IBAN
+      operationId: getTransactionsByIban
+      parameters:
+        - name: iban
+          in: path
+          description: The IBAN for the bank account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation - Transactions retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionOverviewDTO'
+        '400':
+          description: Bad Request - Invalid IBAN supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - No transactions found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /bankAccount:
+    get:
+      tags:
+        - bankAccount
+      summary: Get all bankaccounts
+      description: This can only be viewed by a logged in user with employee rights
+      operationId: getBankAccounts
+      responses:
+        '200':
+          description: Successful operation - Bank accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BankAccountDTO'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '403':
+          description: Forbidden - Employee rights required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 403
+                type: FORBIDDEN
+                message: "Forbidden - Insufficient permissions"
+                details: "You do not have the required permissions to access this resource."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /bankAccount/{userId}:
+    post:
+      tags:
+        - bankAccount
+      summary: Create a bank account for a user
+      description: Creates a new bank account for the selected user.
+      operationId: createBankAccount
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The ID of the user who will own the bank account
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BankAccountCreationRequest'
+      responses:
+        '201':
+          description: Successful operation - Bank account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountCreatedDTO'
+        '400':
+          description: Bad Request - Invalid request parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /bankAccount/{iban}:
+    get:
+      tags:
+        - bankAccount
+      summary: Get bankAccount by IBAN number
+      description: Returns bank account information based on the IBAN number
+      operationId: getBankAccountByIban
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to retrieve
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      responses:
+        '200':
+          description: Successful operation - Bank account retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDTO'
+        '400':
+          description: Bad Request - Invalid IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+    put:
+      tags:
+        - bankAccount
+      summary: Deactivate or activate a bank account
+      description: Updates the active status of a bank account
+      operationId: updateBankAccountStatus
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to update
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteBankAccountRequest'
+      responses:
+        '200':
+          description: Successful operation - Bank account status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDTO'
+        '400':
+          description: Bad Request - Invalid request parameters or IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /bankAccount/updateTransferLimit/{iban}:
+    post:
+      tags:
+        - bankAccount
+      summary: Update transfer limits for a bank account
+      description: Updates the transfer limits (single, daily, absolute) for a specific bank account
+      operationId: updateTransferLimits
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to update limits for
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferLimitRequest'
+      responses:
+        '200':
+          description: Successful operation - Transfer limits updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransferLimitUpdateDTO'
+        '400':
+          description: Bad Request - Invalid request parameters or IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '422':
+          description: Unprocessable Entity - Invalid limit values or business rule violation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 422
+                type: UNPROCESSABLE_ENTITY
+                message: "Unprocessable Entity - Invalid data or business rule violation"
+                details: "The provided data violates business rules or constraints."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /bankAccount/transfer/{iban}:
+    post:
+      tags:
+        - bankAccount
+      summary: Transfer money between bank accounts
+      description: Transfers money from the specified account to another account
+      operationId: transferMoney
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the source bank account
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Successful operation - Transfer completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceUpdateDTO'
+        '400':
+          description: Bad Request - Invalid request parameters or IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Source or destination account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '422':
+          description: Unprocessable Entity - Insufficient funds, limit exceeded, or invalid transfer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 422
+                type: UNPROCESSABLE_ENTITY
+                message: "Unprocessable Entity - Invalid data or business rule violation"
+                details: "The provided data violates business rules or constraints."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /atm/login:
+    post:
+      tags:
+        - ATM
+      summary: Login into ATM account
+      description: Gives user access to ATM
+      operationId: atmLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful operation - User logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginDTO'
+              example:
+                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+                type: "atm"
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Wrong email or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /atm/logout:
+    post:
+      tags:
+        - ATM
+      summary: Logout ATM
+      description: Removes access from ATM
+      operationId: atmLogout
+      responses:
+        '204':
+          description: Successful operation - User logged out
+        '401':
+          description: Unauthorized - User is not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /atm/bankAccounts:
+    get:
+      tags:
+        - ATM
+      summary: Get all bankaccounts owned by user
+      description: Returns bankaccount selectors that will be placed into the account selection box
+      operationId: getAtmBankAccounts
+      responses:
+        '200':
+          description: Successful operation - Bank accounts retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ATMBankAccountOptionDTO'
+        '401':
+          description: Unauthorized - User is not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /atm/bankAccount/{iban}:
+    get:
+      tags:
+        - ATM
+      summary: Gives ATM bankaccount information based on IBan
+      description: Gives ATM bankaccount information based on IBan and nothing more
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to retrieve
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      responses:
+        '200':
+          description: Successful operation - Bank account retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BankAccountDTO'
+        '400':
+          description: Bad Request - Invalid IBAN format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - User is not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /atm/withdraw/{iban}:
+    post:
+      tags:
+        - ATM
+      summary: Remove money from bankaccount
+      description: Remove money from bank account based on amount
+      operationId: atmWithdraw
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to withdraw from
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmountRequest'
+      responses:
+        '200':
+          description: Successful operation - Amount withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: "NL91ABNA0417164300"
+                toAccountIban: null
+                message: "Withdrawing from ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
+        '400':
+          description: Bad Request - Invalid amount or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - User is not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '422':
+          description: Unprocessable Entity - Insufficient funds or limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 422
+                type: UNPROCESSABLE_ENTITY
+                message: "Unprocessable Entity - Invalid data or business rule violation"
+                details: "The provided data violates business rules or constraints."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+
+  /atm/deposit/{iban}:
+    post:
+      tags:
+        - ATM
+      summary: Add money to bankaccount
+      description: Add money to bank account based on amount
+      operationId: atmDeposit
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          description: The IBAN of the bank account to deposit into
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmountRequest'
+      responses:
+        '200':
+          description: Successful operation - Amount deposited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDTO'
+              example: 
+                transactionId: 1
+                initiatingUserId: 2
+                fromAccountIban: null
+                toAccountIban: "NL91ABNA0417164300"
+                message: "Depositing money in ATM."
+                amount: 210.4
+                dateTime: 24-11-2026 14:45:12
+                isActive: true
+        '400':
+          description: Bad Request - Invalid amount or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - User is not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Bank account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '422':
+          description: Unprocessable Entity - Invalid deposit amount
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 422
+                type: UNPROCESSABLE_ENTITY
+                message: "Unprocessable Entity - Invalid data or business rule violation"
+                details: "The provided data violates business rules or constraints."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+
+components:
+  schemas:
+    bankAccount:
+      type: object
+      properties:
+        iban:
+          type: string
+          exanples: NLxxINHO0xxxxxxxxx
+        accountType:
+          type: enum
+          examples: [checking, savings]
+        accountStatus: 
+          type: enum
+          examples: [pending, approved]
+        balance: 
+          type: decimal
+          examples: 3.14
+
+    UserOverviewDTO:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserDTO'
+          description: List of user objects
+
+    UserDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 1
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        bsn:
+          type: string
+          example: "123456789"
+        phoneNumber:
+          type: string
+          example: +31612345678
+        role:
+          type: string
+          enum: [customer, employee]
+          example: user
+        isActive:
+          type: boolean
+          example: true
+        isApproved:
+          type: boolean
+          example: true
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: "secret123"
+
+    AmountRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          example: 50.00
+
+    ErrorDTO:
+      type: object
+      required:
+        - code
+        - type
+        - message
+      properties:
+        code:
+          type: integer
+          example: 400
+        type:
+          type: string
+          enum: [BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, INTERNAL_SERVER_ERROR, FORBIDDEN, UNPROCESSABLE_ENTITY]
+          example: BAD_REQUEST
+        message:
+          type: string
+          example: "Bad Request - Invalid input parameters"
+        details:
+          type: string
+          example: "The provided input does not meet the required validation rules."
+
+    ATMBankAccountOptionDTO:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+        bankAccountType:
+          type: string
+          examples: [checking, savings]
+
+    LoginDTO:
+      type: object
+      properties:
+        jwt:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type:
+          type: string
+          example: [website, atm]
+
+    TransactionDTO:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          example: 1
+        initiatingUserId:
+          type: integer
+          example: 2
+        fromAccountIban: 
+          type: string
+          example: "NL91ABNA0417164300"
+        toAccountIban:
+          type: string
+          example: "NL91ABNA0417164300"
+          description: The IBAN of the account the funds are transferred to
+        message:
+          type: string
+          example: "Bought a car"
+          description: Displays why the transaction was done
+        amount: 
+          type: number
+          format: decimal
+          example: 21.4
+        dateTime: 
+          type: string
+          format: date-time
+          example: "24-11-2026 14:45:12"
+        isActive: 
+          type: boolean
+          example: true
+
+    TransactionOverviewDTO:
+      type: object
+      properties:
+        transactions:
+          type: array
+          items: 
+            $ref: '#/components/schemas/TransactionDTO'
+
+    BankAccountDTO:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+        userId:
+          type: integer
+          example: 1
+        bankAccountType:
+          type: string
+          enum: [checking, savings]
+          example: checking
+        balance:
+          type: number
+          format: decimal
+          example: 1500.00
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+        isActive:
+          type: boolean
+          example: true
+
+    BankAccountCreationRequest:
+      type: object
+      required:
+        - iban
+        - userId
+        - bankAccountType
+        - balance
+        - singleTransferLimit
+        - dailyTransferLimit
+        - absoluteLimit
+      properties:
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+          description: International Bank Account Number
+        userId:
+          type: integer
+          example: 1
+          description: The ID of the user who will own the bank account
+        bankAccountType:
+          type: string
+          enum: [checking, savings]
+          example: checking
+          description: Type of bank account
+        balance:
+          type: number
+          format: decimal
+          example: 1000.00
+          description: Initial balance for the account
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+          description: Maximum amount for a single transfer
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+          description: Maximum total amount that can be transferred in a day
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+          description: Absolute limit (overdraft limit) for the account
+
+    BankAccountCreatedDTO:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+        userId:
+          type: integer
+          example: 1
+        bankAccountType:
+          type: string
+          enum: [checking, savings]
+          example: checking
+        balance:
+          type: number
+          format: decimal
+          example: 1000.00
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+        isActive:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-04-28T10:30:00Z"
+
+    DeleteBankAccountRequest:
+      type: object
+      required:
+        - isActive
+      properties:
+        isActive:
+          type: boolean
+          example: false
+          description: Flag to deactivate (false) or activate (true) the bank account
+
+    TransferLimitRequest:
+      type: object
+      required:
+        - singleTransferLimit
+        - dailyTransferLimit
+        - absoluteLimit
+        - iban
+      properties:
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+          description: New maximum amount for a single transfer
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+          description: New maximum total amount that can be transferred in a day
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+          description: New absolute limit (overdraft limit) for the account
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+          description: International Bank Account Number
+
+    TransferLimitUpdateDTO:
+      type: object
+      properties:
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+          description: International Bank Account Number
+        userId:
+          type: integer
+          example: 1
+          description: The ID of the user who owns the bank account
+        newSingleTransferTimit:
+          type: number
+          format: decimal
+          example: 5000.00
+          description: Updated maximum amount for a single transfer
+        newDailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+          description: Updated maximum total amount that can be transferred in a day
+        newAbsoluteTransferLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+          description: Updated absolute limit (overdraft limit) for the account
+
+    BankAccountTransactionsDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+          description: The ID of the user
+        firstName:
+          type: string
+          example: "John"
+          description: First name of the user
+        lastName:
+          type: string
+          example: "Doe"
+          description: Last name of the user
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionDTO'
+          description: List of transactions for the bank account
+
+    TransferRequest:
+      type: object
+      required:
+        - amount
+        - toAccountIBAN
+      properties:
+        amount:
+          type: number
+          format: decimal
+          example: 100.00
+          description: Amount to transfer
+        toAccountIBAN:
+          type: string
+          example: NL91ABNA0417164300
+          description: IBAN of the destination account
+        
+
+
+
+
+
+
+
+
+
