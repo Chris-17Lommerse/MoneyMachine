@@ -1162,7 +1162,7 @@ paths:
               schema:
                 type: array
                 items: 
-                  $ref: '#/components/schemas/ATMBankAccountOptionDTO'
+                  $ref: '#/components/schemas/BankAccountDTO'
         '401':
           description: Unauthorized - User is not logged in
           content:
@@ -1516,16 +1516,6 @@ components:
         details:
           type: string
           example: "The provided input does not meet the required validation rules."
-
-    ATMBankAccountOptionDTO:
-      type: object
-      properties:
-        iban:
-          type: string
-          example: NL91ABNA0417164300
-        bankAccountType:
-          type: string
-          examples: [checking, savings]
 
     LoginDTO:
       type: object
