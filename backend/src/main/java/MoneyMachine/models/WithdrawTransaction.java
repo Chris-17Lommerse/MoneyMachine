@@ -2,7 +2,6 @@ package MoneyMachine.models;
 
 import java.math.BigDecimal;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,5 @@ public class WithdrawTransaction extends Transaction {
         this.fromAccountIban = fromAccountIban;
     }
 
-    @Column(name = "from_account_iban", nullable = false)
     private String fromAccountIban;
 }

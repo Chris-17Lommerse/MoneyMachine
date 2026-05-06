@@ -1,5 +1,5 @@
 package MoneyMachine.models.enums;
 
 public enum Role {
-    user, employee, admin
+    user, employee
 }

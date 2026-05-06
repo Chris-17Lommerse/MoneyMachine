@@ -2,23 +2,35 @@ package MoneyMachine;
 
 import java.math.BigDecimal;
 
+import javax.security.auth.callback.NameCallback;
+
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
 import MoneyMachine.models.Transaction;
 import MoneyMachine.models.TransferTransaction;
+import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
+import MoneyMachine.models.enums.BankAccountType;
+import MoneyMachine.models.enums.Role;
+import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
+import MoneyMachine.repositories.UserRepository;
 
 @Component
 public class DataSeeder implements ApplicationRunner {
 
+    private final BankAccountRepository bankAccountRepository;
+    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
-    public DataSeeder(TransactionRepository transactionRepository){
+    public DataSeeder(TransactionRepository transactionRepository, UserRepository userRepository, BankAccountRepository bankAccountRepository){
         this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.bankAccountRepository = bankAccountRepository;
     }
 
     @Override
@@ -32,6 +44,12 @@ public class DataSeeder implements ApplicationRunner {
 
         TransferTransaction transferTransaction = new TransferTransaction(1, new BigDecimal("10"), "Hello transfer!", true, "NL91ABNA0417164300", "NL91ABNA0417164300");
         transactionRepository.save(transferTransaction);
+
+        User user = new User("testFirstName", "testLastName", "user@user.user", "123456789", "+31 6 12 34 56 78", Role.user, true, true);
+        userRepository.save(user);
+
+        BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user.getUserId(), new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.checking);
+        bankAccountRepository.save(bankAccount);
 
         for (Transaction transaction : transactionRepository.findAll()) {
             System.out.println(transaction.getTransactionId());
