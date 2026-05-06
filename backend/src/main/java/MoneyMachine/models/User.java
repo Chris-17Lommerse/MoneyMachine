@@ -25,23 +25,23 @@ public class User {
     @NotNull
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     @NotNull
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     @NotNull
     private String lastName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     @NotNull
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 9)
     @NotNull
     private String bsn;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     @NotNull
     private String phoneNumber;
 

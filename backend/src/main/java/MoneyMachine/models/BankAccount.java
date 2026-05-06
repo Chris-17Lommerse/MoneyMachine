@@ -25,6 +25,7 @@ public class BankAccount {
 
     @Id
     @NotNull
+    @Column(length = 34)
     private String iban;
 
     @ManyToOne

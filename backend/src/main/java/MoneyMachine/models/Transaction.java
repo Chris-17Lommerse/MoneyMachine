@@ -38,7 +38,7 @@ public class Transaction {
     @NotNull
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     @NotNull
     private String message;
 
