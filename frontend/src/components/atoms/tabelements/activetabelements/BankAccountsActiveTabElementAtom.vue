@@ -3,6 +3,6 @@
 
 <template>
     <li class="nav-item">
-        <a href="/user" class="nav-link">Users without an account</a>
+        <a href="/bankAccount" class="nav-link active">Bank Accounts</a>
     </li>
 </template>
