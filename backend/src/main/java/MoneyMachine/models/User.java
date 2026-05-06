@@ -1,6 +1,7 @@
 package MoneyMachine.models;
 
 import MoneyMachine.models.enums.Role;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,14 +22,30 @@ public class User {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String bsn;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
     private Boolean isActive;
+
+    @Column(nullable = false)
     private Boolean isApproved;
 
     public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, Boolean isActive, Boolean isApproved)
