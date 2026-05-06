@@ -36,20 +36,20 @@ public class DataSeeder implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        DepositTransaction depositTransaction = new DepositTransaction(1, new BigDecimal("10"), "Hello deposit!", true, "NL91ABNA0417164300");
-        transactionRepository.save(depositTransaction);
-
-        WithdrawTransaction withdrawTransaction = new WithdrawTransaction(1, new BigDecimal("10"), "Hello withdraw!", true, "NL91ABNA0417164300");
-        transactionRepository.save(withdrawTransaction);
-
-        TransferTransaction transferTransaction = new TransferTransaction(1, new BigDecimal("10"), "Hello transfer!", true, "NL91ABNA0417164300", "NL91ABNA0417164300");
-        transactionRepository.save(transferTransaction);
-
         User user = new User("testFirstName", "testLastName", "user@user.user", "123456789", "+31 6 12 34 56 78", Role.user, true, true);
         userRepository.save(user);
 
-        BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user.getUserId(), new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.checking);
+        BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user, new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.checking, true);
         bankAccountRepository.save(bankAccount);
+
+        DepositTransaction depositTransaction = new DepositTransaction(user, new BigDecimal("10"), "Hello deposit!", true, bankAccount);
+        transactionRepository.save(depositTransaction);
+
+        WithdrawTransaction withdrawTransaction = new WithdrawTransaction(user, new BigDecimal("10"), "Hello withdraw!", true, bankAccount);
+        transactionRepository.save(withdrawTransaction);
+
+        TransferTransaction transferTransaction = new TransferTransaction(user, new BigDecimal("10"), "Hello transfer!", true, bankAccount, bankAccount);
+        transactionRepository.save(transferTransaction);
 
         for (Transaction transaction : transactionRepository.findAll()) {
             System.out.println(transaction.getTransactionId());

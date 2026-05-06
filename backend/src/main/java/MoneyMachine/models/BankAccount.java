@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ public class BankAccount {
 
     @Id
     private String iban;
-    private Long userId;
+    @ManyToOne
+    private User user;
     private BigDecimal balance;
     private BigDecimal absoluteLimit;
     private BigDecimal singleTransferLimit;
@@ -30,13 +32,14 @@ public class BankAccount {
     private BankAccountType bankAccountType;
     private Boolean isActive;
 
-    public BankAccount(String iban, Long userId, BigDecimal balance, BigDecimal absoluteLimit, BigDecimal singleTransferLimit, BigDecimal dailyTransferLimit, BankAccountType bankAccountType) {
+    public BankAccount(String iban, User user, BigDecimal balance, BigDecimal absoluteLimit, BigDecimal singleTransferLimit, BigDecimal dailyTransferLimit, BankAccountType bankAccountType, Boolean isActive) {
         this.iban = iban;
-        this.userId = userId;
+        this.user = user;
         this.balance = balance;
         this.absoluteLimit = absoluteLimit;
         this.singleTransferLimit = singleTransferLimit;
         this.dailyTransferLimit = dailyTransferLimit;
         this.bankAccountType = bankAccountType;
+        this.isActive = isActive;
     }
 }

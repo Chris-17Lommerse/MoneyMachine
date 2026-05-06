@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,13 +24,14 @@ public class Transaction {
     @Id
     @GeneratedValue
     private long transactionId;
-    private long initiatingUserId;
+    @ManyToOne
+    private User initiatingUser;
     private BigDecimal amount;
     private String message;
     private Boolean isActive;
 
-    public Transaction(long initiatingUserId, BigDecimal amount, String message, Boolean isActive) {
-        this.initiatingUserId = initiatingUserId;
+    public Transaction(User initiatingUser, BigDecimal amount, String message, Boolean isActive) {
+        this.initiatingUser = initiatingUser;
         this.amount = amount;
         this.message = message;
         this.isActive = isActive;
