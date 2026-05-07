@@ -4,6 +4,8 @@ import ATMLogin from '@/components/views/atm/authentication/ATMLogin.vue'
 import AdminAuthorizationTest from '@/components/views/atm/authentication/AdminAuthorizationTest.vue'
 import UserAuthorizationTest from '@/components/views/atm/authentication/UserAuthorizationTest.vue'
 import ATMLayout from '@/components/layout/ATMLayout.vue'
+import { useAuthStore } from "@/stores/authStore.js"
+import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
 
 const routes = [
     {
@@ -22,15 +24,6 @@ const routes = [
                 }
             },
             { 
-                path: 'admin-test', 
-                component: AdminAuthorizationTest,
-                meta: { 
-                    title: 'AdminTest',
-                    isAuthenticated: true,
-                    roles: ['Admin']
-                }
-            },
-            { 
                 path: 'user-test', 
                 component: UserAuthorizationTest,
                 meta: { 
@@ -45,6 +38,26 @@ const routes = [
 const router = createRouter({
     "history": createWebHistory(),
     routes,
+})
+
+router.beforeEach((to) => {
+
+    const authStore = useAuthStore()
+    const errorHandlingStore = useErrorHandlingStore()
+
+    if (to.meta.isAuthenticated) {
+
+        const decodedAuthToken = authStore.decodedAuthToken
+
+        if (decodedAuthToken === null) {
+            errorHandlingStore.setErrorMessage('You need to be logged in to perform this action.')
+            return '/atm/login'
+        }
+    }
+    
+    if (to.meta.title) {
+        document.title = to.meta.title
+    }
 })
 
 export default router
