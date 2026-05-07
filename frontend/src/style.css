@@ -293,7 +293,3 @@ code {
     border-right-color: var(--border);
   }
 }
-
-.authentication-box {
-    width: 400px;
-}
