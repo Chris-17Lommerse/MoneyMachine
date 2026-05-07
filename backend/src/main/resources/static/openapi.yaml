@@ -1162,7 +1162,7 @@ paths:
               schema:
                 type: array
                 items: 
-                  $ref: '#/components/schemas/ATMBankAccountOptionDTO'
+                  $ref: '#/components/schemas/BankAccountDTO'
         '401':
           description: Unauthorized - User is not logged in
           content:
@@ -1277,16 +1277,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionDTO'
-              example: 
-                transactionId: 1
-                initiatingUserId: 2
-                fromAccountIban: "NL91ABNA0417164300"
-                toAccountIban: null
-                message: "Withdrawing from ATM."
-                amount: 210.4
-                dateTime: 24-11-2026 14:45:12
-                isActive: true
+                $ref: '#/components/schemas/ATMBalanceUpdateDTO'
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
@@ -1370,16 +1361,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TransactionDTO'
-              example: 
-                transactionId: 1
-                initiatingUserId: 2
-                fromAccountIban: null
-                toAccountIban: "NL91ABNA0417164300"
-                message: "Depositing money in ATM."
-                amount: 210.4
-                dateTime: 24-11-2026 14:45:12
-                isActive: true
+                $ref: '#/components/schemas/ATMBalanceUpdateDTO'
         '400':
           description: Bad Request - Invalid amount or parameters
           content:
@@ -1535,16 +1517,6 @@ components:
           type: string
           example: "The provided input does not meet the required validation rules."
 
-    ATMBankAccountOptionDTO:
-      type: object
-      properties:
-        iban:
-          type: string
-          example: NL91ABNA0417164300
-        bankAccountType:
-          type: string
-          examples: [checking, savings]
-
     LoginDTO:
       type: object
       properties:
@@ -1586,6 +1558,28 @@ components:
         isActive: 
           type: boolean
           example: true
+
+    ATMBalanceUpdateDTO:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          example: 1
+        accountIban: 
+          type: string
+          example: "NL91ABNA0417164300"
+        oldBalance: 
+          type: number
+          format: decimal
+          example: 21.4
+        newBalance: 
+          type: number
+          format: decimal
+          example: 21.4
+        dateTime: 
+          type: string
+          format: date-time
+          example: "24-11-2026 14:45:12"
 
     TransactionOverviewDTO:
       type: object
