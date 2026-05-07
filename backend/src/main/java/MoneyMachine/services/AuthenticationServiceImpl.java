@@ -3,20 +3,27 @@ package MoneyMachine.services;
 import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.User;
+import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.Interfaces.AuthenticationService;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    @Override
-    public User getUserByUsernameAndPassword(String username, String password) {
-        
-        // User user = usersRepository.getFullyKnownUserByUsername(username);
+    private UserRepository userRepository;
 
-        // if (user != null && encoder.matches(password, user.getPassword())) {
-        //     return user;
-        // }
+    public AuthenticationServiceImpl(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public User getUserByEmailAndPassword(String email, String password) {
+        
+        User user = userRepository.findByEmail(email);
+
+        if (user != null && BCrypt.checkpw(password, user.getPassword())) {
+            return user;
+        }
 
         return null;
     }
@@ -29,7 +36,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String getHashedPassword(String rawPassword) {
-
         return BCrypt.hashpw(rawPassword, BCrypt.gensalt(10));
     }
 }
