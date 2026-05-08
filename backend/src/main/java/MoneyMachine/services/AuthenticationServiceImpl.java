@@ -16,15 +16,13 @@ import org.mindrot.jbcrypt.BCrypt;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private UserRepository userRepository;
-    private double tokenExpirationInHours = 1;
+    private String tokenSecretKey;
+    private double tokenExpirationInHours;
 
-    private String jwtSecret;
-
-    public AuthenticationServiceImpl(
-            UserRepository userRepository,
-            @Value("${token_secret_key}") String jwtSecret) {
+    public AuthenticationServiceImpl(UserRepository userRepository, @Value("${TOKEN_SECRET_KEY}") String tokenSecretKey, @Value("${TOKEN_EXPIRATION_IN_HOURS}") double tokenExpirationInHours) {
         this.userRepository = userRepository;
-        this.jwtSecret = jwtSecret;
+        this.tokenSecretKey = tokenSecretKey;
+        this.tokenExpirationInHours = tokenExpirationInHours;
     }
 
     @Override
@@ -42,9 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String generateTokenFromUser(User user) {
 
-        Algorithm algorithm = Algorithm.HMAC256(this.jwtSecret);
-
-        System.out.println(this.jwtSecret);
+        Algorithm algorithm = Algorithm.HMAC256(this.tokenSecretKey);
         
         return JWT.create()
             .withSubject(user.getId().toString())
