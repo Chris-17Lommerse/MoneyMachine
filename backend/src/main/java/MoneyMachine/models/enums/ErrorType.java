@@ -1,0 +1,5 @@
+package MoneyMachine.models.enums;
+
+public enum ErrorType {
+    BAD_REQUEST, UNAAUTHORIZED, NT_FOUND, INTERNAL_SERVER_ERROR, FORBIDDEN, UNPROCCESSABLE_ENTITY
+}

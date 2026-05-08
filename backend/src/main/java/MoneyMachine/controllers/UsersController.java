@@ -15,15 +15,13 @@ import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
 import MoneyMachine.services.UserServiceJpa;
 
-
 @RestController
 @RequestMapping("/user")
 public class UsersController {
     private final UserServiceJpa userService;
     private UserMapper userMapper;
 
-    public UsersController(UserServiceJpa userService, UserMapper userMapper)
-    {
+    public UsersController(UserServiceJpa userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }
@@ -31,17 +29,7 @@ public class UsersController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<UserDTO> getAllUsersWithoutAnAccount() 
     {
-        try
-        {
             List<User> users = userService.getAllUsersWithoutAnAccount();
-            return ResponseEntity.ok(userMapper)
-        } catch (InternalServerError ex)
-        {
-            return ResponseEntity.status(500).body(ex);
-        }
-        catch (Unauthorized ex)
-        {
-            return ResponseEntity.status(401).body(ex);
-        }
+            return ResponseEntity.ok(userMapper.toDTO(users))
     }
 }
