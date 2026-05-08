@@ -6,6 +6,7 @@ import UserAuthorizationTest from '@/components/views/atm/authentication/UserAut
 import ATMLayout from '@/components/layout/ATMLayout.vue'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
+import ATMLogout from '@/components/views/atm/authentication/ATMLogout.vue'
 
 const routes = [
     {
@@ -21,6 +22,13 @@ const routes = [
                 component: ATMLogin, 
                 meta: { 
                     title: 'Login'
+                }
+            },
+            { 
+                path: 'logout', 
+                component: ATMLogout, 
+                meta: { 
+                    title: 'Logout'
                 }
             },
             { 
