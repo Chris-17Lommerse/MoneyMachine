@@ -16,11 +16,15 @@ import org.mindrot.jbcrypt.BCrypt;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private UserRepository userRepository;
-    private String jwtSecret = "NEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILE";
     private double tokenExpirationInHours = 1;
 
-    public AuthenticationServiceImpl(UserRepository userRepository){
+    private String jwtSecret;
+
+    public AuthenticationServiceImpl(
+            UserRepository userRepository,
+            @Value("${token_secret_key}") String jwtSecret) {
         this.userRepository = userRepository;
+        this.jwtSecret = jwtSecret;
     }
 
     @Override
@@ -39,6 +43,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String generateTokenFromUser(User user) {
 
         Algorithm algorithm = Algorithm.HMAC256(this.jwtSecret);
+
+        System.out.println(this.jwtSecret);
         
         return JWT.create()
             .withSubject(user.getId().toString())
