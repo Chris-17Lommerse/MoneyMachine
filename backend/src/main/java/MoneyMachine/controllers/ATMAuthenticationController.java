@@ -27,6 +27,8 @@ public class ATMAuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestBody loginRequestBody) {
         
+        String s = null;
+        s.length();
         User user = authenticationService.getUserByEmailAndPassword(loginRequestBody.getEmail(), loginRequestBody.getPassword());
 
         if (user != null){
