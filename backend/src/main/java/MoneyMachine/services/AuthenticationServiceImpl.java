@@ -1,5 +1,6 @@
 package MoneyMachine.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
@@ -15,6 +16,8 @@ import org.mindrot.jbcrypt.BCrypt;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private UserRepository userRepository;
+    private String jwtSecret = "NEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILENEEDSTOBEINA_ENVFILE";
+    private double tokenExpirationInHours = 1;
 
     public AuthenticationServiceImpl(UserRepository userRepository){
         this.userRepository = userRepository;
@@ -35,12 +38,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String generateTokenFromUser(User user) {
 
-        Algorithm algorithm = Algorithm.HMAC256("jouw-geheim-van-minimaal-32-tekens-jouw-geheim-van-minimaal-32-tekens");
+        Algorithm algorithm = Algorithm.HMAC256(this.jwtSecret);
         
         return JWT.create()
             .withSubject(user.getId().toString())
-            .withClaim("role", true)
-            .withExpiresAt(new Date(System.currentTimeMillis() + 3600000))
+            .withClaim("role", user.getRole().toString())
+            .withClaim("email", user.getEmail())
+            .withClaim("firstName", user.getFirstName())
+            .withClaim("lastName", user.getLastName())
+            .withExpiresAt(new Date(System.currentTimeMillis() + (long)(3600000 * tokenExpirationInHours)))
             .sign(algorithm);
     }
 
