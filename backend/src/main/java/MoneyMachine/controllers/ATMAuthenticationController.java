@@ -20,7 +20,7 @@ import MoneyMachine.services.Interfaces.AuthenticationService;
 
 @RestController
 @RequestMapping("/atm")
-public class ATMAuthenticationController {
+public class ATMAuthenticationController extends BaseController {
     
     private AuthenticationService authenticationService;
 

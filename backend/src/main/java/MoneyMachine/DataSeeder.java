@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
-import MoneyMachine.models.Transaction;
 import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;

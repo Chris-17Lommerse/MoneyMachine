@@ -9,29 +9,29 @@
     
     const authStore = useAuthStore();
 
-    const username = ref('')
+    const email = ref('')
     const password = ref('')
     const currentErrorAlert = ref(null)
     const currentSuccessAlert = ref(null)
 
     async function handleLogin(e) {
-        // try {
-        //     e.preventDefault()
+        try {
+            e.preventDefault()
 
-        //     const form = new FormData()
-        //     form.append("username", username.value)
-        //     form.append("password", password.value)
+            const form = new FormData()
+            form.append('email', email.value)
+            form.append('password', password.value)
 
-        //     const response = await axios.post('/auth/login', form)
+            const response = await axios.post('/atm/login', form)
 
-        //     authStore.setAuthToken(response.data.jwt)
-        //     currentSuccessAlert.value.displaySuccessMessage('Successfully logged in.')
-        // }
-        // catch (ex){
-        //     if (ex.response){
-        //         currentErrorAlert.value.displayErrorMessage(ex.response.data.message)
-        //     }
-        // }
+            authStore.setAuthToken(response.data.jwt)
+            currentSuccessAlert.value.displaySuccessMessage('Successfully logged in.')
+        }
+        catch (ex){
+            if (ex.response){
+                currentErrorAlert.value.displayErrorMessage(ex.response.data.message)
+            }
+        }
     }
 </script>
 
@@ -39,7 +39,7 @@
     <form @submit="handleLogin">
         <ErrorAlert ref="currentErrorAlert" />
         <SuccessAlert ref="currentSuccessAlert" />
-        <BaseFormField labelName="Username" id="username" name="username" placeholder="Enter your username" v-model="username"/>
+        <BaseFormField labelName="Email" type="email" id="email" name="email" placeholder="Enter your email address" v-model="email"/>
         <BaseFormField labelName="Password" type="password" id="password" name="password" placeholder="Enter your password" v-model="password"/>
         <AuthsubmitBtn buttonText="Login" />
   </form>
