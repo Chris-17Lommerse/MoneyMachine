@@ -1,4 +1,4 @@
-package MoneyMachine.dto;
+package MoneyMachine.models.dtos;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,5 +9,5 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UserOverviewDTO implements Serializable {
-    private List<UserDTO> userDTOs;
+    private List<UserDTO> users;
 }

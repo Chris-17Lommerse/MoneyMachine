@@ -1,4 +1,4 @@
-package MoneyMachine.dto;
+package MoneyMachine.models.dtos;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,7 +14,7 @@ import MoneyMachine.models.enums.*;
 @Getter
 public class UserDTO implements Serializable {
     @NotNull
-    private Long id;
+    private Long userId;
     @NotNull
     private String firstName;
     @NotNull

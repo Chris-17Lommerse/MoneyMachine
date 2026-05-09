@@ -1,6 +1,7 @@
 package MoneyMachine.models;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import MoneyMachine.models.enums.Role;
 import jakarta.persistence.Column;
@@ -53,9 +54,8 @@ public class User {
     @NotNull
     private Role role;
 
-    @Column(nullable = true)
     @OneToMany(mappedBy = "user")
-    private HashSet<BankAccount> bankAccounts;
+    private Set<BankAccount> bankAccounts = new HashSet<BankAccount>(0);
 
     @Column(nullable = false)
     @NotNull
@@ -65,7 +65,7 @@ public class User {
     @NotNull
     private Boolean isApproved;
 
-    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, HashSet<BankAccount> bankAccounts, Boolean isActive, Boolean isApproved)
+    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, Boolean isActive, Boolean isApproved)
     {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -73,7 +73,6 @@ public class User {
         this.bsn = bsn;
         this.phoneNumber = phoneNumber;
         this.role = role;
-        this.bankAccounts = bankAccounts;
         this.isActive = isActive;
         this.isApproved = isApproved;
     }

@@ -2,15 +2,18 @@ package MoneyMachine.mappers;
 
 import org.springframework.stereotype.Component;
 
-import MoneyMachine.dto.UserDTO;
-import MoneyMachine.models.User;
+import MoneyMachine.models.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import MoneyMachine.models.dtos.UserDTO;
 
 @Component
 public class UserMapper {
     public UserDTO toDTO(User user)
     {
         UserDTO dto = new UserDTO();
-        dto.setId(user.getId());
+        dto.setUserId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
@@ -24,15 +27,24 @@ public class UserMapper {
 
     public User toEntity(UserDTO dto) {
         User user = new User();
-        user.setId(dto.getId());
+        user.setId(dto.getUserId());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setBsn(dto.getBsn());
         user.setPhoneNumber(dto.getPhoneNumber());
         user.setRole(dto.getRole());
-        user.setIsActive(dto.getIsActive());
-        user.setIsApproved(dto.getIsApproved);
+        user.setIsActive(dto.isActive());
+        user.setIsApproved(dto.isApproved());
         return user;
+    }
+
+    public List<UserDTO> toDTOList(List<User> userList) {
+        List<UserDTO> userDTOs = new ArrayList<UserDTO>();
+        for(User user : userList)
+        {
+            userDTOs.add(toDTO(user));
+        }
+        return userDTOs;
     }
 }
