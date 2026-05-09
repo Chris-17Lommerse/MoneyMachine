@@ -58,6 +58,18 @@ public class ATMAuthenticationController extends BaseController {
 
         super.atmLoggedInAuthorization(request);
 
-        return ResponseEntity.status(204).body(null);
+        UserDTO userDTO = new UserDTO(
+            super.loggedInUser.getId(), 
+            super.loggedInUser.getFirstName(),
+            super.loggedInUser.getLastName(),
+            super.loggedInUser.getEmail(),
+            super.loggedInUser.getBsn(),
+            super.loggedInUser.getPhoneNumber(),
+            super.loggedInUser.getRole(),
+            super.loggedInUser.getIsActive(),
+            super.loggedInUser.getIsApproved()
+        );
+
+        return ResponseEntity.status(200).body(userDTO);
     }
 }

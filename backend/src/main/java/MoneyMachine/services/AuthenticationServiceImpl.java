@@ -60,7 +60,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void getDecodedToken(String token) {
+    public DecodedJWT getDecodedToken(String token) {
+        
         DecodedJWT decoded = JWT.decode(token);
 
         System.out.println("=== JWT Claims ===");
@@ -71,5 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         System.out.println("Email      : " + decoded.getClaim("email").asString());
         System.out.println("First name : " + decoded.getClaim("firstName").asString());
         System.out.println("Last name  : " + decoded.getClaim("lastName").asString());
+
+        return decoded;
     }
 }

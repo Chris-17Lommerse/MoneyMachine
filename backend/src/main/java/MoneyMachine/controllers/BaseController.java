@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+
 import MoneyMachine.models.User;
 import MoneyMachine.models.exceptions.ExpiredException;
 import MoneyMachine.models.exceptions.NotAuthorizedException;
@@ -20,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BaseController {
     
-    User currentLoggedInUser = null;
+    User loggedInUser = null;
     UserService userService;
     AuthenticationService authenticationService;
 
@@ -46,14 +48,13 @@ public class BaseController {
 
             String token = headerParts[1];
             System.out.println(token);
-            authenticationService.getDecodedToken(token);
+            DecodedJWT decoded = authenticationService.getDecodedToken(token);
 
-            // this.loggedInUser = usersService.getUserByUserId(decoded.getData().getUserId());
+            this.loggedInUser = this.userService.findUserById(Integer.parseInt(decoded.getSubject()));
 
-            // if (this.loggedInUser == null) {
-            //     throw new NotAuthorizedException("User in your token does not exist.");
-            // }
-
+            if (this.loggedInUser == null) {
+                throw new NotAuthorizedException("User in your token does not exist.");
+            }
         } 
         catch (ExpiredException ex) {
             System.out.println(ex.getMessage());
