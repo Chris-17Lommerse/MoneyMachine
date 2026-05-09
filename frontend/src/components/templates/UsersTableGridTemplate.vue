@@ -24,12 +24,12 @@ const props = defineProps({
 </script>
 
 <template>
-    <UserTableHeader />
-    <section class="">
-        <UserRecordMolecule
-        v-for="user in users"
-        :key="user.userId"
-        :user="user"
-        />
-    </section>
+    <table>
+        <thead>
+            <UserTableHeader />
+        </thead>
+        <tbody>
+            <UserRecordMolecule v-for="user in users" :key="user.userId" :user="user" />
+        </tbody>
+    </table>
 </template>
