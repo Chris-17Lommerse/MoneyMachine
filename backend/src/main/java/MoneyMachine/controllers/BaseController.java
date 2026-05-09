@@ -1,20 +1,19 @@
 package MoneyMachine.controllers;
 
-import java.io.IOException;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.ErrorDTO;
+import MoneyMachine.models.enums.ErrorType;
 import MoneyMachine.models.exceptions.ExpiredException;
 import MoneyMachine.models.exceptions.NotAuthorizedException;
 import MoneyMachine.models.exceptions.SignatureInvalidException;
 import MoneyMachine.services.Interfaces.AuthenticationService;
 import MoneyMachine.services.Interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.NoArgsConstructor;
 
 @Controller
@@ -31,7 +30,7 @@ public class BaseController {
         this.authenticationService = authenticationService;
     }
 
-    private void setLoggedInUser(HttpServletRequest request) {
+    private ErrorDTO setLoggedInUser(HttpServletRequest request) {
 
         try {
             String authHeader = request.getHeader("Authorization");
@@ -47,7 +46,6 @@ public class BaseController {
             }
 
             String token = headerParts[1];
-            System.out.println(token);
             DecodedJWT decoded = authenticationService.getDecodedToken(token);
 
             this.loggedInUser = this.userService.findUserById(Integer.parseInt(decoded.getSubject()));
@@ -57,24 +55,19 @@ public class BaseController {
             }
         } 
         catch (ExpiredException ex) {
-            System.out.println(ex.getMessage());
-            //sendErrorJson(response, 401, "Your token has expired.");
+            return new ErrorDTO(401, ErrorType.UNAUTHORIZED, "Token expired", ex.getMessage());
         } 
         catch (SignatureInvalidException ex) {
-            System.out.println(ex.getMessage());
-            //sendErrorJson(response, 401, "Token signature is not valid.");
+            return new ErrorDTO(401, ErrorType.UNAUTHORIZED, "Invalid signature", ex.getMessage());
         } 
         catch (NotAuthorizedException ex) {
-            System.out.println(ex.getMessage());
-            //sendErrorJson(response, 401, ex.getMessage());
+            return new ErrorDTO(401, ErrorType.UNAUTHORIZED, "Not authorized", ex.getMessage());
         } 
-        catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            //sendErrorJson(response, 400, ex.getMessage());
-        }
+        
+        return null;
     }
 
-    public void atmLoggedInAuthorization(HttpServletRequest request){
-        this.setLoggedInUser(request);
+    public ErrorDTO atmLoggedInAuthorization(HttpServletRequest request){
+        return this.setLoggedInUser(request);
     }
 }

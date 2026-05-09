@@ -54,9 +54,13 @@ public class ATMAuthenticationController extends BaseController {
     }
 
     @GetMapping("/user-test")
-    public ResponseEntity<UserDTO> userTest(HttpServletRequest request) {
+    public ResponseEntity<?> userTest(HttpServletRequest request) {
 
-        super.atmLoggedInAuthorization(request);
+        ErrorDTO errorDTO = super.atmLoggedInAuthorization(request);
+
+        if (errorDTO != null){
+            return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
+        }
 
         UserDTO userDTO = new UserDTO(
             super.loggedInUser.getId(), 
