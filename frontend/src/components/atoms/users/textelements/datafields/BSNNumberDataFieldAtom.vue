@@ -9,6 +9,6 @@ const props = defineProps({
 
 <template>
     <td>
-        <h4>{{ user.bsnNumber }}</h4>
+        <h4>{{ user.bsn }}</h4>
     </td>
 </template>

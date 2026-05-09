@@ -15,7 +15,7 @@ const props = defineProps({
             typeof value.firstName === 'string' &&
             typeof value.lastName === 'string' &&
             typeof value.email === 'string' &&
-            typeof value.bsnNumber === 'string' &&
+            typeof value.bsn === 'string' &&
             typeof value.phoneNumber === 'string' &&
             typeof value.role === 'string' &&
             typeof value.isActive === 'boolean' &&

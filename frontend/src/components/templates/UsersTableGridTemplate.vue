@@ -12,7 +12,7 @@ const props = defineProps({
                 typeof user.firstName === 'string' &&
                 typeof user.lastName === 'string' &&
                 typeof user.email === 'string' &&
-                typeof user.bsnNumber === 'string' &&
+                typeof user.bsn === 'string' &&
                 typeof user.phoneNumber === 'string' &&
                 typeof user.role === 'string' &&
                 typeof user.isActive === 'boolean' &&
@@ -24,7 +24,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <table>
+    <table class="table-striped">
         <thead>
             <UserTableHeader />
         </thead>
