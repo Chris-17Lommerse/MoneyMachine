@@ -30,27 +30,44 @@ externalDocs:
 servers:
   - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
     description: Production server (OAS 3.2)
+security:
+  - bearerAuth: []
 tags:
   - name: user
-    summary: User account operations
     description: Operations about user management and authentication
   - name: transaction
-    summary: Transaction operations
     description: Operations about recording transactions within the application
   - name: bankAccount
-    summary: bankaccount operations
     description: Operations for managing bankaccounts
   - name: ATM
-    summary: ATM operations
     description: Operations for withdrawing and depositing money for bankaccounts
 paths:
-  /user:
+  /users:
     get:
       tags:
         - user
       summary: Get all registered users
-      description: Returns a list of all registered users.
+      description: Returns a list of registered users. Can be filtered by username
       operationId: getUsers
+      parameters:
+        - name: username
+          in: query         
+          description: Filter users by a specific username
+          required: false   
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Filter by 'employee' or 'customer'
+          required: false   
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by 'approved'
+          required: false   
+          schema:
+            type: boolean
       responses:
         '200':
           description: Successful operation
@@ -80,13 +97,14 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/createWithList:
+  
     post:
       tags:
         - user
-      summary: Creates list of users with given input array.
-      description: Creates list of users with given input array.
-      operationId: createUsersWithListInput
+      summary: Registers an user account
+      description: Creates an account for an user 
+      security: []
+      operationId: registerUser
       requestBody:
         required: true
         content:
@@ -94,7 +112,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
           description: Users created successfully
@@ -103,7 +121,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserDTO'
+                  $ref: '#/components/schemas/User'
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -137,47 +155,28 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/login:
-    get:
+  /users/login:
+    post:
       tags:
         - user
       summary: Logs user into the system.
       description: log user into the system.
+      security: []
       operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: Successful operation
           headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
           content:
-            application/xml:
-              schema:
-                type: string
             application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/LoginDTO'
         '400':
           description: Bad Request - Invalid username or password supplied
           content:
@@ -211,19 +210,18 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/logout:
-    get:
+  /users/logout:
+    post:
       tags:
         - user
       summary: Logs out current logged in user session.
       description: Log user out of system.
       operationId: logoutUser
-      parameters: []
       responses:
         '200':
           description: Successful operation
         '401':
-          description: Unauthorized - User not logged in
+          description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
@@ -484,7 +482,8 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /transaction:
+
+  /transactions:
     get:
       tags:
         - transaction
@@ -976,7 +975,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceUpdateDTO'
+                $ref: '#/components/schemas/ATMBalanceUpdateDTO'
         '400':
           description: Bad Request - Invalid request parameters or IBAN format
           content:
@@ -1038,6 +1037,7 @@ paths:
         - ATM
       summary: Login into ATM account
       description: Gives user access to ATM
+      security: []
       operationId: atmLogin
       requestBody:
         required: true
@@ -1398,16 +1398,46 @@ components:
       properties:
         iban:
           type: string
-          exanples: NLxxINHO0xxxxxxxxx
+          examples: NLxxINHO0xxxxxxxxx
         accountType:
-          type: enum
+          type: string
           examples: [checking, savings]
         accountStatus: 
-          type: enum
+          type: string
           examples: [pending, approved]
         balance: 
-          type: decimal
+          type: number
           examples: 3.14
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [10]
+        username:
+          type: string
+          examples: [theUser]
+        firstName:
+          type: string
+          examples: [John]
+        lastName:
+          type: string
+          examples: [James]
+        email:
+          type: string
+          examples: [john@email.com]
+        password:
+          type: string
+          examples: ['12345']
+        phone:
+          type: string
+          examples: ['12345']
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+          examples: [1]
 
     UserOverviewDTO:
       type: object
@@ -1415,7 +1445,7 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/UserDTO'
+            $ref: '#/components/schemas/User'
           description: List of user objects
 
     UserDTO:
@@ -1461,6 +1491,25 @@ components:
           type: string
           example: "secret123"
 
+    RegisterRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        bsn:
+          type: integer
+          example: 123456789
+        phoneNumber:
+          type: string
+          example: +31612345678
+
     AmountRequest:
       type: object
       properties:
@@ -1478,11 +1527,6 @@ components:
       properties:
         code:
           type: integer
-          example: 400
-        type:
-          type: string
-          enum: [BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, INTERNAL_SERVER_ERROR, FORBIDDEN, UNPROCESSABLE_ENTITY]
-          example: BAD_REQUEST
         message:
           type: string
           example: "Bad Request - Invalid input parameters"
@@ -1493,12 +1537,35 @@ components:
     LoginDTO:
       type: object
       properties:
-        jwt:
+        accessToken:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type:
+        tokenType:
           type: string
-          example: [website, atm]
+          example: Bearer
+        expiresIn:
+          type: integer
+          example: 3600
+        user: 
+          $ref: '#/components/schemas/UserSummaryDTO'
+        
+
+    UserSummaryDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: "john"
+        lastName:
+          type: string
+          example: "doe"
+        email:
+          type: string
+          example: "user@example.com"
+        
 
     TransactionDTO:
       type: object
@@ -1527,7 +1594,7 @@ components:
         dateTime: 
           type: string
           format: date-time
-          example: "24-11-2026 14:45:12"
+          example: "2026-11-24T14:45:12Z"
         isActive: 
           type: boolean
           example: true
@@ -1552,7 +1619,7 @@ components:
         dateTime: 
           type: string
           format: date-time
-          example: "24-11-2026 14:45:12"
+          example: "2026-11-24T14:45:12Z"
 
     TransactionOverviewDTO:
       type: object
@@ -1726,7 +1793,7 @@ components:
           type: integer
           example: 1
           description: The ID of the user who owns the bank account
-        newSingleTransferTimit:
+        newSingleTransferLimit:
           type: number
           format: decimal
           example: 5000.00
@@ -1741,27 +1808,6 @@ components:
           format: decimal
           example: -1000.00
           description: Updated absolute limit (overdraft limit) for the account
-
-    BankAccountTransactionsDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-          example: 1
-          description: The ID of the user
-        firstName:
-          type: string
-          example: "John"
-          description: First name of the user
-        lastName:
-          type: string
-          example: "Doe"
-          description: Last name of the user
-        transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/TransactionDTO'
-          description: List of transactions for the bank account
 
     TransferRequest:
       type: object
@@ -1801,13 +1847,10 @@ components:
           type: string
           example: NL91ABNA0417164300
           description: Filter transactions by a specific IBAN (from or to)
+      
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
         
-
-
-
-
-
-
-
-
-
