@@ -28,7 +28,6 @@ externalDocs:
   url: https://swagger.io
 servers:
   - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
-  - url: https://petstore32.swagger.io/api/v3
     description: Production server (OAS 3.2)
 tags:
   - name: user
