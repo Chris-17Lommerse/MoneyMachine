@@ -1,4 +1,3 @@
-openapi: 3.0.3
 info:
   title: MoneyMachine - Project 2.4 (Code Generation)
   description: |
@@ -29,6 +28,7 @@ externalDocs:
   url: https://swagger.io
 servers:
   - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
+  - url: https://petstore32.swagger.io/api/v3
     description: Production server (OAS 3.2)
 tags:
   - name: user
@@ -44,13 +44,32 @@ tags:
     summary: ATM operations
     description: Operations for withdrawing and depositing money for bankaccounts
 paths:
-  /user:
+  /users:
     get:
       tags:
         - user
       summary: Get all registered users
-      description: Returns a list of all registered users.
+      description: Returns a list of registered users. Can be filtered by username
       operationId: getUsers
+      parameters:
+        - name: username
+          in: query         
+          description: Filter users by a specific username
+          required: false   
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: Filter by 'employee' or 'customer'
+          required: false   
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Filter by 'approved'
+          required: false   
+          schema:
+            type: boolean
       responses:
         '200':
           description: Successful operation
@@ -84,9 +103,10 @@ paths:
     post:
       tags:
         - user
-      summary: Creates list of users with given input array.
-      description: Creates list of users with given input array.
-      operationId: createUsersWithListInput
+      summary: Registers an user account
+      description: Creates an account for an user 
+      security: []
+      operationId: registerUser
       requestBody:
         required: true
         content:
@@ -94,7 +114,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/UserDTO'
+                $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
           description: Users created successfully
@@ -103,7 +123,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserDTO'
+                  $ref: '#/components/schemas/User'
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -137,46 +157,28 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/login:
-    get:
+  /users/login:
+    post:
       tags:
         - user
       summary: Logs user into the system.
       description: log user into the system.
+      security: []
       operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: Successful operation
           headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
           content:
-            application/xml:
-              schema:
-                type: string
             application/json:
               schema:
+                $ref: '#/components/schemas/LoginDTO'
                 type: string
         '400':
           description: Bad Request - Invalid username or password supplied
@@ -211,19 +213,18 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/logout:
-    get:
+  /users/logout:
+    post:
       tags:
         - user
       summary: Logs out current logged in user session.
       description: Log user out of system.
       operationId: logoutUser
-      parameters: []
       responses:
         '200':
           description: Successful operation
         '401':
-          description: Unauthorized - User not logged in
+          description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
@@ -244,7 +245,7 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/{userId}:
+  /users/{userId}:
     get:
       tags:
         - user
@@ -305,105 +306,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-  /user/{username}:
-    get:
-      tags:
-        - user
-      summary: Get user by user name.
-      description: Get user details based on username.
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be fetched. Use user1 for testing
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserDTO'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/UserDTO'
-        '400':
-          description: Bad Request - Invalid username supplied
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDTO'
-              example:
-                code: 400
-                type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
-        '401':
-          description: Unauthorized - Authentication required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDTO'
-              example:
-                code: 401
-                type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
-        '404':
-          description: Not Found - User not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDTO'
-              example:
-                code: 404
-                type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDTO'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+
     put:
       tags:
         - user
-      summary: Update user.
-      description: This can only be done by the logged in user.
+      summary: Update user by user ID.
+      description: This can only be done by an admin.
       operationId: updateUser
       parameters:
-        - name: username
+        - name: userId
           in: path
-          description: The username to update
+          description: The user to update
           required: true
           schema:
             type: string
       requestBody:
-        description: Update an existent user in the store
+        description: Update an exististing user.
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserDTO'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/UserDTO'
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: Successful operation
@@ -454,13 +377,13 @@ paths:
     delete:
       tags:
         - user
-      summary: Delete user.
-      description: This can only be done by the logged in user.
+      summary: Delete user by user ID.
+      description: This can only be done by an admin.
       operationId: deleteUser
       parameters:
-        - name: username
+        - name: userId
           in: path
-          description: The username to delete
+          description: The user to delete
           required: true
           schema:
             type: string
@@ -511,7 +434,72 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /transaction:
+
+
+  /users/forgot-password:
+   post:
+    summary: Request a password reset link
+    tags:
+      - user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: "user@example.com"
+            required:
+              - email
+    responses:
+      '200':
+        description: If the email exists, a reset link has been sent.
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+      '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+
+  /users/reset-password:
+   post:
+    summary: Reset password using a token
+    tags:
+      - user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PasswordResetRequest'
+    responses:
+      '200':
+        description: Password successfully updated.
+        content:
+          application/json: 
+            schema:
+               $ref: '#/components/schemas/ErrorDTO'
+      '400':
+        description: Invalid or expired token.
+        content:
+          application/json: 
+            schema:
+               $ref: '#/components/schemas/ErrorDTO'
+      '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+
+  /transactions:
     get:
       tags:
         - transaction
@@ -1065,6 +1053,7 @@ paths:
         - ATM
       summary: Login into ATM account
       description: Gives user access to ATM
+      security: []
       operationId: atmLogin
       requestBody:
         required: true
@@ -1425,7 +1414,7 @@ components:
       properties:
         iban:
           type: string
-          exanples: NLxxINHO0xxxxxxxxx
+          examples: NLxxINHO0xxxxxxxxx
         accountType:
           type: enum
           examples: [checking, savings]
@@ -1435,6 +1424,46 @@ components:
         balance: 
           type: decimal
           examples: 3.14
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [10]
+        username:
+          type: string
+          examples: [theUser]
+        firstName:
+          type: string
+          examples: [John]
+        lastName:
+          type: string
+          examples: [James]
+        email:
+          type: string
+          examples: [john@email.com]
+        password:
+          type: string
+          examples: ['12345']
+        phone:
+          type: string
+          examples: ['12345']
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+          examples: [1]
+      xml:
+        name: user
+    UserArray:
+      description: List of user object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
 
     UserOverviewDTO:
       type: object
@@ -1442,7 +1471,7 @@ components:
         users:
           type: array
           items:
-            $ref: '#/components/schemas/UserDTO'
+            $ref: '#/components/schemas/User'
           description: List of user objects
 
     UserDTO:
@@ -1488,6 +1517,25 @@ components:
           type: string
           example: "secret123"
 
+    RegisterRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          example: john.doe@example.com
+        bsn:
+          type: integer
+          example: 123456789
+        phoneNumber:
+          type: string
+          example: +31612345678
+
     AmountRequest:
       type: object
       properties:
@@ -1505,11 +1553,6 @@ components:
       properties:
         code:
           type: integer
-          example: 400
-        type:
-          type: string
-          enum: [BAD_REQUEST, UNAUTHORIZED, NOT_FOUND, INTERNAL_SERVER_ERROR, FORBIDDEN, UNPROCESSABLE_ENTITY]
-          example: BAD_REQUEST
         message:
           type: string
           example: "Bad Request - Invalid input parameters"
@@ -1520,12 +1563,35 @@ components:
     LoginDTO:
       type: object
       properties:
-        jwt:
+        accesToken:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        type:
+        tokenType:
           type: string
-          example: [website, atm]
+          example: Bearer
+        expiresIn:
+          type: integer
+          example: 3600
+        user: 
+          $ref: '#/components/schemas/UserSummaryDTO'
+        
+
+    UserSummaryDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        firstName:
+          type: string
+          example: "john"
+        lastName:
+          type: string
+          example: "doe"
+        emal:
+          type: string
+          example: "user@example.com"
+        
 
     TransactionDTO:
       type: object
@@ -1753,7 +1819,7 @@ components:
           type: integer
           example: 1
           description: The ID of the user who owns the bank account
-        newSingleTransferTimit:
+        newSingleTransferLimit:
           type: number
           format: decimal
           example: 5000.00
@@ -1805,13 +1871,27 @@ components:
           type: string
           example: NL91ABNA0417164300
           description: IBAN of the destination account
+
+    PasswordResetRequest:
+            type: object
+            required:
+              - token
+              - newPassword
+            properties:
+              token:
+                type: string
+                description: The unique code/token from the email link
+                example: "2kkf94..." 
+              newPassword:
+                type: string
+                format: password
+                minLength: 8
+                example: "NewSecurePass123!"
+            
+
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
         
-
-
-
-
-
-
-
-
-
