@@ -1843,10 +1843,14 @@ components:
           format: decimal
           example: 250.00
           description: Filter transactions with an amount equal to this value
-        iban:
+        fromIban:
           type: string
           example: NL91ABNA0417164300
-          description: Filter transactions by a specific IBAN (from or to)
+          description: Filter transactions by a specific IBAN by me
+        toIban:
+          type: string
+          example: NL91ABNA0417164300
+          description: Filter transactions by a specific IBAN to someone else
       
   securitySchemes:
     bearerAuth:            
