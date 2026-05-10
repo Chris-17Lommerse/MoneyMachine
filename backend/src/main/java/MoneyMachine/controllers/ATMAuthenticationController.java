@@ -17,7 +17,6 @@ import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.exceptions.InvalidCredentialsException;
 import MoneyMachine.models.requestBodies.LoginRequestBody;
 import MoneyMachine.services.Interfaces.AuthenticationService;
-import MoneyMachine.services.Interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -27,14 +26,13 @@ public class ATMAuthenticationController extends BaseController {
     
     private AuthenticationService authenticationService;
 
-    public ATMAuthenticationController(AuthenticationService authenticationService, UserService userService){
-        super(userService, authenticationService);
+    public ATMAuthenticationController(AuthenticationService authenticationService){
         this.authenticationService = authenticationService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestBody loginRequestBody) {
-
+        
         try{
             User user = authenticationService.getUserByEmailAndPassword(loginRequestBody.getEmail(), loginRequestBody.getPassword());
 
@@ -55,24 +53,20 @@ public class ATMAuthenticationController extends BaseController {
     }
 
     @GetMapping("/user-test")
-    public ResponseEntity<?> userTest(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> userTest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        ErrorDTO errorDTO = super.setAtmLoggedInUser(request, response);
-
-        if (errorDTO != null){
-            return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
-        }
+        User loggedInAtmUser = this.authenticationService.getLoggedInAtmUser(request, response);
 
         UserDTO userDTO = new UserDTO(
-            super.atmLoggedInUser.getId(), 
-            super.atmLoggedInUser.getFirstName(),
-            super.atmLoggedInUser.getLastName(),
-            super.atmLoggedInUser.getEmail(),
-            super.atmLoggedInUser.getBsn(),
-            super.atmLoggedInUser.getPhoneNumber(),
-            super.atmLoggedInUser.getRole(),
-            super.atmLoggedInUser.getIsActive(),
-            super.atmLoggedInUser.getIsApproved()
+            loggedInAtmUser.getId(), 
+            loggedInAtmUser.getFirstName(),
+            loggedInAtmUser.getLastName(),
+            loggedInAtmUser.getEmail(),
+            loggedInAtmUser.getBsn(),
+            loggedInAtmUser.getPhoneNumber(),
+            loggedInAtmUser.getRole(),
+            loggedInAtmUser.getIsActive(),
+            loggedInAtmUser.getIsApproved()
         );
 
         return ResponseEntity.status(200).body(userDTO);

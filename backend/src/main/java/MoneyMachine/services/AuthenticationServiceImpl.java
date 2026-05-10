@@ -5,16 +5,23 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Date;
 
 import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.ErrorDTO;
+import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.exceptions.ExpiredException;
 import MoneyMachine.models.exceptions.NotAuthorizedException;
+import MoneyMachine.models.exceptions.SignatureInvalidException;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.Interfaces.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 @Service
@@ -92,5 +99,47 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private boolean isClaimNullOrEmpty(Claim claim) {
         return claim == null || claim.isNull() || claim.isMissing() || claim.asString() == null || claim.asString().isBlank();
+    }
+
+    private User getLoggedInUserByHeader(HttpServletRequest request, HttpServletResponse response, String headerName) throws Exception {
+        try {
+            String authHeader = request.getHeader(headerName);
+
+            if (authHeader == null) {
+                throw new NotAuthorizedException(headerName + " header is required.");
+            }
+
+            String[] headerParts = authHeader.split(" ");
+
+            if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase("bearer")) {
+                throw new NotAuthorizedException("Invalid authorization header format.");
+            }
+
+            String authToken = headerParts[1];
+            DecodedJWT decodedAuthToken = getDecodedAuthToken(authToken);
+            validateDecodedAuthToken(decodedAuthToken);
+            
+            User user = this.userRepository.findById(Integer.parseInt(decodedAuthToken.getSubject()));
+            
+            if (user == null) {
+                throw new NotAuthorizedException("User in your token does not exist.");
+            }
+
+            return user;
+        } 
+        catch (ExpiredException | NotAuthorizedException | JWTDecodeException ex) {
+            authError(ex, response);
+        } 
+        
+        return null;
+    }
+
+    public User getLoggedInAtmUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        return getLoggedInUserByHeader(request, response, "Authorization");
+    }
+
+    private ErrorDTO authError(Exception ex, HttpServletResponse response) throws Exception {
+        response.setHeader("x-atm-auth-error", "invalid_token");
+        throw ex;
     }
 }
