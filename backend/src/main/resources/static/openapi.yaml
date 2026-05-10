@@ -47,15 +47,15 @@ paths:
       tags:
         - user
       summary: Get all registered users
-      description: Returns a list of registered users. Can be filtered by username
+      description: Returns a list of registered users. Can be filtered by is approved
       operationId: getUsers
       parameters:
-        - name: role
+        - name: isApproved
           in: query
-          description: Filter by 'employee' or 'customer'
+          description: Filter by 'approved'
           required: false   
           schema:
-            type: string
+            type: boolean
       responses:
         '200':
           description: Successful operation
@@ -132,6 +132,71 @@ paths:
                 type: UNAUTHORIZED
                 message: "Unauthorized - Authentication required"
                 details: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+  /users/findIbanByName:
+    get:
+      tags:
+        - user
+      summary: Find IBAN by account holder name
+      description: Returns the IBAN of a bank account based on the first and last name of the account holder
+      operationId: findIbanByName
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IbanFinderRequest'
+      responses:
+        '200':
+          description: Successful operation - IBAN retrieved
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/IbanFinderResultDTO'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - No account found for the given name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDTO'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -1793,6 +1858,22 @@ components:
           example: -1000.00
           description: Updated absolute limit (overdraft limit) for the account
 
+    IbanFinderResultDTO:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+          description: The first name of the account holder
+        lastName:
+          type: string
+          example: Doe
+          description: The last name of the account holder
+        iban:
+          type: string
+          example: NL91ABNA0417164300
+          description: The IBAN of the bank account belonging to the account holder
+
     TransferRequest:
       type: object
       required:
@@ -1835,6 +1916,21 @@ components:
           type: string
           example: NL91ABNA0417164300
           description: Filter transactions by a specific IBAN to someone else
+
+    IbanFinderRequest:
+      type: object
+      required:
+        - firstName
+        - lastName
+      properties:
+        firstName:
+          type: string
+          example: John
+          description: The first name of the account holder
+        lastName:
+          type: string
+          example: Doe
+          description: The last name of the account holder
       
   securitySchemes:
     bearerAuth:            
