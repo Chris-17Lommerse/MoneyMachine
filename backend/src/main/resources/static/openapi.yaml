@@ -1,3 +1,4 @@
+openapi: 3.0.3
 info:
   title: MoneyMachine - Project 2.4 (Code Generation)
   description: |
@@ -29,18 +30,16 @@ externalDocs:
 servers:
   - url: https://moneymachine-1ifn.onrender.com/swagger-ui/index.html#/ATM/atmDeposit
     description: Production server (OAS 3.2)
+security:
+  - bearerAuth: []
 tags:
   - name: user
-    summary: User account operations
     description: Operations about user management and authentication
   - name: transaction
-    summary: Transaction operations
     description: Operations about recording transactions within the application
   - name: bankAccount
-    summary: bankaccount operations
     description: Operations for managing bankaccounts
   - name: ATM
-    summary: ATM operations
     description: Operations for withdrawing and depositing money for bankaccounts
 paths:
   /users:
@@ -98,7 +97,7 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-  /user/createWithList:
+  
     post:
       tags:
         - user
@@ -178,7 +177,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginDTO'
-                type: string
         '400':
           description: Bad Request - Invalid username or password supplied
           content:
@@ -460,37 +458,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorDTO'
-      '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorDTO'
-
-  /users/reset-password:
-   post:
-    summary: Reset password using a token
-    tags:
-      - user
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/PasswordResetRequest'
-    responses:
-      '200':
-        description: Password successfully updated.
-        content:
-          application/json: 
-            schema:
-               $ref: '#/components/schemas/ErrorDTO'
-      '400':
-        description: Invalid or expired token.
-        content:
-          application/json: 
-            schema:
-               $ref: '#/components/schemas/ErrorDTO'
       '500':
           description: Internal Server Error
           content:
@@ -990,7 +957,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BalanceUpdateDTO'
+                $ref: '#/components/schemas/ATMBalanceUpdateDTO'
         '400':
           description: Bad Request - Invalid request parameters or IBAN format
           content:
@@ -1415,13 +1382,13 @@ components:
           type: string
           examples: NLxxINHO0xxxxxxxxx
         accountType:
-          type: enum
+          type: string
           examples: [checking, savings]
         accountStatus: 
-          type: enum
+          type: string
           examples: [pending, approved]
         balance: 
-          type: decimal
+          type: number
           examples: 3.14
     User:
       type: object
@@ -1453,16 +1420,6 @@ components:
           description: User Status
           format: int32
           examples: [1]
-      xml:
-        name: user
-    UserArray:
-      description: List of user object
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
 
     UserOverviewDTO:
       type: object
@@ -1562,7 +1519,7 @@ components:
     LoginDTO:
       type: object
       properties:
-        accesToken:
+        accessToken:
           type: string
           example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
         tokenType:
@@ -1587,7 +1544,7 @@ components:
         lastName:
           type: string
           example: "doe"
-        emal:
+        email:
           type: string
           example: "user@example.com"
         
@@ -1619,7 +1576,7 @@ components:
         dateTime: 
           type: string
           format: date-time
-          example: "24-11-2026 14:45:12"
+          example: "2026-11-24T14:45:12Z"
         isActive: 
           type: boolean
           example: true
@@ -1644,7 +1601,7 @@ components:
         dateTime: 
           type: string
           format: date-time
-          example: "24-11-2026 14:45:12"
+          example: "2026-11-24T14:45:12Z"
 
     TransactionOverviewDTO:
       type: object
@@ -1834,27 +1791,6 @@ components:
           example: -1000.00
           description: Updated absolute limit (overdraft limit) for the account
 
-    BankAccountTransactionsDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-          example: 1
-          description: The ID of the user
-        firstName:
-          type: string
-          example: "John"
-          description: First name of the user
-        lastName:
-          type: string
-          example: "Doe"
-          description: Last name of the user
-        transactions:
-          type: array
-          items:
-            $ref: '#/components/schemas/TransactionDTO'
-          description: List of transactions for the bank account
-
     TransferRequest:
       type: object
       required:
@@ -1871,21 +1807,6 @@ components:
           example: NL91ABNA0417164300
           description: IBAN of the destination account
 
-    PasswordResetRequest:
-            type: object
-            required:
-              - token
-              - newPassword
-            properties:
-              token:
-                type: string
-                description: The unique code/token from the email link
-                example: "2kkf94..." 
-              newPassword:
-                type: string
-                format: password
-                minLength: 8
-                example: "NewSecurePass123!"
             
 
   securitySchemes:
