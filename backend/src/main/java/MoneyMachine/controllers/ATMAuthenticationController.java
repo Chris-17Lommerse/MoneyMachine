@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import MoneyMachine.models.User;
-import MoneyMachine.models.dtos.ErrorDTO;
 import MoneyMachine.models.dtos.LoginDTO;
 import MoneyMachine.models.dtos.UserDTO;
 import MoneyMachine.models.enums.LoginType;
@@ -31,25 +30,17 @@ public class ATMAuthenticationController extends BaseController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestBody loginRequestBody) {
-        
-        try{
-            User user = authenticationService.getUserByEmailAndPassword(loginRequestBody.getEmail(), loginRequestBody.getPassword());
+    public ResponseEntity<LoginDTO> login(@RequestBody LoginRequestBody loginRequestBody) throws Exception {
 
-            if (user == null){
-                throw new InvalidCredentialsException("Password or username is not correct.");
-            }
+        User user = authenticationService.getUserByEmailAndPassword(loginRequestBody.getEmail(), loginRequestBody.getPassword());
 
-            LoginDTO loginDto = new LoginDTO(authenticationService.generateAuthTokenFromUser(user), LoginType.atm);
-
-            return ResponseEntity.status(201).body(loginDto);
+        if (user == null){
+            throw new InvalidCredentialsException("Password or username is not correct.");
         }
-        catch (InvalidCredentialsException ex){
 
-            ErrorDTO errorDTO = new ErrorDTO(401, ErrorType.UNAUTHORIZED, "Invalid credentials", ex.getMessage());
+        LoginDTO loginDto = new LoginDTO(authenticationService.generateAuthTokenFromUser(user), LoginType.atm);
 
-            return ResponseEntity.status(401).body(errorDTO);
-        }
+        return ResponseEntity.status(201).body(loginDto);
     }
 
     @GetMapping("/user-test")
