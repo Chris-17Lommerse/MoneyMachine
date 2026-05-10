@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import MoneyMachine.models.dtos.ErrorDTO;
 import MoneyMachine.models.enums.ErrorType;
 import MoneyMachine.models.exceptions.ExpiredException;
+import MoneyMachine.models.exceptions.InvalidCredentialsException;
 import MoneyMachine.models.exceptions.NotAuthorizedException;
 
 @RestControllerAdvice
@@ -70,6 +71,13 @@ public class ErrorController {
     public ResponseEntity<ErrorDTO> handleJwtDecodeException(JWTDecodeException ex) {
         
         ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Jwt failed to decode");
+        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorDTO> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        
+        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Invalid credentials");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 }

@@ -13,10 +13,8 @@ import java.util.Date;
 
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.ErrorDTO;
-import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.exceptions.ExpiredException;
 import MoneyMachine.models.exceptions.NotAuthorizedException;
-import MoneyMachine.models.exceptions.SignatureInvalidException;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.Interfaces.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
