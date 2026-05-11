@@ -375,7 +375,7 @@ paths:
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
 
-  /bankAccounts:
+  /myBankAccounts:
     get:
       tags:
         - user
@@ -529,7 +529,7 @@ paths:
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
 
-  /transactions:
+  /employee/transactions:
     get:
       tags:
         - transaction
