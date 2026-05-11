@@ -54,6 +54,14 @@ paths:
           required: false   
           schema:
             type: boolean
+        - name: page
+          in: query
+          required: false
+          description: Get paginated page
+          schema:
+            type: number
+            format: int
+            example: 2
       responses:
         '200':
           description: Successful operation
@@ -213,7 +221,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AmountRequest'
+              $ref: '#/components/schemas/TransferRequest'
       responses:
         '200':
           description: Successful operation - Transfer completed
@@ -382,12 +390,53 @@ paths:
       summary: Get all transactions for the authenticated user
       description: Returns a list of all transactions across all bank accounts owned by the currently logged in user
       operationId: getUserTransactions
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TransactionFilterRequest'
+      parameters:
+      - name: lessThan
+        in: query
+        required: false
+        description: Filter transactions with an amount less than this value
+        schema:
+          type: number
+          format: decimal
+          example: 500.00
+      - name: greaterThan
+        in: query
+        required: false
+        description: Filter transactions with an amount greater than this value
+        schema:
+          type: number
+          format: decimal
+          example: 100.00
+      - name: equalTo
+        in: query
+        required: false
+        description: Filter transactions with an amount equal to this value
+        schema:
+          type: number
+          format: decimal
+          example: 250.00
+      - name: fromIban
+        in: query
+        required: false
+        description: Filter transactions by a specific IBAN by me
+        schema:
+          type: string
+          example: NL91ABNA0417164300
+      - name: toIban
+        in: query
+        required: false
+        description: Filter transactions by a specific IBAN to someone else
+        schema:
+          type: string
+          example: NL91ABNA0417164300
+      - name: page
+        in: query
+        required: false
+        description: Get paginated page
+        schema:
+          type: number
+          format: int
+          example: 2
       responses:
         '200':
           description: Successful operation - Transactions retrieved
@@ -504,6 +553,15 @@ paths:
       summary: Get all bankaccounts
       description: This can only be viewed by a logged in user with employee rights
       operationId: getBankAccounts
+      parameters:
+        - name: page
+          in: query
+          required: false
+          description: Get paginated page
+          schema:
+            type: number
+            format: int
+            example: 2
       responses:
         '200':
           description: Successful operation - Bank accounts retrieved
@@ -775,7 +833,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AmountRequest'
+              $ref: '#/components/schemas/WithdrawRequest'
       responses:
         '200':
           description: Successful operation - Amount withdrawn
@@ -859,7 +917,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AmountRequest'
+              $ref: '#/components/schemas/DepositRequest'
       responses:
         '200':
           description: Successful operation - Amount deposited
@@ -987,13 +1045,41 @@ components:
           type: string
           example: +31612345678
 
-    AmountRequest:
+    DepositRequest:
       type: object
       properties:
         amount:
           type: number
           format: decimal
           example: 50.00
+        toIban:
+          type: string
+          example: john.doe@example.com
+
+    WithdrawRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          example: 50.00
+        fromIban:
+            type: string
+            example: john.doe@example.com
+    
+    TransferRequest:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: decimal
+          example: 50.00
+        toIban:
+            type: string
+            example: john.doe@example.com
+        fromIban:
+            type: string
+            example: john.doe@example.com
 
     ErrorResponse:
       type: object
@@ -1293,49 +1379,6 @@ components:
           type: string
           example: NL91ABNA0417164300
           description: The IBAN of the bank account belonging to the account holder
-
-    TransferRequest:
-      type: object
-      required:
-        - amount
-        - toAccountIBAN
-      properties:
-        amount:
-          type: number
-          format: decimal
-          example: 100.00
-          description: Amount to transfer
-        toAccountIBAN:
-          type: string
-          example: NL91ABNA0417164300
-          description: IBAN of the destination account
-
-    TransactionFilterRequest:
-      type: object
-      properties:
-        lessThan:
-          type: number
-          format: decimal
-          example: 500.00
-          description: Filter transactions with an amount less than this value
-        greaterThan:
-          type: number
-          format: decimal
-          example: 100.00
-          description: Filter transactions with an amount greater than this value
-        equalTo:
-          type: number
-          format: decimal
-          example: 250.00
-          description: Filter transactions with an amount equal to this value
-        fromIban:
-          type: string
-          example: NL91ABNA0417164300
-          description: Filter transactions by a specific IBAN by me
-        toIban:
-          type: string
-          example: NL91ABNA0417164300
-          description: Filter transactions by a specific IBAN to someone else
 
     IbanFinderRequest:
       type: object
