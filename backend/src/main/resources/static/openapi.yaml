@@ -335,7 +335,82 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
-
+  /users/{user_id}:
+    patch:
+      tags:
+        - Users
+      summary: Update a user's information
+      description: >
+        Updates the user identified by the given user_id. Any type of requestBody
+        can be provided to update specific user fields, such as approval status,
+        role, or personal information.
+      operationId: updateUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user to update
+          schema:
+            type: integer
+            format: int64
+            example: 42
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteRequest'
+      responses:
+        '200':
+          description: Successful operation - User updated; returns the updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Bad Request - Invalid request parameters or user_id format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - No user found with the given ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested user could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
   /users/me:
     get:
       tags:
@@ -548,6 +623,84 @@ paths:
                 type: INTERNAL_SERVER_ERROR
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
+  /bank-accounts/iban-lookup:
+    get:
+      tags:
+        - BankAccounts
+      summary: Look up a customer's IBAN by name
+      description: >
+        Allows users to look up the IBAN of another user's checking account
+        using first and last name.
+      operationId: lookupIbanByName
+      parameters:
+        - name: firstName
+          in: query
+          required: true
+          description: The first name of the customer whose IBAN is being searched
+          schema:
+            type: string
+            example: John
+        - name: lastName
+          in: query
+          required: true
+          description: The last name of the customer whose IBAN is being searched
+          schema:
+            type: string
+            example: Doe
+      responses:
+        '200':
+          description: Successful operation - Matching IBANs retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IbanLookupResponse'
+        '400':
+          description: Bad Request - Missing or invalid name parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "Bad Request - Invalid input parameters"
+                details: "Both firstName and lastName must be provided."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - No matching customers or IBANs found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - No matching IBAN found"
+                details: "No customer with the provided name was found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
+
   /bank-accounts:
     get:
       tags:
@@ -739,7 +892,7 @@ paths:
       tags:
         - BankAccounts
       summary: Activate or deactivate a bank account
-      description: Updates the active status of the bank account identified by the given IBAN. Set isActive to false to deactivate or true to reactivate the account. Only accessible by employees.
+      description: Updates the bank account identified by the given IBAN. Any type of requestBody can be given to update specific values
       operationId: updateBankAccountStatus
       parameters:
         - name: iban
@@ -754,7 +907,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteBankAccountRequest'
+              $ref: '#/components/schemas/DeleteRequest'
       responses:
         '200':
           description: Successful operation - Bank account status updated; returns the updated bank account
@@ -1315,16 +1468,27 @@ components:
           format: date-time
           example: "2024-04-28T10:30:00Z"
 
-    DeleteBankAccountRequest:
+    DeleteRequest:
       type: object
-      required:
-        - isActive
       properties:
         isActive:
           type: boolean
           example: false
-          description: Set to false to deactivate the bank account, or true to reactivate it
-      
+    
+    IbanLookupResponse:
+      type: object
+      description: IBAN lookup response for users
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        iban:
+          type: string
+          example: NL91INHO0123456789
+
   securitySchemes:
     bearerAuth:            
       type: http
