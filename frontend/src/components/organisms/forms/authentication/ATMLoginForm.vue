@@ -21,6 +21,7 @@
             const form = new FormData()
             form.append('email', email.value)
             form.append('password', password.value)
+            form.append('loginType', 'ATM')
 
             const response = await axios.post('/atm/login', form)
 

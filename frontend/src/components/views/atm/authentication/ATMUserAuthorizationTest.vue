@@ -8,7 +8,7 @@
 
     onMounted(async () => {
         try {
-            const response = await axios.get('/atm/user-test')
+            const response = await axios.get('/users/me?loginType=ATM')
             user.value = response.data
         }
         catch (ex){

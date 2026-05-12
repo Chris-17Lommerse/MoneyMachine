@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 
-import MoneyMachine.models.dtos.ErrorDTO;
+import MoneyMachine.models.dtos.ErrorResponse;
 import MoneyMachine.models.enums.ErrorType;
 
 @RestControllerAdvice
@@ -33,48 +33,48 @@ public class GlobalExceptionHandler {
         return locationInfo;
     }
 
-    private ErrorDTO generateErrorDtoByExceptionAndErrorInfo(Exception ex, int code, ErrorType errorType, String message) {
+    private ErrorResponse generateErrorDtoByExceptionAndErrorInfo(Exception ex, int code, ErrorType errorType, String message) {
         
         if (message == null){
             String locationInfo = getLocationOfException(ex);
-            return new ErrorDTO(code, errorType, ex.getMessage(), locationInfo);
+            return new ErrorResponse(code, errorType, ex.getMessage(), locationInfo);
         }
 
-        return new ErrorDTO(code, errorType, message, ex.getMessage());
+        return new ErrorResponse(code, errorType, message, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorDTO> handleAllExceptions(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         
-        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 500, ErrorType.UNAUTHORIZED, null);
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 500, ErrorType.UNAUTHORIZED, null);
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
     @ExceptionHandler(NotAuthorizedException.class)
-    public ResponseEntity<ErrorDTO> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
+    public ResponseEntity<ErrorResponse> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
         
-        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Not authorized");
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Not authorized");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
     @ExceptionHandler(ExpiredException.class)
-    public ResponseEntity<ErrorDTO> handleExpiredExceptionExceptions(ExpiredException ex) {
+    public ResponseEntity<ErrorResponse> handleExpiredExceptionExceptions(ExpiredException ex) {
         
-        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Auth token expired");
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Auth token expired");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
     @ExceptionHandler(JWTDecodeException.class)
-    public ResponseEntity<ErrorDTO> handleJwtDecodeException(JWTDecodeException ex) {
+    public ResponseEntity<ErrorResponse> handleJwtDecodeException(JWTDecodeException ex) {
         
-        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Jwt failed to decode");
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Jwt failed to decode");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorDTO> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+    public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
         
-        ErrorDTO errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Invalid credentials");
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Invalid credentials");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 }

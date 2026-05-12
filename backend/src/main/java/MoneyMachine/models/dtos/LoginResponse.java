@@ -1,4 +1,4 @@
-package MoneyMachine.models.requestBodies;
+package MoneyMachine.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequestBody {
-
-    private String email;
-    private String password;
+public class LoginResponse {
+    
+    private String jwt;
 }

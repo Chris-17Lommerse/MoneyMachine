@@ -14,7 +14,8 @@ import java.util.Date;
 import MoneyMachine.exception.ExpiredException;
 import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.User;
-import MoneyMachine.models.dtos.ErrorDTO;
+import MoneyMachine.models.dtos.ErrorResponse;
+import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.Interfaces.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -99,12 +100,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return claim == null || claim.isNull() || claim.isMissing() || claim.asString() == null || claim.asString().isBlank();
     }
 
-    private User getLoggedInUserByHeader(HttpServletRequest request, HttpServletResponse response, String headerName) throws Exception {
+    public User getLoggedInUserByLoginType(HttpServletRequest request, HttpServletResponse response, LoginType loginType) throws Exception {
         try {
-            String authHeader = request.getHeader(headerName);
+            String authHeader = request.getHeader("Authorization");
 
             if (authHeader == null) {
-                throw new NotAuthorizedException(headerName + " header is required.");
+                throw new NotAuthorizedException("Authorization header is required.");
             }
 
             String[] headerParts = authHeader.split(" ");
@@ -132,11 +133,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return null;
     }
 
-    public User getLoggedInAtmUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return getLoggedInUserByHeader(request, response, "Authorization");
-    }
-
-    private ErrorDTO authError(Exception ex, HttpServletResponse response) throws Exception {
+    private ErrorResponse authError(Exception ex, HttpServletResponse response) throws Exception {
         response.setHeader("x-atm-auth-error", "invalid_token");
         throw ex;
     }

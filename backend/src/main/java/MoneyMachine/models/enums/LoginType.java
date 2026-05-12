@@ -1,5 +1,6 @@
 package MoneyMachine.models.enums;
 
 public enum LoginType {
-    atm, website
+    ATM, 
+    WEBSITE
 }
