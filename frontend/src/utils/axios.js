@@ -13,10 +13,19 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
     (config) => {
         const authStore = useAuthStore()
-        let atmAuthToken = authStore.atmAuthToken
 
-        if (atmAuthToken) {
-            config.headers.Authorization = `Bearer ${atmAuthToken}`;
+        const currentPath = router.currentRoute.value.path
+        let authToken = null
+
+        if (currentPath.startsWith('/atm')) {
+            authToken = authStore.atmAuthToken;
+        }
+        else{
+            // WEBSITE JWT RELATED
+        }
+
+        if (authToken) {
+            config.headers.Authorization = `Bearer ${authToken}`;
         }
 
         return config;
@@ -35,9 +44,17 @@ apiClient.interceptors.response.use(
         const errorHandlingStore = useErrorHandlingStore()
 
         if (error.response && error.response.status === 401 && error.response.data && error.response.data.errorType == "INVALID_AUTH_TOKEN") {
-            authStore.setAtmAuthToken(null)
+            
+            const currentPath = router.currentRoute.value.path
             errorHandlingStore.setErrorMessage('You must login again for the following reason: ' + error.response.data.details)
-            router.push('/atm/login')
+
+            if (currentPath.startsWith('/atm')) {
+                authStore.setAtmAuthToken(null)
+                router.push('/atm/login')
+            }
+            else {
+                // WEBSITE JWT RELATED
+            }
         }
 
         return Promise.reject(error);
