@@ -50,24 +50,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
-    @ExceptionHandler(NotAuthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
-        
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Not authorized");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
-    }
-
-    @ExceptionHandler(ExpiredException.class)
-    public ResponseEntity<ErrorResponse> handleExpiredExceptionExceptions(ExpiredException ex) {
-        
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Auth token expired");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
-    }
-
     @ExceptionHandler(JWTDecodeException.class)
     public ResponseEntity<ErrorResponse> handleJwtDecodeException(JWTDecodeException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Jwt failed to decode");
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Failed to decode JWT");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
@@ -75,6 +61,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
         
         ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Invalid credentials");
+        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+    }
+
+    @ExceptionHandler(NotAuthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
+        
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Not authorized");
+        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+    }
+
+    @ExceptionHandler(InvalidAuthTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAuthTokenExceptions(InvalidAuthTokenException ex) {
+        
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Invalid token");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 }

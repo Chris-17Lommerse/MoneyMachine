@@ -5,6 +5,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import lombok.NoArgsConstructor;
 
 @Controller
-@CrossOrigin(origins = "*", exposedHeaders = {"x-atm-auth-error"})
+@CrossOrigin(origins = "*")
 @NoArgsConstructor
 public class BaseController {}

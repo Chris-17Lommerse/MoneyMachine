@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
         const authStore = useAuthStore()
         const errorHandlingStore = useErrorHandlingStore()
 
-        if (error.response && error.response.status === 401 && error.response.headers['x-atm-auth-error'] && error.response.headers['x-atm-auth-error'] === 'invalid_token') {
+        if (error.response && error.response.status === 401 && error.response.data && error.response.data.errorType == "INVALID_AUTH_TOKEN") {
             authStore.setAtmAuthToken(null)
             errorHandlingStore.setErrorMessage('You must login again for the following reason: ' + error.response.data.details)
             router.push('/atm/login')

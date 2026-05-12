@@ -5,16 +5,14 @@ import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import java.util.Date;
 
-import MoneyMachine.exception.ExpiredException;
+import MoneyMachine.exception.InvalidAuthTokenException;
 import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.User;
-import MoneyMachine.models.dtos.ErrorResponse;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.Interfaces.AuthenticationService;
@@ -79,20 +77,20 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public void validateDecodedAuthToken(DecodedJWT decodedAuthToken, LoginType loginType) {
 
         if (decodedAuthToken.getSubject() == null) {
-            throw new NotAuthorizedException("Token is missing subject.");
+            throw new InvalidAuthTokenException("Token is missing subject.");
         }
 
         if (decodedAuthToken.getExpiresAt() == null) {
-            throw new NotAuthorizedException("Token is missing expiration.");
+            throw new InvalidAuthTokenException("Token is missing expiration.");
         }
 
         if (decodedAuthToken.getExpiresAt().before(new Date())) {
-            throw new ExpiredException("Token has expired.");
+            throw new InvalidAuthTokenException("Token has expired.");
         }
 
         for (String requiredClaim : requiredClaims) {
             if (isClaimNullOrEmpty(decodedAuthToken.getClaim(requiredClaim))) {
-                throw new NotAuthorizedException(String.format("Token is missing %s claim.", requiredClaim));
+                throw new InvalidAuthTokenException(String.format("Token is missing %s claim.", requiredClaim));
             }
         }
 
@@ -106,40 +104,29 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public User getLoggedInUserByLoginType(HttpServletRequest request, HttpServletResponse response, LoginType loginType) throws Exception {
-        try {
-            String authHeader = request.getHeader("Authorization");
-
-            if (authHeader == null) {
-                throw new NotAuthorizedException("Authorization header is required.");
-            }
-
-            String[] headerParts = authHeader.split(" ");
-
-            if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase("bearer")) {
-                throw new NotAuthorizedException("Invalid authorization header format.");
-            }
-
-            String authToken = headerParts[1];
-            DecodedJWT decodedAuthToken = getDecodedAuthToken(authToken);
-            validateDecodedAuthToken(decodedAuthToken, loginType);
-            
-            User user = this.userRepository.findById(Integer.parseInt(decodedAuthToken.getSubject()));
-            
-            if (user == null) {
-                throw new NotAuthorizedException("User in your token does not exist.");
-            }
-
-            return user;
-        } 
-        catch (ExpiredException | NotAuthorizedException | JWTDecodeException ex) {
-            authError(ex, response);
-        } 
         
-        return null;
-    }
+        String authHeader = request.getHeader("Authorization");
 
-    private ErrorResponse authError(Exception ex, HttpServletResponse response) throws Exception {
-        response.setHeader("x-atm-auth-error", "invalid_token");
-        throw ex;
+        if (authHeader == null) {
+            throw new NotAuthorizedException("Authorization header is required.");
+        }
+
+        String[] headerParts = authHeader.split(" ");
+
+        if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase("bearer")) {
+            throw new NotAuthorizedException("Invalid authorization header format.");
+        }
+
+        String authToken = headerParts[1];
+        DecodedJWT decodedAuthToken = getDecodedAuthToken(authToken);
+        validateDecodedAuthToken(decodedAuthToken, loginType);
+        
+        User user = this.userRepository.findById(Integer.parseInt(decodedAuthToken.getSubject()));
+        
+        if (user == null) {
+            throw new InvalidAuthTokenException("User in your token does not exist.");
+        }
+
+        return user;
     }
 }
