@@ -29,9 +29,6 @@
             currentSuccessAlert.value.displaySuccessMessage('Successfully logged in.')
         }
         catch (ex){
-
-            console.log(ex)
-
             if (ex.response){
                 currentErrorAlert.value.displayErrorMessage(ex.response.data.message)
             }
