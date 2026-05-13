@@ -20,12 +20,12 @@
 </script>
 
 <template>
-    user authorization 
+    <strong>Logged in user returned from backend</strong>
     <br>
     {{ JSON.stringify(user, null, 2) }}
     <br>
     <br>
-    jwt 
+    <strong>Decoded JWT from frontend cached in authStore</strong> 
     <br>
     {{ JSON.stringify(authStore.atmDecodedAuthToken, null, 2) }}
 </template>

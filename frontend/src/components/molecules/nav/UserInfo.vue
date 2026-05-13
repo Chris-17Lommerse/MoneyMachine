@@ -1,6 +1,6 @@
 <script setup>
-    import ATMLoginBtn from '@/components/atoms/nav/ATMLoginBtn.vue';
-    import ATMLogoutBtn from '@/components/atoms/nav/ATMLogoutBtn.vue';
+    import LoginBtn from '@/components/atoms/nav/LoginBtn.vue';
+    import LogoutBtn from '@/components/atoms/nav/LogoutBtn.vue';
 
     const props = defineProps({
         email: { 
@@ -15,9 +15,9 @@
         <div class="nav-link">
             Logged in as: {{ email }}
         </div>
-        <ATMLogoutBtn />
+        <LogoutBtn url="/atm/logout" />
     </div>
     <div v-else class="form-inline my-2 my-lg-0">
-        <ATMLoginBtn />
+        <LoginBtn url="/atm/login" />
     </div>
 </template>

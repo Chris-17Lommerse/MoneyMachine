@@ -236,10 +236,6 @@ code {
     }
   }
 
-  .authentication-box {
-    width: 500px;
-  }
-
   @media (max-width: 1024px) {
     margin-top: 20px;
     flex-wrap: wrap;

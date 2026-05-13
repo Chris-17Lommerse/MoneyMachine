@@ -8,11 +8,7 @@
     import UserInfo from '@/components/molecules/nav/UserInfo.vue'
 
     const authStore = useAuthStore()
-    const atmDecodedAuthToken = ref(null)
-
-    onMounted(async () => {
-        atmDecodedAuthToken.value = authStore.atmDecodedAuthToken
-    })
+    const email = computed(() => authStore.atmDecodedAuthToken?.email ?? null)
 </script>
 
 <template>
@@ -22,7 +18,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <NavMenu />
-            <UserInfo :email="atmDecodedAuthToken?.email" />
+            <UserInfo :email="email" />
         </div>
     </nav>
 </template>
