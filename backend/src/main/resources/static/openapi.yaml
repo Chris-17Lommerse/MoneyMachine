@@ -491,6 +491,14 @@ paths:
       description: Returns a paginated list of all transactions by user. Supports filtering by amount and by source or destination IBAN. Access | User (only own transactions) and Employee (all transactions of all users)
       operationId: getUserTransactions
       parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the user whose bank accounts to retrieve
+          schema:
+            type: integer
+            format: int64
+            example: 1
         - name: lessThan
           in: query
           required: false
@@ -609,7 +617,7 @@ paths:
         - Transactions
       summary: Get all transactions of all users
       description: Returns a paginated list of all transactions across all users. Supports filtering by amount and by source or destination IBAN. Access | Employee
-      operationId: getUserTransactions
+      operationId: getTransactions
       parameters:
       - name: lessThan
         in: query
