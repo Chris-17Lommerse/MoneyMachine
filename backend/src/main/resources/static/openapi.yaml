@@ -57,11 +57,19 @@ paths:
         - name: page
           in: query
           required: false
-          description: Page number for paginated results
+          description: Page number for paginated results. Defaults to 1 if not provided.
           schema:
             type: number
             format: int
             example: 2
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results to return per page. Defaults to 20 if not provided.
+          schema:
+            type: integer
+            format: int
+            example: 20
       responses:
         '200':
           description: Successful operation
@@ -293,6 +301,22 @@ paths:
             type: integer
             format: int64
             example: 1
+        - name: page
+          in: query
+          required: false
+          description: Page number for paginated results. Defaults to 1 if not provided.
+          schema:
+            type: number
+            format: int
+            example: 2
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results to return per page. Defaults to 20 if not provided.
+          schema:
+            type: integer
+            format: int
+            example: 20
       responses:
         '200':
           description: Successful operation - Bank accounts retrieved
@@ -467,76 +491,76 @@ paths:
       description: Returns a paginated list of all transactions by user. Supports filtering by amount and by source or destination IBAN. Access | User (only own transactions) and Employee (all transactions of all users)
       operationId: getUserTransactions
       parameters:
-      - name: lessThan
-        in: query
-        required: false
-        description: Filter transactions with an amount less than this value
-        schema:
-          type: number
-          format: decimal
-          example: 500.00
-      - name: greaterThan
-        in: query
-        required: false
-        description: Filter transactions with an amount greater than this value
-        schema:
-          type: number
-          format: decimal
-          example: 100.00
-      - name: equalTo
-        in: query
-        required: false
-        description: Filter transactions with an amount exactly equal to this value
-        schema:
-          type: number
-          format: decimal
-          example: 250.00
-      - name: fromIban
-        in: query
-        required: false
-        description: Filter transactions sent from this IBAN
-        schema:
-          type: string
-          example: NL91ABNA0417164300
-      - name: toIban
-        in: query
-        required: false
-        description: Filter transactions sent to this IBAN
-        schema:
-          type: string
-          example: NL91ABNA0417164300
-      - name: startDate
-        in: query
-        required: false
-        description: Filter transactions on or after this date
-        schema:
-          type: string
-          format: date
-          example: "2026-01-01"
-      - name: endDate
-        in: query
-        required: false
-        description: Filter transactions on or before this date
-        schema:
-          type: string
-          format: date
-          example: "2026-12-31"
-      - name: page
-        in: query
-        required: false
-        description: Page number for paginated results
-        schema:
-          type: number
-          format: int
-          example: 2
-      - name: pageSize
-        in: query
-        required: false
-        description: Number of results to return per page
-        schema:
-          type: integer
-          format: int
-          example: 20
+        - name: lessThan
+          in: query
+          required: false
+          description: Filter transactions with an amount less than this value
+          schema:
+            type: number
+            format: decimal
+            example: 500.00
+        - name: greaterThan
+          in: query
+          required: false
+          description: Filter transactions with an amount greater than this value
+          schema:
+            type: number
+            format: decimal
+            example: 100.00
+        - name: equalTo
+          in: query
+          required: false
+          description: Filter transactions with an amount exactly equal to this value
+          schema:
+            type: number
+            format: decimal
+            example: 250.00
+        - name: fromIban
+          in: query
+          required: false
+          description: Filter transactions sent from this IBAN
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+        - name: toIban
+          in: query
+          required: false
+          description: Filter transactions sent to this IBAN
+          schema:
+            type: string
+            example: NL91ABNA0417164300
+        - name: startDate
+          in: query
+          required: false
+          description: Filter transactions on or after this date
+          schema:
+            type: string
+            format: date
+            example: "2026-01-01"
+        - name: endDate
+          in: query
+          required: false
+          description: Filter transactions on or before this date
+          schema:
+            type: string
+            format: date
+            example: "2026-12-31"
+        - name: page
+          in: query
+          required: false
+          description: Page number for paginated results. Defaults to 1 if not provided.
+          schema:
+            type: number
+            format: int
+            example: 2
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results to return per page. Defaults to 20 if not provided.
+          schema:
+            type: integer
+            format: int
+            example: 20
       responses:
         '200':
           description: Successful operation - Transactions retrieved
@@ -644,7 +668,7 @@ paths:
       - name: page
         in: query
         required: false
-        description: Page number for paginated results
+        description: Page number for paginated results. Defaults to 1 if not provided.
         schema:
           type: number
           format: int
@@ -652,7 +676,7 @@ paths:
       - name: pageSize
         in: query
         required: false
-        description: Number of results to return per page
+        description: Number of results to return per page. Defaults to 20 if not provided.
         schema:
           type: integer
           format: int
@@ -772,7 +796,7 @@ paths:
         - name: page
           in: query
           required: false
-          description: Page number for paginated results
+          description: Page number for paginated results. Defaults to 1 if not provided.
           schema:
             type: number
             format: int
@@ -780,7 +804,7 @@ paths:
         - name: pageSize
           in: query
           required: false
-          description: Number of results to return per page
+          description: Number of results to return per page. Defaults to 20 if not provided.
           schema:
             type: integer
             format: int
@@ -864,7 +888,7 @@ paths:
         - name: page
           in: query
           required: false
-          description: Page number for paginated results
+          description: Page number for paginated results. Defaults to 1 if not provided.
           schema:
             type: number
             format: int
@@ -872,7 +896,7 @@ paths:
         - name: pageSize
           in: query
           required: false
-          description: Number of results to return per page
+          description: Number of results to return per page. Defaults to 20 if not provided.
           schema:
             type: integer
             format: int
@@ -942,7 +966,7 @@ paths:
         - name: page
           in: query
           required: false
-          description: Page number for paginated results
+          description: Page number for paginated results. Defaults to 1 if not provided.
           schema:
             type: number
             format: int
@@ -950,7 +974,7 @@ paths:
         - name: pageSize
           in: query
           required: false
-          description: Number of results to return per page
+          description: Number of results to return per page. Defaults to 20 if not provided.
           schema:
             type: integer
             format: int
