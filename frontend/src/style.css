@@ -156,17 +156,6 @@ code {
   }
 }
 
-#app {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
 #center {
   display: flex;
   flex-direction: column;
@@ -245,6 +234,10 @@ code {
       height: 18px;
       width: 18px;
     }
+  }
+
+  .authentication-box {
+    width: 500px;
   }
 
   @media (max-width: 1024px) {

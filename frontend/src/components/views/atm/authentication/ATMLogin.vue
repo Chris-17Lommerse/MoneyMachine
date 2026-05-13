@@ -15,6 +15,6 @@
 
 <style scoped>
     .authentication-box {
-        width: 400px;
+        width: 450px;
     }
 </style>
