@@ -7,5 +7,8 @@ import MoneyMachine.models.Transaction;
 
 @Repository
 public interface TransactionRepository extends ListCrudRepository<Transaction, Long> {
+    getTransactionByFromAccountId(Long id);
+    getTransactionByToAccountId(Long id);
+
     
 }
