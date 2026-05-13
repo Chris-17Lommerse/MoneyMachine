@@ -282,7 +282,7 @@ paths:
       tags:
         - Users
       summary: Get all bank accounts for a specific user
-      description: Returns a list of bank accounts belonging to the user identified by the given user_id in the path.  Access | User and Employee
+      description: Returns a list of bank accounts belonging to the user identified by the given user_id in the path.  Access | User (only own bank accounts) and Employee (all bank accounts of all users)
       operationId: getUserBankAccounts
       parameters:
         - name: user_id
@@ -459,12 +459,132 @@ paths:
                 message: "Internal Server Error - An unexpected error occurred"
                 details: "Please try again later or contact support if the problem persists."
 
+  /users/{user_id}/transactions:
+    get:
+      tags:
+        - Users
+      summary: Get all transactions by user
+      description: Returns a paginated list of all transactions by user. Supports filtering by amount and by source or destination IBAN. Access | User (only own transactions) and Employee (all transactions of all users)
+      operationId: getUserTransactions
+      parameters:
+      - name: lessThan
+        in: query
+        required: false
+        description: Filter transactions with an amount less than this value
+        schema:
+          type: number
+          format: decimal
+          example: 500.00
+      - name: greaterThan
+        in: query
+        required: false
+        description: Filter transactions with an amount greater than this value
+        schema:
+          type: number
+          format: decimal
+          example: 100.00
+      - name: equalTo
+        in: query
+        required: false
+        description: Filter transactions with an amount exactly equal to this value
+        schema:
+          type: number
+          format: decimal
+          example: 250.00
+      - name: fromIban
+        in: query
+        required: false
+        description: Filter transactions sent from this IBAN
+        schema:
+          type: string
+          example: NL91ABNA0417164300
+      - name: toIban
+        in: query
+        required: false
+        description: Filter transactions sent to this IBAN
+        schema:
+          type: string
+          example: NL91ABNA0417164300
+      - name: startDate
+        in: query
+        required: false
+        description: Filter transactions on or after this date
+        schema:
+          type: string
+          format: date
+          example: "2026-01-01"
+      - name: endDate
+        in: query
+        required: false
+        description: Filter transactions on or before this date
+        schema:
+          type: string
+          format: date
+          example: "2026-12-31"
+      - name: page
+        in: query
+        required: false
+        description: Page number for paginated results
+        schema:
+          type: number
+          format: int
+          example: 2
+      - name: pageSize
+        in: query
+        required: false
+        description: Number of results to return per page
+        schema:
+          type: integer
+          format: int
+          example: 20
+      responses:
+        '200':
+          description: Successful operation - Transactions retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Unauthorized - Authentication required"
+                details: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - No transactions found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "Not Found - Requested resource does not exist"
+                details: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Internal Server Error - An unexpected error occurred"
+                details: "Please try again later or contact support if the problem persists."
   /transactions:
     get:
       tags:
         - Transactions
-      summary: Get all transactions for the authenticated user
-      description: Returns a paginated list of all transactions across all bank accounts owned by the currently authenticated user. Supports filtering by amount and by source or destination IBAN. Access | Employee
+      summary: Get all transactions of all users
+      description: Returns a paginated list of all transactions across all users. Supports filtering by amount and by source or destination IBAN. Access | Employee
       operationId: getUserTransactions
       parameters:
       - name: lessThan
@@ -585,7 +705,7 @@ paths:
       tags:
         - BankAccounts
       summary: Get all transactions for a specific bank account
-      description: Returns all transactions (both incoming and outgoing) for the bank account identified by the given IBAN. Access | User and Employee
+      description: Returns all transactions (both incoming and outgoing) for the bank account identified by the given IBAN. Access | User (only own bank accounts) and Employee (all bank accounts)
       operationId: getTransactionsByIban
       parameters:
         - name: iban
