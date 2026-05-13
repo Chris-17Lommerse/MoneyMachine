@@ -529,6 +529,14 @@ paths:
           type: number
           format: int
           example: 2
+      - name: pageSize
+        in: query
+        required: false
+        description: Number of results to return per page
+        schema:
+          type: integer
+          format: int
+          example: 20
       responses:
         '200':
           description: Successful operation - Transactions retrieved
@@ -733,6 +741,14 @@ paths:
             type: number
             format: int
             example: 2
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results to return per page
+          schema:
+            type: integer
+            format: int
+            example: 20
       responses:
         '200':
           description: Successful operation - Bank accounts retrieved
@@ -907,7 +923,7 @@ paths:
     patch:
       tags:
         - BankAccounts
-      summary: Activate or deactivate a bank account
+      summary: Updates a bank account's information
       description: Updates the bank account identified by the given IBAN. Any type of requestBody can be given to update specific values
       operationId: updateBankAccountStatus
       parameters:
