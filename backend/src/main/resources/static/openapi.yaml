@@ -76,8 +76,7 @@ paths:
           content:
             application/json:
               schema:
-                items: 
-                  $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserOverviewResponse'
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -323,9 +322,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BankAccountResponse'
+                $ref: '#/components/schemas/BankAccountOverviewResponse'
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -383,7 +380,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteRequest'
+              $ref: '#/components/schemas/PatchRequest'
       responses:
         '200':
           description: Successful operation - User updated; returns the updated user
@@ -575,9 +572,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionResponse'
+                $ref: '#/components/schemas/TransactionOverviewResponse'
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -695,9 +690,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TransactionResponse'
+                $ref: '#/components/schemas/TransactionOverviewResponse'
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -823,8 +816,7 @@ paths:
           content:
             application/json:
               schema:
-                items: 
-                  $ref: '#/components/schemas/TransactionResponse'
+                $ref: '#/components/schemas/TransactionOverviewResponse'
         '400':
           description: Bad Request - Invalid IBAN format
           content:
@@ -915,9 +907,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/IbanLookupResponse'
+                $ref: '#/components/schemas/IbanLookupOverviewResponse'
         '400':
           description: Bad Request - Missing or invalid name parameters
           content:
@@ -993,9 +983,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BankAccountResponse'
+                $ref: '#/components/schemas/BankAccountOverviewResponse'
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1177,7 +1165,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeleteRequest'
+              $ref: '#/components/schemas/PatchRequest'
       responses:
         '200':
           description: Successful operation - Bank account status updated; returns the updated bank account
@@ -1738,7 +1726,7 @@ components:
           format: date-time
           example: "2024-04-28T10:30:00Z"
 
-    DeleteRequest:
+    PatchRequest:
       type: object
       properties:
         isActive:
@@ -1758,6 +1746,62 @@ components:
         iban:
           type: string
           example: NL91INHO0123456789
+
+    UserOverviewResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
+
+    BankAccountOverviewResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BankAccountResponse'
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
+
+    TransactionOverviewResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionResponse'
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
+
+    IbanLookupOverviewResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IbanLookupResponse'
+        page:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 20
 
   securitySchemes:
     bearerAuth:            
