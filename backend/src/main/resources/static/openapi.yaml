@@ -206,7 +206,7 @@ paths:
       tags:
         - Transactions
       summary: Transfer money between bank accounts
-      description: Transfers a specified amount from one bank account to another. Both the source IBAN (fromIban) and destination IBAN (toIban) are provided in the request body. Access | User and Employee
+      description: Transfers a specified amount from one bank account to another. Both the source IBAN (fromIban) and destination IBAN (toIban) are provided in the request body. Access | User (can only select own source IBANs.) and Employee (can select all source IBANs.)
       operationId: userTransfer
       requestBody:
         required: true
@@ -343,7 +343,7 @@ paths:
       description: >
         Updates the user identified by the given user_id. Any type of requestBody
         can be provided to update specific user fields, such as approval status,
-        role, or personal information. Access | User and Employee
+        role, or personal information. Access | User (only own user account) and Employee (all user accounts) 
       operationId: updateUser
       parameters:
         - name: user_id
@@ -1065,7 +1065,7 @@ paths:
       tags:
         - BankAccounts
       summary: Get a bank account by IBAN
-      description: Returns the details of a single bank account identified by its IBAN.
+      description: Returns the details of a single bank account identified by its IBAN. Access | User (only own bank accounts) and Employee (all bank accounts)
       operationId: getBankAccountByIban
       parameters:
         - name: iban
@@ -1130,7 +1130,7 @@ paths:
       tags:
         - BankAccounts
       summary: Updates a bank account's information
-      description: Updates the bank account identified by the given IBAN. Any type of requestBody can be given to update specific values. Access | User and Employee
+      description: Updates the bank account identified by the given IBAN. Any type of requestBody can be given to update specific values. Access | User (only own bank accounts) and Employee (all bank accounts)
       operationId: updateBankAccountStatus
       parameters:
         - name: iban
