@@ -4,5 +4,6 @@ import UsersWithoutBankAccountPage from './components/pages/UsersWithoutBankAcco
 </script>
 
 <template>
+    <router-view></router-view>
   <UsersWithoutBankAccountPage />
 </template>

@@ -1,5 +1,6 @@
 package MoneyMachine.services;
 
+import java.util.ArrayList;
 import MoneyMachine.mappers.UserMapper;
 import java.util.List;
 

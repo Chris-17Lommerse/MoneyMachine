@@ -59,13 +59,17 @@ public class User {
 
     @Column(nullable = false)
     @NotNull
+    private String password;
+
+    @Column(nullable = false)
+    @NotNull
     private Boolean isActive;
 
     @Column(nullable = false)
     @NotNull
     private Boolean isApproved;
 
-    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, Boolean isActive, Boolean isApproved)
+    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, String password, Boolean isActive, Boolean isApproved)
     {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -73,6 +77,7 @@ public class User {
         this.bsn = bsn;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.password = password;
         this.isActive = isActive;
         this.isApproved = isApproved;
     }

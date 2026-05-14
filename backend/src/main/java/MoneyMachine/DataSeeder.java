@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
-import MoneyMachine.models.Transaction;
 import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
@@ -17,6 +16,7 @@ import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.repositories.UserRepository;
+import MoneyMachine.services.Interfaces.AuthenticationService;
 
 @Component
 public class DataSeeder implements ApplicationRunner {
@@ -24,17 +24,19 @@ public class DataSeeder implements ApplicationRunner {
     private final BankAccountRepository bankAccountRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final AuthenticationService authenticationService;
 
-    public DataSeeder(TransactionRepository transactionRepository, UserRepository userRepository, BankAccountRepository bankAccountRepository){
+    public DataSeeder(TransactionRepository transactionRepository, UserRepository userRepository, BankAccountRepository bankAccountRepository, AuthenticationService authenticationService){
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.bankAccountRepository = bankAccountRepository;
+        this.authenticationService = authenticationService;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        User user = new User("testFirstName", "testLastName", "user@user.user", "123456789", "+31 6 12 34 56 78", Role.user, true, true);
+        User user = new User("testFirstName", "testLastName", "user@user.user", "123456789", "+31 6 12 34 56 78", Role.USER, authenticationService.getHashedPassword("password"), true, true);
         userRepository.save(user);
 
         BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user, new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.checking, true);
@@ -48,11 +50,5 @@ public class DataSeeder implements ApplicationRunner {
 
         TransferTransaction transferTransaction = new TransferTransaction(user, new BigDecimal("10"), "Hello transfer!", true, bankAccount, bankAccount);
         transactionRepository.save(transferTransaction);
-
-        for (Transaction transaction : transactionRepository.findAll()) {
-            System.out.println(transaction.getTransactionId());
-            System.out.println(transaction.getClass());
-            System.out.println(String.format("This subclass is a: %s!", transaction.getClass().getSimpleName()));
-        }
     }
 }
