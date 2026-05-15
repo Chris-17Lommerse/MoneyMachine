@@ -72,20 +72,19 @@ public class UsersController extends BaseController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllUsersWithoutAnAccount() {
-        try {
-            List<UserDTO> users = userService.getAllUsersWithoutBankAccounts();
-            UserOverviewDTO userOverviewDTO = new UserOverviewDTO();
-            userOverviewDTO.setUsers(users);
-            return ResponseEntity.ok(userOverviewDTO);
-        } catch (Unauthorized exUnauthorized) {
-            ErrorDTO errorDTO = new ErrorDTO(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
-                    "Unauthorized - Authentication required", exUnauthorized.getMessage());
-            return ResponseEntity.status(401).body(errorDTO);
-        } catch (InternalServerError exInternalServerError) {
-            ErrorDTO errorDTO = new ErrorDTO(500, ErrorType.BAD_REQUEST,
-                    "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
-            return ResponseEntity.status(500).body(errorDTO);
+    public ResponseEntity getAllUsersWithoutAnAccount() 
+    {
+        try
+        {
+            List<User> users = userService.getAllUsersWithoutAnAccount();
+            return ResponseEntity.status(200).body(users);
+        } catch (InternalServerError ex)
+        {
+            return ResponseEntity.status(500).body(ex);
+        }
+        catch (Unauthorized ex)
+        {
+            return ResponseEntity.status(401).body(ex);
         }
     }
 }
