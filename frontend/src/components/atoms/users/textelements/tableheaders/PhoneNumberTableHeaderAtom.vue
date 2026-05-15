@@ -2,7 +2,5 @@
 </script>
 
 <template>
-    <th>
-        <h4>Phone number</h4>
-    </th>
+    <h4>Phone number</h4>
 </template>
