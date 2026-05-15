@@ -12,15 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "bank_accounts")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class BankAccount {
 
     @Id
@@ -57,15 +57,4 @@ public class BankAccount {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
-
-    public BankAccount(String iban, User user, BigDecimal balance, BigDecimal absoluteLimit, BigDecimal singleTransferLimit, BigDecimal dailyTransferLimit, BankAccountType bankAccountType, Boolean isActive) {
-        this.iban = iban;
-        this.user = user;
-        this.balance = balance;
-        this.absoluteLimit = absoluteLimit;
-        this.singleTransferLimit = singleTransferLimit;
-        this.dailyTransferLimit = dailyTransferLimit;
-        this.bankAccountType = bankAccountType;
-        this.isActive = isActive;
-    }
 }

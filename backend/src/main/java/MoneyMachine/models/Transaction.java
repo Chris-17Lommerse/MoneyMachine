@@ -12,16 +12,16 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "transactions")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
@@ -45,11 +45,4 @@ public class Transaction {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
-
-    public Transaction(User initiatingUser, BigDecimal amount, String message, Boolean isActive) {
-        this.initiatingUser = initiatingUser;
-        this.amount = amount;
-        this.message = message;
-        this.isActive = isActive;
-    }
 }

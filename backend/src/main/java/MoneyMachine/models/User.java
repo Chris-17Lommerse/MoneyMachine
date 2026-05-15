@@ -13,15 +13,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -68,17 +68,4 @@ public class User {
     @Column(nullable = false)
     @NotNull
     private Boolean isApproved;
-
-    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, String password, Boolean isActive, Boolean isApproved)
-    {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.bsn = bsn;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
-        this.password = password;
-        this.isActive = isActive;
-        this.isApproved = isApproved;
-    }
 }
