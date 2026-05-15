@@ -40,7 +40,7 @@ const routes = [
             },
         ],
     },
-    {path: '/user', component: UsersWithoutBankAccountPage},
+    {path: '/users', component: UsersWithoutBankAccountPage},
 ]
 
 const router = createRouter({
