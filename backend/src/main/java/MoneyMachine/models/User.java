@@ -1,5 +1,8 @@
 package MoneyMachine.models;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import MoneyMachine.models.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,17 +10,18 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -50,6 +54,9 @@ public class User {
     @NotNull
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private Set<BankAccount> bankAccounts = new HashSet<BankAccount>(0);
+
     @Column(nullable = false)
     @NotNull
     private String password;
@@ -61,17 +68,4 @@ public class User {
     @Column(nullable = false)
     @NotNull
     private Boolean isApproved;
-
-    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, String password, Boolean isActive, Boolean isApproved)
-    {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.bsn = bsn;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
-        this.password = password;
-        this.isActive = isActive;
-        this.isApproved = isApproved;
-    }
 }

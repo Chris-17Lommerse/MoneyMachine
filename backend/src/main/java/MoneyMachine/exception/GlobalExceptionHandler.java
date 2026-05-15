@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 
-import MoneyMachine.models.dtos.ErrorResponse;
 import MoneyMachine.models.enums.ErrorType;
+import MoneyMachine.models.dtos.responses.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

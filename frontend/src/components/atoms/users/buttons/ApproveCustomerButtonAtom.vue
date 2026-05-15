@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <a href="" class="btn btn-success">Approve Custmer</a>
+    <a href="" class="btn btn-success">Approve Customer</a>
 </template>

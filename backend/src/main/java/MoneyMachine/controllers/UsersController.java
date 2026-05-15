@@ -4,22 +4,19 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 import MoneyMachine.exception.InvalidCredentialsException;
+import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
-import MoneyMachine.models.dtos.LoginResponse;
-import MoneyMachine.models.dtos.UserResponse;
 import MoneyMachine.models.enums.LoginType;
-import MoneyMachine.models.requestBodies.LoginRequest;
-import MoneyMachine.services.UserServiceImpl;
-import MoneyMachine.services.Interfaces.AuthenticationService;
+import MoneyMachine.models.dtos.requests.LoginRequest;
+import MoneyMachine.models.dtos.responses.ErrorResponse;
+import MoneyMachine.models.dtos.responses.LoginResponse;
+import MoneyMachine.models.dtos.responses.UserOverviewResponse;
+import MoneyMachine.models.dtos.responses.UserResponse;
+import MoneyMachine.services.interfaces.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,12 +26,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UsersController extends BaseController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final UserMapper userMapper;
 
-    public UsersController(UserServiceImpl userService, AuthenticationService authenticationService) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("login")
@@ -46,45 +45,35 @@ public class UsersController extends BaseController {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
-        LoginResponse loginDto = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
+        LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
 
-        return ResponseEntity.status(201).body(loginDto);
+        return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")
     public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response, @RequestParam LoginType loginType) throws Exception {
 
         User user = this.authenticationService.getLoggedInUserByLoginType(request, response, loginType);
+        UserResponse userResponse = userMapper.toResponse(user);
 
-        UserResponse userDTO = new UserResponse(
-            user.getId(), 
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            user.getBsn(),
-            user.getPhoneNumber(),
-            user.getRole(),
-            user.getIsActive(),
-            user.getIsApproved()
-        );
-
-        return ResponseEntity.status(200).body(userDTO);
+        return ResponseEntity.status(200).body(userResponse);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity getAllUsersWithoutAnAccount() 
-    {
-        try
-        {
-            List<User> users = userService.getAllUsersWithoutAnAccount();
-            return ResponseEntity.status(200).body(users);
-        } catch (InternalServerError ex)
-        {
-            return ResponseEntity.status(500).body(ex);
-        }
-        catch (Unauthorized ex)
-        {
-            return ResponseEntity.status(401).body(ex);
+    @GetMapping()
+    public ResponseEntity<?> getAllUsersWithoutAnAccount() {
+        try {
+            List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+            UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
+            userOverviewResponse.setUsers(users);
+            return ResponseEntity.ok(userOverviewResponse);
+        } catch (Unauthorized exUnauthorized) {
+            ErrorResponse errorResponse = new ErrorResponse(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
+                    "Unauthorized - Authentication required", exUnauthorized.getMessage());
+            return ResponseEntity.status(401).body(errorResponse);
+        } catch (InternalServerError exInternalServerError) {
+            ErrorResponse errorResponse = new ErrorResponse(500, MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
+                    "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 }
