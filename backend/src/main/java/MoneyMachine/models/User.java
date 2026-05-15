@@ -1,8 +1,5 @@
 package MoneyMachine.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import MoneyMachine.models.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +7,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -53,9 +49,6 @@ public class User {
     @Column(nullable = false)
     @NotNull
     private Role role;
-
-    @OneToMany(mappedBy = "user")
-    private Set<BankAccount> bankAccounts = new HashSet<BankAccount>(0);
 
     @Column(nullable = false)
     @NotNull
