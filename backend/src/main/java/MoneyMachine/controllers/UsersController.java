@@ -45,9 +45,9 @@ public class UsersController extends BaseController {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
-        LoginResponse loginDto = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
+        LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
 
-        return ResponseEntity.status(201).body(loginDto);
+        return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")
@@ -63,17 +63,17 @@ public class UsersController extends BaseController {
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
         try {
             List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
-            UserOverviewResponse userOverviewDTO = new UserOverviewResponse();
-            userOverviewDTO.setUsers(users);
-            return ResponseEntity.ok(userOverviewDTO);
+            UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
+            userOverviewResponse.setUsers(users);
+            return ResponseEntity.ok(userOverviewResponse);
         } catch (Unauthorized exUnauthorized) {
-            ErrorResponse errorDTO = new ErrorResponse(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
+            ErrorResponse errorResponse = new ErrorResponse(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
                     "Unauthorized - Authentication required", exUnauthorized.getMessage());
-            return ResponseEntity.status(401).body(errorDTO);
+            return ResponseEntity.status(401).body(errorResponse);
         } catch (InternalServerError exInternalServerError) {
-            ErrorResponse errorDTO = new ErrorResponse(500, MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
+            ErrorResponse errorResponse = new ErrorResponse(500, MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
                     "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
-            return ResponseEntity.status(500).body(errorDTO);
+            return ResponseEntity.status(500).body(errorResponse);
         }
     }
 }
