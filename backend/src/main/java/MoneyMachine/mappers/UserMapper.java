@@ -3,48 +3,54 @@ package MoneyMachine.mappers;
 import org.springframework.stereotype.Component;
 
 import MoneyMachine.models.*;
+import MoneyMachine.models.dtos.responses.UserResponse;
 
 import java.util.ArrayList;
 import java.util.List;
-import MoneyMachine.models.dtos.UserDTO;
 
 @Component
 public class UserMapper {
-    public UserDTO toDTO(User user)
-    {
-        UserDTO dto = new UserDTO();
-        dto.setUserId(user.getId());
-        dto.setFirstName(user.getFirstName());
-        dto.setLastName(user.getLastName());
-        dto.setEmail(user.getEmail());
-        dto.setBsn(user.getBsn());
-        dto.setPhoneNumber(user.getPhoneNumber());
-        dto.setRole(user.getRole());
-        dto.setActive(user.getIsActive());
-        dto.setApproved(user.getIsApproved());
-        return dto;
+
+    public UserResponse toResponse(User user) {
+
+        UserResponse response = new UserResponse();
+        response.setUserId(user.getId());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setEmail(user.getEmail());
+        response.setBsn(user.getBsn());
+        response.setPhoneNumber(user.getPhoneNumber());
+        response.setRole(user.getRole());
+        response.setActive(user.getIsActive());
+        response.setApproved(user.getIsApproved());
+
+        return response;
     }
 
-    public User toEntity(UserDTO dto) {
+    public User toEntity(UserResponse response) {
+
         User user = new User();
-        user.setId(dto.getUserId());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setEmail(dto.getEmail());
-        user.setBsn(dto.getBsn());
-        user.setPhoneNumber(dto.getPhoneNumber());
-        user.setRole(dto.getRole());
-        user.setIsActive(dto.isActive());
-        user.setIsApproved(dto.isApproved());
+        user.setId(response.getUserId());
+        user.setFirstName(response.getFirstName());
+        user.setLastName(response.getLastName());
+        user.setEmail(response.getEmail());
+        user.setBsn(response.getBsn());
+        user.setPhoneNumber(response.getPhoneNumber());
+        user.setRole(response.getRole());
+        user.setIsActive(response.isActive());
+        user.setIsApproved(response.isApproved());
+
         return user;
     }
 
-    public List<UserDTO> toDTOList(List<User> userList) {
-        List<UserDTO> userDTOs = new ArrayList<UserDTO>();
-        for(User user : userList)
-        {
-            userDTOs.add(toDTO(user));
+    public List<UserResponse> toDTOList(List<User> userList) {
+
+        List<UserResponse> userResponses = new ArrayList<UserResponse>();
+
+        for(User user : userList){
+            userResponses.add(toResponse(user));
         }
-        return userDTOs;
+
+        return userResponses;
     }
 }

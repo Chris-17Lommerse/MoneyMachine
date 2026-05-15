@@ -1,4 +1,4 @@
-package MoneyMachine.models.requestBodies;
+package MoneyMachine.models.dtos.requests;
 
 import MoneyMachine.models.enums.LoginType;
 import lombok.AllArgsConstructor;

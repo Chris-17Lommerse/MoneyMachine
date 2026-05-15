@@ -1,11 +1,12 @@
 package MoneyMachine.services.interfaces;
 
 import java.util.List;
-import MoneyMachine.models.dtos.UserDTO;
 
 import org.springframework.stereotype.Service;
 
+import MoneyMachine.models.dtos.responses.UserResponse;
+
 @Service
 public interface UserService {
-    List<UserDTO> getAllUsersWithoutBankAccounts();
+    List<UserResponse> getAllUsersWithoutBankAccounts();
 }

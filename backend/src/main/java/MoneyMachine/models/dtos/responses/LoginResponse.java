@@ -1,4 +1,4 @@
-package MoneyMachine.models.dtos;
+package MoneyMachine.models.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

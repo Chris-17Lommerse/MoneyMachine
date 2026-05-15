@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
-import MoneyMachine.models.dtos.UserDTO;
+import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.interfaces.UserService;
 
@@ -17,19 +17,20 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     private UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper)
-    {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper){
         this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
 
-    public List<UserDTO> getAllUsersWithoutBankAccounts() {
+    public List<UserResponse> getAllUsersWithoutBankAccounts() {
+
         Iterable<User> users = userRepository.findByBankAccountsIsEmpty();
-        List<UserDTO> convertedUsers = new ArrayList<UserDTO>();
+        List<UserResponse> convertedUsers = new ArrayList<UserResponse>();
 
         for (User user : users) {
-            convertedUsers.add(userMapper.toDTO(user));
+            convertedUsers.add(userMapper.toResponse(user));
         }
+
         return convertedUsers;
     }
 }

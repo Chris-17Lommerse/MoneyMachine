@@ -1,35 +1,34 @@
 <script setup>
-import UsersTableGridTemplate from '../templates/UsersTableGridTemplate.vue';
-import { onMounted, ref } from 'vue';
-import axios from '../../utils/axios';
+    import UsersTableGridTemplate from '@/components/organisms/UsersTableGrid.vue';
+    import { onMounted, ref } from 'vue';
+    import axios from '@/utils/axios';
 
-const loading = ref(true);
-const error = ref(null);
-const usersWithoutBankAccounts = ref([])
+    const loading = ref(true);
+    const error = ref(null);
+    const usersWithoutBankAccounts = ref([])
 
-const fetchUsersWithoutAccount = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-        const result = await axios.get("/users");
-        usersWithoutBankAccounts.value = result.data.users;
-        console.log(result.data);
-    }
-    catch (err) {
-        console.log("Error fetching users without bank accounts", err);
-        error.value =
-            err.message || "Failed to fetch users without bank accounts. Please try again later.";
-        usersWithoutBankAccounts.value = [];
-    }
-    finally {
-        loading.value = false;
-    }
-};
+    const fetchUsersWithoutAccount = async () => {
+        loading.value = true;
+        error.value = null;
+        try {
+            const result = await axios.get("/users");
+            usersWithoutBankAccounts.value = result.data.users;
+            console.log(result.data);
+        }
+        catch (err) {
+            console.log("Error fetching users without bank accounts", err);
+            error.value =
+                err.message || "Failed to fetch users without bank accounts. Please try again later.";
+            usersWithoutBankAccounts.value = [];
+        }
+        finally {
+            loading.value = false;
+        }
+    };
 
-onMounted(() => {
-    fetchUsersWithoutAccount();
-})
-
+    onMounted(() => {
+        fetchUsersWithoutAccount();
+    })
 </script>
 
 <template>

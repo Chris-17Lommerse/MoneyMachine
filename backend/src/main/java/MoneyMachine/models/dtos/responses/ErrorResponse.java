@@ -1,4 +1,4 @@
-package MoneyMachine.models.dtos;
+package MoneyMachine.models.dtos.responses;
 
 import MoneyMachine.models.enums.ErrorType;
 import lombok.AllArgsConstructor;

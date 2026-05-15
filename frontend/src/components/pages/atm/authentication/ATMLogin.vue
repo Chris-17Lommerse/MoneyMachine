@@ -1,5 +1,5 @@
 <script setup>
-    import ATMLoginForm from '../../../organisms/forms/authentication/ATMLoginForm.vue';
+    import ATMLoginForm from '@/components/organisms/forms/authentication/ATMLoginForm.vue';
 </script>
 
 <template>
