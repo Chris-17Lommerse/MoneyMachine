@@ -16,7 +16,7 @@ console.log(error)
 <template>
   <div class="text-center">
     <h1 class="display-4">All Transactions</h1>
-    <a href="transactions/create" class="btn btn-primary mb-3">add transaction</a>
+    <router-link to="/transactions/create" class="btn btn-primary mb-3">add transaction</router-link>
 
     <table class="table table-bordered table-striped table-hover">
         <thead>
@@ -33,13 +33,13 @@ console.log(error)
         <tbody>
             <div v-for="transaction in transactions" :key="transaction.Id">
                 <tr>
-                    <td> @transaction.FromAccount </td>
-                    <td> @transaction.ToAccount </td>
-                    <td> @transaction.Amount </td>
-                    <td> @transaction.Time </td>
-                    <td> @transaction.Type </td>
-                    <td> @transaction.IniciatedBy </td>
-                    <td> @transaction.Message </td>
+                    <td>{{ transaction.FromAccount }}</td>
+                    <td> {{ transaction.ToAccount }}</td>
+                    <td> {{ transaction.Amount }}</td>
+                    <td> {{ transaction.Time }}</td>
+                    <td> {{ transaction.Type }}</td>
+                    <td> {{ transaction.IniciatedBy }}</td>
+                    <td> {{ transaction.Message }}</td>
                 </tr>
             </div>
         </tbody>

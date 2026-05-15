@@ -5,6 +5,10 @@ import ATMLayout from '@/components/layout/ATMLayout.vue'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
 import ATMLogout from '@/components/views/atm/authentication/ATMLogout.vue'
+import AllTransactions from '@/components/views/transactions/allTransactions.vue'
+import Transaction from '@/components/views/transactions/transaction.vue'
+import CreateTransaction from '@/components/views/transactions/createTransaction.vue'
+import TransactionLayout from '@/components/layout/transactionLayout.vue'
 
 const routes = [
     {
@@ -39,6 +43,33 @@ const routes = [
             },
         ],
     },
+    {
+        path: '/transactions',
+        component: TransactionLayout,
+        children: [
+            {
+                path: '',
+                component: AllTransactions,
+                meta: {
+                    title: 'All Transactions'
+                }
+            },
+            {
+                path: 'create',
+                component: CreateTransaction,
+                meta: {
+                    title: 'Create Transaction'
+                }
+            },
+            {
+                path: ':id',
+                component: Transaction,
+                meta: {
+                    title: 'Transaction Details'
+                }
+            }
+        ]
+    }
 ]
 
 const router = createRouter({
