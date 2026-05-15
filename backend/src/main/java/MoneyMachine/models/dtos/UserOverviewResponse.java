@@ -8,6 +8,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class UserOverviewDTO implements Serializable {
-    private List<UserDTO> users;
+public class UserOverviewResponse implements Serializable {
+    private List<UserResponse> users;
 }

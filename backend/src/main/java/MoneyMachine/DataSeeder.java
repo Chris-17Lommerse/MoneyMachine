@@ -41,7 +41,7 @@ public class DataSeeder implements ApplicationRunner {
 
         User userWithoutBankAccount = new User("test", "test", "test@test.test", "123456749", "+31 6 12 34 54 78", Role.EMPLOYEE, authenticationService.getHashedPassword("test"), false, false);
         userRepository.save(userWithoutBankAccount);
-        BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user, new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.checking, true);
+        BankAccount bankAccount = new BankAccount("NL91ABNA0417164300", user, new BigDecimal("100"), new BigDecimal("-100"), new BigDecimal("100"), new BigDecimal("100"), BankAccountType.CHECKING, true);
         bankAccountRepository.save(bankAccount);
 
         DepositTransaction depositTransaction = new DepositTransaction(user, new BigDecimal("10"), "Hello deposit!", true, bankAccount);

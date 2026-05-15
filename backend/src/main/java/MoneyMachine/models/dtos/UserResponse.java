@@ -1,22 +1,35 @@
 package MoneyMachine.models.dtos;
 
-import MoneyMachine.models.enums.Role;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class UserResponse {
+import java.io.Serializable;
 
+import MoneyMachine.models.enums.*;
+
+@Setter
+@Getter
+public class UserResponse implements Serializable {
+    @NotNull
     private Long userId;
+    @NotNull
     private String firstName;
+    @NotNull
     private String lastName;
+    @NotNull
     private String email;
+    @NotNull
     private String bsn;
+    @NotNull
     private String phoneNumber;
+    @NotNull
+    @Enumerated(EnumType.STRING)
     private Role role;
-    private Boolean isActive;
-    private Boolean isApproved;
+    @NotNull
+    private boolean isActive;
+    @NotNull
+    private boolean isApproved;
 }

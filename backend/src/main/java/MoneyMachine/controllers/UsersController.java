@@ -4,20 +4,15 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 import MoneyMachine.exception.InvalidCredentialsException;
+import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.ErrorResponse;
 import MoneyMachine.models.dtos.LoginResponse;
-import MoneyMachine.models.dtos.UserDTO;
-import MoneyMachine.models.dtos.UserOverviewDTO;
+import MoneyMachine.models.dtos.UserOverviewResponse;
 import MoneyMachine.models.dtos.UserResponse;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.requestBodies.LoginRequest;
@@ -33,10 +28,12 @@ public class UsersController extends BaseController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final UserMapper userMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("login")
@@ -57,27 +54,16 @@ public class UsersController extends BaseController {
     public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response, @RequestParam LoginType loginType) throws Exception {
 
         User user = this.authenticationService.getLoggedInUserByLoginType(request, response, loginType);
+        UserResponse userResponse = userMapper.toResponse(user);
 
-        UserResponse userDTO = new UserResponse(
-            user.getId(), 
-            user.getFirstName(),
-            user.getLastName(),
-            user.getEmail(),
-            user.getBsn(),
-            user.getPhoneNumber(),
-            user.getRole(),
-            user.getIsActive(),
-            user.getIsApproved()
-        );
-
-        return ResponseEntity.status(200).body(userDTO);
+        return ResponseEntity.status(200).body(userResponse);
     }
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @GetMapping()
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
         try {
-            List<UserDTO> users = userService.getAllUsersWithoutBankAccounts();
-            UserOverviewDTO userOverviewDTO = new UserOverviewDTO();
+            List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+            UserOverviewResponse userOverviewDTO = new UserOverviewResponse();
             userOverviewDTO.setUsers(users);
             return ResponseEntity.ok(userOverviewDTO);
         } catch (Unauthorized exUnauthorized) {

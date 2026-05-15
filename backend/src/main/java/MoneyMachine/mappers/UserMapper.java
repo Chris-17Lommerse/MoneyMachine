@@ -6,13 +6,14 @@ import MoneyMachine.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import MoneyMachine.models.dtos.UserDTO;
+import MoneyMachine.models.dtos.UserResponse;
 
 @Component
 public class UserMapper {
-    public UserDTO toDTO(User user)
-    {
-        UserDTO dto = new UserDTO();
+
+    public UserResponse toResponse(User user) {
+
+        UserResponse dto = new UserResponse();
         dto.setUserId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -22,10 +23,12 @@ public class UserMapper {
         dto.setRole(user.getRole());
         dto.setActive(user.getIsActive());
         dto.setApproved(user.getIsApproved());
+
         return dto;
     }
 
-    public User toEntity(UserDTO dto) {
+    public User toEntity(UserResponse dto) {
+
         User user = new User();
         user.setId(dto.getUserId());
         user.setFirstName(dto.getFirstName());
@@ -36,15 +39,18 @@ public class UserMapper {
         user.setRole(dto.getRole());
         user.setIsActive(dto.isActive());
         user.setIsApproved(dto.isApproved());
+
         return user;
     }
 
-    public List<UserDTO> toDTOList(List<User> userList) {
-        List<UserDTO> userDTOs = new ArrayList<UserDTO>();
-        for(User user : userList)
-        {
-            userDTOs.add(toDTO(user));
+    public List<UserResponse> toDTOList(List<User> userList) {
+
+        List<UserResponse> userDTOs = new ArrayList<UserResponse>();
+
+        for(User user : userList){
+            userDTOs.add(toResponse(user));
         }
+
         return userDTOs;
     }
 }
