@@ -10,6 +10,8 @@ import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.interfaces.BankAccountService;
+import MoneyMachine.strategies.CheckingStrategy;
+import MoneyMachine.strategies.SavingsStrategy;
 import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.factories.IbanGenerator;
@@ -22,8 +24,6 @@ public class BankAccountServiceImpl implements BankAccountService {
     private BankAccountMapper bankAccountMapper;
     private BankAccountRepository bankAccountRepository;
     private UserRepository userRepository;
-    private static final BigDecimal singleTransferLimit;
-    private static final BigDecimal dailyTransferLimit; 
 
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository, BankAccountMapper bankAccountMapper)
     {
@@ -33,11 +33,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
     public BankAccountResponse createBankAccount(BankAccountCreationRequest bankAccountCreationRequest)
     {
-       User user = userRepository.findById(userId);
+       User user = userRepository.findById(bankAccountCreationRequest.getUserId());
 
        if(user == null)
        {
-            throw new NotFoundException("User with user id");
+            throw new NotFoundException("User with user id" + bankAccountCreationRequest.getUserId() + "Not found");
        }
 
        if(user.getIsActive() == false)
@@ -50,14 +50,14 @@ public class BankAccountServiceImpl implements BankAccountService {
             throw new NotAuthorizedException("User is not allowed to create account");
        }
 
-       if(bankAccountType == bankAccountType.CHECKING)
+       if(bankAccountCreationRequest.getBankAccountType() == BankAccountType.CHECKING)
        {
-            // Code to be determined
+            CheckingStrategy checkingStrategy = new CheckingStrategy();
        }
 
-       if(bankAccountType == bankAccountType.SAVINGS)
+       if(bankAccountCreationRequest.getBankAccountType() == BankAccountType.SAVINGS)
        {
-           // Code to be determined
+           SavingsStrategy savingsStrategy = new SavingsStrategy();
        }
        
        BankAccount bankAccount = new BankAccount();
