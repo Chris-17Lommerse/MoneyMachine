@@ -15,6 +15,7 @@ import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.factories.IbanGenerator;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -30,7 +31,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         this.userRepository = userRepository;
         this.bankAccountMapper = bankAccountMapper;
     }
-    public BankAccountResponse createBankAccount(int userId, BankAccountType bankAccountType, BigDecimal absoluteLimit)
+    public BankAccountResponse createBankAccount(BankAccountCreationRequest bankAccountCreationRequest)
     {
        User user = userRepository.findById(userId);
 
