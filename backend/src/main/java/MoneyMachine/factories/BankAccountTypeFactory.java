@@ -1,21 +1,43 @@
 package MoneyMachine.factories;
 
+import java.util.HashMap;
+import java.util.List;
+
 import MoneyMachine.models.enums.BankAccountType;
-import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import MoneyMachine.strategies.CheckingStrategy;
 import MoneyMachine.strategies.SavingsStrategy;
+import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
+import java.util.Map;
+
 
 public class BankAccountTypeFactory {
-    public static BankAccountTypeStrategy bankAccountRules(BankAccountType bankAccountType)
+    private final Map<BankAccountType, BankAccountTypeStrategy> strategies = new HashMap<>();
+    
+    public BankAccountTypeFactory(List<BankAccountTypeStrategy> strategyBeans)
     {
-        switch(bankAccountType)
+        for(BankAccountTypeStrategy strategy : strategyBeans)
         {
-            case SAVINGS:
-                return new SavingsStrategy();
-            case CHECKING:
-                return new CheckingStrategy();
-            default:
-                throw new IllegalArgumentException("Unknown bankaccount type:" + bankAccountType);
+            if(strategy instanceof CheckingStrategy)
+            {
+                strategies.put(BankAccountType.CHECKING, strategy);
+            }
+
+            else if(strategy instanceof SavingsStrategy)
+            {
+                strategies.put(BankAccountType.SAVINGS, strategy);
+            }
         }
-    } 
+    }
+
+    public BankAccountTypeStrategy getStrategy(BankAccountType bankAccountType)
+    {
+        BankAccountTypeStrategy strategy = strategies.get(bankAccountType);
+
+        if(strategy == null)
+        {
+            throw new IllegalArgumentException("No strategy found for: " + bankAccountType);
+        }
+
+        return strategy;
+    }
 }

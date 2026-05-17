@@ -13,6 +13,7 @@ import MoneyMachine.repositories.UserRepository;
 import MoneyMachine.services.interfaces.BankAccountService;
 import MoneyMachine.strategies.CheckingStrategy;
 import MoneyMachine.strategies.SavingsStrategy;
+import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.factories.BankAccountTypeFactory;
@@ -62,13 +63,10 @@ public class BankAccountServiceImpl implements BankAccountService {
                 bankAccountCreationRequest.getAbsoluteLimit(), bankAccountCreationRequest.getSingleTransferLimit(),
                 bankAccountCreationRequest.getDailyTransferLimit(), bankAccountCreationRequest.getBankAccountType(),
                 true, LocalDateTime.now());
-        if (bankAccountCreationRequest.getBankAccountType() == BankAccountType.CHECKING) {
-            bankAccountTypeFactory.bankAccountRules(BankAccountType.CHECKING);
-        }
-
-        if (bankAccountCreationRequest.getBankAccountType() == BankAccountType.SAVINGS) {
-              bankAccountTypeFactory.bankAccountRules(BankAccountType.SAVINGS);
-        }
+        
+        BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountCreationRequest.getBankAccountType());
+        strategy.applyBankAccountRules(bankAccount);
+        
         bankAccountRepository.save(bankAccount);
         BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
         return bankAccountRespnse;
