@@ -10,8 +10,8 @@ import MoneyMachine.models.BankAccount;
 
 @Repository
 public interface BankAccountRepository extends ListCrudRepository<BankAccount, String> {
-    @Query("UPDATE BankAccount b SET b.balance = b.balance - ?2 WHERE b.accountId = ?1")
+    @Query("UPDATE BankAccount b SET b.balance = b.balance - ?2 WHERE b.iban = ?1")
     public void pay(String iban, BigDecimal amount);
-    @Query("UPDATE BankAccount b SET b.balance = b.balance + ?2 WHERE b.accountId = ?1")
+    @Query("UPDATE BankAccount b SET b.balance = b.balance + ?2 WHERE b.iban = ?1")
     public void receive(String iban, BigDecimal amount);
 }

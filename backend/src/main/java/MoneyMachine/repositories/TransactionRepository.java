@@ -9,9 +9,5 @@ import MoneyMachine.models.Transaction;
 
 @Repository
 public interface TransactionRepository extends ListCrudRepository<Transaction, Long> {
-    List<Transaction> getTransactionByFromIban(String iban);
-    List<Transaction> getTransactionByToIban(String iban);
-    
-
-    
+      
 }
