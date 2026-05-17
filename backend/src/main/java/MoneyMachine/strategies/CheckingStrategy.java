@@ -4,7 +4,7 @@ import MoneyMachine.models.BankAccount;
 import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 
 public class CheckingStrategy implements BankAccountTypeStrategy {
-    public void bankAccountRules(BankAccount bankAccount)
+    public void applyBankAccountRules(BankAccount bankAccount)
     {
         bankAccount.getAbsoluteLimit();
     }

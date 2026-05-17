@@ -2,6 +2,7 @@ package MoneyMachine.services;
 
 import MoneyMachine.mappers.BankAccountMapper;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
@@ -19,51 +20,56 @@ import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
+
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
     private BankAccountMapper bankAccountMapper;
     private BankAccountRepository bankAccountRepository;
     private UserRepository userRepository;
+    private IbanGenerator ibanGenerator;
 
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository, BankAccountMapper bankAccountMapper)
-    {
+    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository,
+            BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator) {
         this.bankAccountRepository = bankAccountRepository;
         this.userRepository = userRepository;
         this.bankAccountMapper = bankAccountMapper;
+        this.ibanGenerator = ibanGenerator;
     }
-    public BankAccountResponse createBankAccount(BankAccountCreationRequest bankAccountCreationRequest)
-    {
-       User user = userRepository.findById(bankAccountCreationRequest.getUserId());
 
-       if(user == null)
-       {
+    public BankAccountResponse createBankAccount(BankAccountCreationRequest bankAccountCreationRequest) {
+        User user = userRepository.findById(bankAccountCreationRequest.getUserId());
+
+        if (user == null) {
             throw new NotFoundException("User with user id" + bankAccountCreationRequest.getUserId() + "Not found");
-       }
+        }
 
-       if(user.getIsActive() == false)
-       {
-          throw new NotAuthorizedException("User is not active");
-       }
+        if (user.getIsActive() == false) {
+            throw new NotAuthorizedException("User is not active");
+        }
 
-       if(user.getRole() == Role.USER)
-       {
+        if (user.getRole() == Role.USER) {
             throw new NotAuthorizedException("User is not allowed to create account");
-       }
+        }
 
-       if(bankAccountCreationRequest.getBankAccountType() == BankAccountType.CHECKING)
-       {
+        String generatedIban = ibanGenerator.generateIBAN();
+        while (bankAccountRepository.existsById(generatedIban)) {
+            generatedIban = ibanGenerator.generateIBAN();
+        }
+        BankAccount bankAccount = new BankAccount(generatedIban, user, bankAccountCreationRequest.getBalance(),
+                bankAccountCreationRequest.getAbsoluteLimit(), bankAccountCreationRequest.getSingleTransferLimit(),
+                bankAccountCreationRequest.getDailyTransferLimit(), bankAccountCreationRequest.getBankAccountType(),
+                true, LocalDateTime.now());
+        if (bankAccountCreationRequest.getBankAccountType() == BankAccountType.CHECKING) {
             CheckingStrategy checkingStrategy = new CheckingStrategy();
-       }
+            checkingStrategy.applyBankAccountRules(bankAccount);
+        }
 
-       if(bankAccountCreationRequest.getBankAccountType() == BankAccountType.SAVINGS)
-       {
-           SavingsStrategy savingsStrategy = new SavingsStrategy();
-       }
-       
-       BankAccount bankAccount = new BankAccount();
-
-       bankAccountRepository.save(bankAccount);
-       BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
-       return bankAccountRespnse;
+        if (bankAccountCreationRequest.getBankAccountType() == BankAccountType.SAVINGS) {
+            SavingsStrategy savingsStrategy = new SavingsStrategy();
+            savingsStrategy.applyBankAccountRules(bankAccount);
+        }
+        bankAccountRepository.save(bankAccount);
+        BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
+        return bankAccountRespnse;
     }
 }

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 public class SavingsStrategy implements BankAccountTypeStrategy {
     private static BigDecimal maxSingleTransferLimit; 
-    public void bankAccountRules(BankAccount bankAccount)
+    public void applyBankAccountRules(BankAccount bankAccount)
     {
         bankAccount.setSingleTransferLimit(maxSingleTransferLimit);
     }
