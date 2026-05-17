@@ -16,7 +16,7 @@ import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.repositories.UserRepository;
-import MoneyMachine.services.Interfaces.AuthenticationService;
+import MoneyMachine.services.interfaces.AuthenticationService;
 
 @Component
 public class DataSeeder implements ApplicationRunner {

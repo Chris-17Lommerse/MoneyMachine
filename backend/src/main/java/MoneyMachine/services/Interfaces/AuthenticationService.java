@@ -1,4 +1,4 @@
-package MoneyMachine.services.Interfaces;
+package MoneyMachine.services.interfaces;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 

@@ -15,7 +15,7 @@ import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.repositories.UserRepository;
-import MoneyMachine.services.Interfaces.AuthenticationService;
+import MoneyMachine.services.interfaces.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
