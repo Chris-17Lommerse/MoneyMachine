@@ -20,6 +20,7 @@ import MoneyMachine.services.interfaces.*;
 import MoneyMachine.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -56,12 +57,10 @@ public class UsersController extends BaseController {
     @GetMapping("me")
     public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response, @RequestParam LoginType loginType) throws Exception {
 
-        // User user = this.authenticationService.getLoggedInUserByLoginType(request, response, loginType);
-        // UserResponse userResponse = userMapper.toResponse(user);
-
-        return ResponseEntity.status(200).body(org.springframework.security.core.context.SecurityContextHolder
-                .getContext()
-                .getAuthentication());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserResponse userResponse = userMapper.toResponse(user);
+        
+        return ResponseEntity.status(200).body(userResponse);
     }
 
     @GetMapping()

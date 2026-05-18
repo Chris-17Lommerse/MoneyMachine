@@ -32,10 +32,10 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/login", "/users/register", "/h2-console/**").permitAll()
+                .requestMatchers("/users/login", "/users/register", "/h2-console/**").anonymous()
                 .anyRequest().authenticated()
             )
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
