@@ -17,6 +17,7 @@ import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.services.interfaces.*;
+import MoneyMachine.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -26,18 +27,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UsersController extends BaseController {
 
+    private final JwtUtil jwtUtil;
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("login")
-    public String login(@RequestBody LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
 
         User user = authenticationService.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
@@ -45,11 +48,9 @@ public class UsersController extends BaseController {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
-        //LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
+        LoginResponse loginResponse = new LoginResponse(jwtUtil.generateAuthTokenFromUser(user, loginRequest.getLoginType()));
 
-        //return ResponseEntity.status(201).body(loginResponse);
-
-        throw new Exception("happy");
+        return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")

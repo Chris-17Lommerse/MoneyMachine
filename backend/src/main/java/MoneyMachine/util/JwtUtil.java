@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import MoneyMachine.exception.InvalidAuthTokenException;
 import MoneyMachine.exception.NotAuthorizedException;
+import MoneyMachine.models.User;
 import MoneyMachine.models.enums.LoginType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -26,15 +27,21 @@ public class JwtUtil {
     // - signWith(...) when creating the token
     // - verifyWith(...) when validating/parsing the token
     private final SecretKey authTokenSecretKeyEncoded;
+    private final int AUTH_TOKEN_EXPIRATION_HOURS = 1;
     private final String[] requiredClaims = {"role", "email", "firstName", "lastName", "loginType"};
 
     public JwtUtil(@Value("${AUTH_TOKEN_SECRET_KEY}") String authTokenSecretKey) {
         this.authTokenSecretKeyEncoded = Keys.hmacShaKeyFor(authTokenSecretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username) {
+    public String generateAuthTokenFromUser(User user, LoginType loginType) {
         return Jwts.builder()
-            .subject(username)
+            .subject(user.getId().toString())
+            .claim("role", user.getRole().toString())
+            .claim("email", user.getEmail())
+            .claim("firstName", user.getFirstName())
+            .claim("lastName", user.getLastName())
+            .claim("loginType", loginType.toString())
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
             .signWith(authTokenSecretKeyEncoded)
