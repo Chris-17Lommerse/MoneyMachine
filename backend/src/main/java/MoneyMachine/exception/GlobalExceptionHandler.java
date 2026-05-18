@@ -4,8 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-
 import MoneyMachine.models.enums.ErrorType;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 
@@ -47,13 +45,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         
         ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 500, ErrorType.UNAUTHORIZED, null);
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
-    }
-
-    @ExceptionHandler(JWTDecodeException.class)
-    public ResponseEntity<ErrorResponse> handleJwtDecodeException(JWTDecodeException ex) {
-        
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Failed to decode JWT");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 

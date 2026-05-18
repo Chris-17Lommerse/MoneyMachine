@@ -2,27 +2,22 @@ package MoneyMachine.util;
 
 import org.springframework.stereotype.Component;
 
+import MoneyMachine.exception.InvalidAuthTokenException;
+import MoneyMachine.exception.NotAuthorizedException;
+import MoneyMachine.models.enums.LoginType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Value;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 
-/**
- * JwtUtil is a helper class for:
- * 1) creating JWT tokens
- * 2) reading data (username) back from a JWT token
- * <p>
- * JWT (JSON Web Token) is commonly used in authentication systems.
- * After login, server gives a token to client, and client sends it back
- * on future requests (usually in Authorization header).
- */
 @Component
 public class JwtUtil {
-    // NOTE: In a real application this should come from environment variables
-    // or secure configuration, not hardcoded in source code.
-    private static final String SECRET = "qaehstlGw6MHXMUokFIRHoULiKi5wRP2jsT8K5uLs7Z";
     // Convert the plain text SECRET into a SecretKey object that crypto APIs can use.
     // JWT signing with HS256 uses HMAC (a hash-based message authentication algorithm),
     // which requires raw bytes, not a Java String.
@@ -30,49 +25,88 @@ public class JwtUtil {
     // This same key must be used for BOTH:
     // - signWith(...) when creating the token
     // - verifyWith(...) when validating/parsing the token
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    private final SecretKey authTokenSecretKeyEncoded;
+    private final String[] requiredClaims = {"role", "email", "firstName", "lastName", "loginType"};
 
-    /**
-     * Creates a signed JWT token for a given username.
-     * <p>
-     * Token fields used:
-     * - subject: who the token belongs to (here: username)
-     * - issuedAt: when token was created
-     * - expiration: when token becomes invalid (1 hour from now)
-     * <p>
-     * signWith(SECRET_KEY) cryptographically signs the token so it cannot
-     * be modified by clients without detection.
-     */
+    public JwtUtil(@Value("${AUTH_TOKEN_SECRET_KEY}") String authTokenSecretKey) {
+        this.authTokenSecretKeyEncoded = Keys.hmacShaKeyFor(authTokenSecretKey.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String generateToken(String username) {
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(SECRET_KEY)
-                .compact();
+            .subject(username)
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+            .signWith(authTokenSecretKeyEncoded)
+            .compact();
     }
 
-    /**
-     * Extracts the username (JWT subject) from the token.
-     * <p>
-     * Supports both formats:
-     * - raw token: "eyJhbGciOi..."
-     * - Authorization header value: "Bearer eyJhbGciOi..."
-     * <p>
-     * Steps:
-     * 1) remove "Bearer " prefix if present
-     * 2) verify signature using SECRET_KEY
-     * 3) parse claims payload
-     * 4) return "sub" (subject), which is the username
-     */
+    // @Override
+    // public void validateDecodedAuthToken(DecodedJWT decodedAuthToken, LoginType loginType) {
+
+    //     if (decodedAuthToken.getSubject() == null) {
+    //         throw new InvalidAuthTokenException("Token is missing subject.");
+    //     }
+
+    //     if (decodedAuthToken.getExpiresAt() == null) {
+    //         throw new InvalidAuthTokenException("Token is missing expiration.");
+    //     }
+
+    //     if (decodedAuthToken.getExpiresAt().before(new Date())) {
+    //         throw new InvalidAuthTokenException("Token has expired.");
+    //     }
+
+    //     for (String requiredClaim : requiredClaims) {
+    //         if (isClaimNullOrEmpty(decodedAuthToken.getClaim(requiredClaim))) {
+    //             throw new InvalidAuthTokenException(String.format("Token is missing %s claim.", requiredClaim));
+    //         }
+    //     }
+
+    //     if (LoginType.valueOf(decodedAuthToken.getClaim("loginType").toString().replace("\"", "")) != loginType){
+    //         throw new NotAuthorizedException("You are not logged in into this part of the application.");
+    //     }
+    // }
+
+    // private boolean isClaimNullOrEmpty(Claim claim) {
+    //     return claim == null || claim.isNull() || claim.isMissing() || claim.asString() == null || claim.asString().isBlank();
+    // }
+
     public String extractUsername(String token) {
+        
         String jwt = token != null && token.startsWith("Bearer ") ? token.substring(7) : token;
+        
         return Jwts.parser()
-                .verifyWith(SECRET_KEY)
-                .build()
-                .parseSignedClaims(jwt)
-                .getPayload()
-                .getSubject();
+            .verifyWith(authTokenSecretKeyEncoded)
+            .build()
+            .parseSignedClaims(jwt)
+            .getPayload()
+            .getSubject();
     }
 
+    // public User getLoggedInUserByLoginType(HttpServletRequest request, HttpServletResponse response, LoginType loginType) throws Exception {
+        
+    //     String authHeader = request.getHeader("Authorization");
+
+    //     if (authHeader == null) {
+    //         throw new NotAuthorizedException("Authorization header is required.");
+    //     }
+
+    //     String[] headerParts = authHeader.split(" ");
+
+    //     if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase("bearer")) {
+    //         throw new NotAuthorizedException("Invalid authorization header format.");
+    //     }
+
+    //     String authToken = headerParts[1];
+    //     DecodedJWT decodedAuthToken = getDecodedAuthToken(authToken);
+    //     validateDecodedAuthToken(decodedAuthToken, loginType);
+        
+    //     User user = this.userRepository.findById(Integer.parseInt(decodedAuthToken.getSubject()));
+        
+    //     if (user == null) {
+    //         throw new InvalidAuthTokenException("User in your token does not exist.");
+    //     }
+
+    //     return user;
+    // }
 }

@@ -42,7 +42,7 @@ public class DataSeeder implements ApplicationRunner {
         user.setEmail("user@user.user");
         user.setBsn("123456789");
         user.setPhoneNumber("+31 6 12 34 56 78");
-        user.setRole(Role.USER);
+        user.setRole(Role.ROLE_USER);
         user.setPassword(authenticationService.getHashedPassword("password"));
         user.setIsActive(true);
         user.setIsApproved(true);
@@ -55,7 +55,7 @@ public class DataSeeder implements ApplicationRunner {
         userWithoutBankAccount.setEmail("test@test.test");
         userWithoutBankAccount.setBsn("123456749");
         userWithoutBankAccount.setPhoneNumber("+31 6 12 34 54 78");
-        userWithoutBankAccount.setRole(Role.EMPLOYEE);
+        userWithoutBankAccount.setRole(Role.ROLE_EMPLOYEE);
         userWithoutBankAccount.setPassword(authenticationService.getHashedPassword("test"));
         userWithoutBankAccount.setIsActive(false);
         userWithoutBankAccount.setIsApproved(false);

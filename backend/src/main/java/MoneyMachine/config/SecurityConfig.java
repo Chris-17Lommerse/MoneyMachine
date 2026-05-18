@@ -32,7 +32,7 @@ public class SecurityConfig {
                 // Disabling CSRF protection for simplicity (not recommended for production)
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login", "/auth/register").anonymous()
+                        .requestMatchers("/users/login").anonymous()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

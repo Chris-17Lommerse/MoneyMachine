@@ -37,7 +37,7 @@ public class UsersController extends BaseController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
+    public String login(@RequestBody LoginRequest loginRequest) throws Exception {
 
         User user = authenticationService.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
@@ -45,9 +45,11 @@ public class UsersController extends BaseController {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
-        LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
+        //LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
 
-        return ResponseEntity.status(201).body(loginResponse);
+        //return ResponseEntity.status(201).body(loginResponse);
+
+        throw new Exception("happy");
     }
 
     @GetMapping("me")

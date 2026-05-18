@@ -1,10 +1,7 @@
-package com.example.demo.security;
+package MoneyMachine.security;
 
-import com.example.demo.entity.Review;
-import com.example.demo.entity.User;
-import com.example.demo.repository.ReviewRepository;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+//import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +10,10 @@ import java.io.Serializable;
 @Component
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
-    private final ReviewRepository reviewRepository;
+    //private final ReviewRepository reviewRepository;
 
-    public CustomPermissionEvaluator(ReviewRepository reviewRepository) {
-        this.reviewRepository = reviewRepository;
+    public CustomPermissionEvaluator() {//ReviewRepository reviewRepository) {
+        //this.reviewRepository = reviewRepository;
     }
 
     @Override
@@ -34,38 +31,40 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     // - targetType: the domain type name from the expression (here: "Review").
     // - permission: the action being requested (for example: "update" or "delete").
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        if (authentication == null || targetId == null || targetType == null || permission == null) {
-            return false;
-        }
 
-        if (!(authentication.getPrincipal() instanceof User currentUser)) {
-            return false;
-        }
+        return true;
+        // if (authentication == null || targetId == null || targetType == null || permission == null) {
+        //     return false;
+        // }
 
-        if (isAdmin(authentication)) {
-            return true;
-        }
+        // if (!(authentication.getPrincipal() instanceof User currentUser)) {
+        //     return false;
+        // }
 
-        if (!"review".equalsIgnoreCase(targetType)) {
-            return false;
-        }
+        // if (isAdmin(authentication)) {
+        //     return true;
+        // }
 
-        String permissionName = permission.toString().toLowerCase();
-        if (!"update".equals(permissionName) && !"delete".equals(permissionName)) {
-            return false;
-        }
+        // if (!"review".equalsIgnoreCase(targetType)) {
+        //     return false;
+        // }
 
-        Long reviewId = Long.valueOf(targetId.toString());
-        return reviewRepository.findById(reviewId)
-                .map(Review::getUser)
-                .map(User::getId)
-                .filter(ownerId -> ownerId.equals(currentUser.getId()))
-                .isPresent();
+        // String permissionName = permission.toString().toLowerCase();
+        // if (!"update".equals(permissionName) && !"delete".equals(permissionName)) {
+        //     return false;
+        // }
+
+        // Long reviewId = Long.valueOf(targetId.toString());
+        // return reviewRepository.findById(reviewId)
+        //         .map(Review::getUser)
+        //         .map(User::getId)
+        //         .filter(ownerId -> ownerId.equals(currentUser.getId()))
+        //         .isPresent();
     }
 
-    private boolean isAdmin(Authentication authentication) {
-        return authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch("ROLE_ADMIN"::equals);
-    }
+    // private boolean isAdmin(Authentication authentication) {
+    //     return authentication.getAuthorities().stream()
+    //             .map(GrantedAuthority::getAuthority)
+    //             .anyMatch("ROLE_ADMIN"::equals);
+    // }
 }

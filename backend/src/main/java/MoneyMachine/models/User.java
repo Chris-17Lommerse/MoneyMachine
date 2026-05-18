@@ -1,7 +1,13 @@
 package MoneyMachine.models;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import MoneyMachine.models.enums.Role;
 import jakarta.persistence.Column;
@@ -68,4 +74,8 @@ public class User {
     @Column(nullable = false)
     @NotNull
     private Boolean isApproved;
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 }
