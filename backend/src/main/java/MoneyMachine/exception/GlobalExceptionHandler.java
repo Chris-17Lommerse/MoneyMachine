@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import MoneyMachine.models.enums.ErrorType;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 
 @RestControllerAdvice
@@ -62,10 +64,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 
-    @ExceptionHandler(InvalidAuthTokenException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidAuthTokenExceptions(InvalidAuthTokenException ex) {
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ErrorResponse> handleJwtExceptions(JwtException ex) {
         
         ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Invalid token");
+        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtExceptions(ExpiredJwtException ex) {
+        
+        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Expired token");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
     }
 }

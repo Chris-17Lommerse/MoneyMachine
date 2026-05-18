@@ -2,14 +2,10 @@ package MoneyMachine.util;
 
 import org.springframework.stereotype.Component;
 
-import MoneyMachine.exception.InvalidAuthTokenException;
-import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.LoginType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -48,35 +44,35 @@ public class JwtUtil {
             .compact();
     }
 
-    // @Override
-    // public void validateDecodedAuthToken(DecodedJWT decodedAuthToken, LoginType loginType) {
+    public void validateDecodedAuthToken(Claims decodedAuthToken) {
 
-    //     if (decodedAuthToken.getSubject() == null) {
-    //         throw new InvalidAuthTokenException("Token is missing subject.");
-    //     }
+        if (decodedAuthToken.getSubject() == null) {
+            throw new JwtException("Token is missing subject.");
+        }
 
-    //     if (decodedAuthToken.getExpiresAt() == null) {
-    //         throw new InvalidAuthTokenException("Token is missing expiration.");
-    //     }
+        if (decodedAuthToken.getExpiration() == null) {
+            throw new JwtException("Token is missing expiration.");
+        }
 
-    //     if (decodedAuthToken.getExpiresAt().before(new Date())) {
-    //         throw new InvalidAuthTokenException("Token has expired.");
-    //     }
+        for (String requiredClaim : requiredClaims) {
+            if (isClaimNullOrEmpty(decodedAuthToken.get(requiredClaim))) {
+                throw new JwtException(String.format("Token is missing %s claim.", requiredClaim));
+            }
+        }
+    }
 
-    //     for (String requiredClaim : requiredClaims) {
-    //         if (isClaimNullOrEmpty(decodedAuthToken.getClaim(requiredClaim))) {
-    //             throw new InvalidAuthTokenException(String.format("Token is missing %s claim.", requiredClaim));
-    //         }
-    //     }
+    private boolean isClaimNullOrEmpty(Object claim) {
 
-    //     if (LoginType.valueOf(decodedAuthToken.getClaim("loginType").toString().replace("\"", "")) != loginType){
-    //         throw new NotAuthorizedException("You are not logged in into this part of the application.");
-    //     }
-    // }
+        if (claim == null) {
+            return true;
+        }
 
-    // private boolean isClaimNullOrEmpty(Claim claim) {
-    //     return claim == null || claim.isNull() || claim.isMissing() || claim.asString() == null || claim.asString().isBlank();
-    // }
+        if (claim instanceof String str) {
+            return str.isBlank();
+        }
+
+        return false;
+    }
 
     public Claims getDecodedAuthToken(String authToken) {
         return Jwts.parser()
@@ -85,31 +81,4 @@ public class JwtUtil {
             .parseSignedClaims(authToken)
             .getPayload();
     }
-
-    // public User getLoggedInUserByLoginType(HttpServletRequest request, HttpServletResponse response, LoginType loginType) throws Exception {
-        
-    //     String authHeader = request.getHeader("Authorization");
-
-    //     if (authHeader == null) {
-    //         throw new NotAuthorizedException("Authorization header is required.");
-    //     }
-
-    //     String[] headerParts = authHeader.split(" ");
-
-    //     if (headerParts.length != 2 || !headerParts[0].equalsIgnoreCase("bearer")) {
-    //         throw new NotAuthorizedException("Invalid authorization header format.");
-    //     }
-
-    //     String authToken = headerParts[1];
-    //     DecodedJWT decodedAuthToken = getDecodedAuthToken(authToken);
-    //     validateDecodedAuthToken(decodedAuthToken, loginType);
-        
-    //     User user = this.userRepository.findById(Integer.parseInt(decodedAuthToken.getSubject()));
-        
-    //     if (user == null) {
-    //         throw new InvalidAuthTokenException("User in your token does not exist.");
-    //     }
-
-    //     return user;
-    // }
 }
