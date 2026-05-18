@@ -1,6 +1,15 @@
 <script setup>
+import { RouterLink } from 'vue-router';
+
+const props = defineProps({
+    userId: {
+        type: Number,
+        required: true
+    }
+})
+
 </script>
 
 <template>
-    <a href="" class="btn btn-success">Approve Customer</a>
+    <RouterLink to="/users/:userId/bank-accounts">Approve Custommer</RouterLink>
 </template>

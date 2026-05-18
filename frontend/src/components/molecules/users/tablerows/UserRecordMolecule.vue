@@ -33,6 +33,6 @@ const props = defineProps({
     <EmailDataFieldAtom :user="user" />
     <BSNNumberDataFieldAtom :user="user" />
     <PhoneNumberDataFieldAtom :user="user" />
-    <ApproveCustomerButtonAtom />
+    <ApproveCustomerButtonAtom :user-id="user.userId"/>
     </tr>  
 </template>
