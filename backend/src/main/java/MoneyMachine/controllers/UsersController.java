@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("users")
-public class UsersController extends BaseController {
+public class UsersController {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
@@ -57,7 +57,7 @@ public class UsersController extends BaseController {
     }
 
     @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response, @RequestParam LoginType loginType) throws Exception {
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserResponse userResponse = userMapper.toResponse(user);
