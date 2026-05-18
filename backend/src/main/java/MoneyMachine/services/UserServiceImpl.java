@@ -60,9 +60,10 @@ public class UserServiceImpl implements UserService {
             throw new NotAuthorizedException("User is not allowed to create account");
         }
 
-        user.setIsApproved(true);
         for (BankAccountType bankAccountType : BankAccountType.values()) {
             bankAccountService.createBankAccountForUser(bankAccountType, user);
         }
+
+        user.setIsApproved(true);
     }
 }

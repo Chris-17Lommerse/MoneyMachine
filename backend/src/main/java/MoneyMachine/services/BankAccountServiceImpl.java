@@ -39,8 +39,8 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
 
-        generateIBAN();
-        BankAccount bankAccount = new BankAccount();
+        String iban = generateIBAN();
+        BankAccount bankAccount = new BankAccount(iban, user, 500, 500, 500, 500, bankAccountType, true, LocalDateTime.now());
 
         BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountType);
         strategy.applyBankAccountRules(bankAccount);
