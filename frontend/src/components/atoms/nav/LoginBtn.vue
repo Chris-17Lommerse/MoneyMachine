@@ -1,6 +1,6 @@
 <script setup>
     defineProps({
-        url: { 
+        to: { 
             type: String, 
             required: true 
         },
@@ -12,5 +12,5 @@
 </script>
 
 <template>
-    <a :href="url" class="btn btn-success text-light">{{ text }}</a>
+    <RouterLink :to="to" class="btn btn-success text-light">{{ text }}</RouterLink>
 </template>

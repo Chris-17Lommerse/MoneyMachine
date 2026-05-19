@@ -1,9 +1,16 @@
 <script setup>
     import NavLink from '@/components/atoms/nav/NavLink.vue'
+    import { useAuthStore } from '@/stores/authStore.js'
+    import { computed } from 'vue';
+
+    const authStore = useAuthStore()
+    const atmDecodedAuthToken = computed(() => authStore.atmDecodedAuthToken ?? null)
 </script>
 
 <template>
     <ul class="navbar-nav mr-auto">
-        <NavLink href="/atm/user-test" label="Test your JWT" />
+        <template v-if="atmDecodedAuthToken !== null">
+            <NavLink to="/atm/user-test" text="Test your JWT" /> 
+        </template>
     </ul>
 </template>

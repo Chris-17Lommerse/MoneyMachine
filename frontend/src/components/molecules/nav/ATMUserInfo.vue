@@ -13,9 +13,9 @@
         <div class="nav-link">
             Logged in as: {{ atmDecodedAuthToken.email }}
         </div>
-        <LogoutBtn url="/atm/logout" text="Logout ATM" />
+        <LogoutBtn to="/atm/logout" text="Logout ATM" />
     </div>
     <div v-else class="form-inline my-2 my-lg-0">
-        <LoginBtn url="/atm/login" text="Login ATM" />
+        <LoginBtn to="/atm/login" text="Login ATM" />
     </div>
 </template>
