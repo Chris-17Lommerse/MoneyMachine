@@ -7,5 +7,5 @@ import MoneyMachine.models.BankAccount;
 
 @Repository
 public interface BankAccountRepository extends ListCrudRepository<BankAccount, String> {
-    
+    Iterable<BankAccount> getAll();
 }

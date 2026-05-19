@@ -18,6 +18,8 @@ import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -40,7 +42,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
 
         String iban = generateIBAN();
-        BankAccount bankAccount = new BankAccount(iban, user, 500, 500, 500, 500, bankAccountType, true, LocalDateTime.now());
+        BankAccount bankAccount = new BankAccount();
 
         BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountType);
         strategy.applyBankAccountRules(bankAccount);
@@ -65,6 +67,18 @@ public class BankAccountServiceImpl implements BankAccountService {
         bankAccountRepository.save(bankAccount);
         BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
         return bankAccountRespnse;
+    }
+
+    public List<BankAccountResponse> getAllBankAccounts()
+    {
+        Iterable<BankAccount> bankAccounts = bankAccountRepository.getAll();
+        List<BankAccountResponse> convertedBankAccounts = new ArrayList<BankAccountResponse>();
+
+        for(BankAccount bankAccount: bankAccounts)
+        {
+            convertedBankAccounts.add(bankAccountMapper.toResponse(bankAccount)) 
+        }
+        return convertedBankAccounts;
     }
 
     private String generateIBAN() {
