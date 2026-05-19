@@ -23,11 +23,11 @@ public class AuthorizationService {
         Claims claims = (Claims) SecurityContextHolder.getContext().getAuthentication().getDetails();
         String decodedAuthTokenLoginType = claims.get("loginType", String.class);
 
-        if (loginType == decodedAuthTokenLoginType) {
+        if (loginType.equals(decodedAuthTokenLoginType)) {
             return true;
         }
 
-        return true;
+        return false;
     }
 
     public boolean isAllowedToGetUserById(Long id) {
