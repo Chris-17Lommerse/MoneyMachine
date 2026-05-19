@@ -30,60 +30,51 @@ public class GlobalExceptionHandler {
             );
         }
 
-        System.err.println(String.format("[RUNTIME ERROR] Reason: %s | Code Location: %s", ex.getMessage(), locationInfo));
-
         return locationInfo;
-    }
-
-    private ErrorResponse generateErrorDtoByExceptionAndErrorInfo(Exception ex, int code, ErrorType errorType, String message) {
-        
-        if (message == null){
-            String locationInfo = getLocationOfException(ex);
-            return new ErrorResponse(code, errorType, ex.getMessage(), locationInfo);
-        }
-
-        return new ErrorResponse(code, errorType, message, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 500, ErrorType.UNAUTHORIZED, null);
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        String locationInfo = getLocationOfException(ex);
+        ErrorResponse errorResponse = new ErrorResponse(500, ErrorType.INTERNAL_SERVER_ERROR, ex.getMessage(), locationInfo);
+
+        System.err.println(String.format("[RUNTIME ERROR] Reason: %s | Code Location: %s", ex.getMessage(), locationInfo));
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Invalid credentials");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.UNAUTHORIZED, "Invalid credentials", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(NotAuthorizedException.class)
     public ResponseEntity<ErrorResponse> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED, "Not authorized");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.UNAUTHORIZED, "Not authorized", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedExceptions(AccessDeniedException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 403, ErrorType.FORBIDDEN, "Access denied");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        ErrorResponse errorResponse = new ErrorResponse(403, ErrorType.FORBIDDEN, "Access denied", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtExceptions(JwtException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Invalid token");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.INVALID_AUTH_TOKEN, "Invalid token", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleExpiredJwtExceptions(ExpiredJwtException ex) {
         
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN, "Expired token");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO); 
+        ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.INVALID_AUTH_TOKEN, "Expired token", "Your authentication token has expired.");
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 }
