@@ -8,6 +8,7 @@ import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
 import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 import UsersWithoutBankAccountPage from '@/components/pages/website/UsersWithoutBankAccountPage.vue'
+import CreateBankAccountPage from '../components/pages/website/CreateBankAccountPage.vue'
 
 const routes = [
     {
@@ -45,6 +46,10 @@ const routes = [
     {
         path: '/users', 
         component: UsersWithoutBankAccountPage
+    },
+    {
+        path: '/users/:user_id/bank-accounts',
+        component: CreateBankAccountPage
     },
 ]
 

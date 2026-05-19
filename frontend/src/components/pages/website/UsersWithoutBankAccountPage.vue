@@ -2,6 +2,7 @@
     import UsersTableGridTemplate from '@/components/organisms/UsersTableGrid.vue';
     import { onMounted, ref } from 'vue';
     import axios from '@/utils/axios';
+    import TabMolecule from '@/components/molecules/tabs/TabMolecule.vue';
 
     const loading = ref(true);
     const error = ref(null);
@@ -32,6 +33,7 @@
 </script>
 
 <template>
+    <TabMolecule />
     <section>
         <!-- Loading State -->
         <section v-if="loading" class="min-h-screen flex items-center justify-center">
