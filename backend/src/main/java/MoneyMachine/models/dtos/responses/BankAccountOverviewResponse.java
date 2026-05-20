@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankAccountOverviewResponse implements Serializable {
-    private List<BankAccountResponse> bankAccounts;
+    private List<BankAccountResponse> items;
     private int page;
     private int pageSize;
 }

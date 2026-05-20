@@ -1,6 +1,9 @@
 package MoneyMachine.services;
 
 import MoneyMachine.mappers.BankAccountMapper;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.enums.BankAccountType;
@@ -14,6 +17,7 @@ import MoneyMachine.factories.IbanGenerator;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
 import java.time.LocalDateTime;
@@ -69,16 +73,12 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountRespnse;
     }
 
-    public List<BankAccountResponse> getAllBankAccounts()
+    public BankAccountOverviewResponse getAllBankAccounts(Pageable pageable)
     {
-        Iterable<BankAccount> bankAccounts = bankAccountRepository.findAll();
-        List<BankAccountResponse> convertedBankAccounts = new ArrayList<BankAccountResponse>();
-
-        for(BankAccount bankAccount: bankAccounts)
-        {
-            convertedBankAccounts.add(bankAccountMapper.toResponse(bankAccount)); 
-        }
-        return convertedBankAccounts;
+        Page<BankAccount> page = bankAccountRepository.findAll(pageable);
+        List<BankAccount> bankAccounts = page.getContent();
+        
+        bankAccountMapper.toDTOList(page.getContent());
     }
 
     private String generateIBAN() {

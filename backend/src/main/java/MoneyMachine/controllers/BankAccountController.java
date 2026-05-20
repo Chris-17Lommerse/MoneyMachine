@@ -1,5 +1,6 @@
 package MoneyMachine.controllers;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +31,10 @@ public class BankAccountController extends BaseController {
     }
 
     @GetMapping()
-    public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts() {
-        List<BankAccountResponse> bankAccounts = bankAccountService.getAllBankAccounts();
+    public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts(int page, int pageSize, Pageable pageable) {
+        Pageable bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         BankAccountOverviewResponse bankAccountOverviewResponse = new BankAccountOverviewResponse();
-        bankAccountOverviewResponse.setBankAccounts(bankAccounts);
+        bankAccountOverviewResponse.setItems(bankAccounts);
         return ResponseEntity.ok(bankAccountOverviewResponse);
     }
 }
