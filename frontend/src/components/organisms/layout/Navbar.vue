@@ -1,9 +1,8 @@
 <script setup>
     import NavBrand from '@/components/atoms/nav/NavBrand.vue'
     import NavToggler from '@/components/atoms/nav/NavToggler.vue'
-    import ATMUserInfo from '@/components/molecules/nav/ATMUserInfo.vue';
-    import ATMNavMenu from '@/components/molecules/nav/ATMNavMenu.vue';
-import NavMenu from '../../molecules/nav/NavMenu.vue';
+    import NavMenu from '@/components/molecules/nav/NavMenu.vue'
+    import UserInfo from '@/components/molecules/nav/UserInfo.vue'
 </script>
 
 <template>
@@ -13,7 +12,7 @@ import NavMenu from '../../molecules/nav/NavMenu.vue';
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <NavMenu />
-            <ATMUserInfo />
+            <UserInfo />
         </div>
     </nav>
 </template>

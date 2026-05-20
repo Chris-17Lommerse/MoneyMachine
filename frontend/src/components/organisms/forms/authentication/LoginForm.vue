@@ -25,7 +25,7 @@
 
             const response = await axios.post('/users/login', form)
 
-            authStore.setAtmAuthToken(response.data.accessToken)
+            authStore.setWebsiteAuthToken(response.data.accessToken)
             currentSuccessAlert.value.displaySuccessMessage('Successfully logged in.')
         }
         catch (ex){

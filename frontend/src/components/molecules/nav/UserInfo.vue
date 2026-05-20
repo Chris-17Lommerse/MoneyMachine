@@ -5,17 +5,17 @@
     import LogoutBtn from '@/components/atoms/nav/LogoutBtn.vue';
 
     const authStore = useAuthStore()
-    const atmDecodedAuthToken = computed(() => authStore.atmDecodedAuthToken ?? null)
+    const websiteDecodedAuthToken = computed(() => authStore.websiteDecodedAuthToken ?? null)
 </script>
 
 <template>
-    <div v-if="atmDecodedAuthToken !== null" class="form-inline my-2 my-lg-0">
+    <div v-if="websiteDecodedAuthToken !== null" class="form-inline my-2 my-lg-0">
         <div class="nav-link">
-            Logged in as: {{ atmDecodedAuthToken.email }}
+            Logged in as: {{ websiteDecodedAuthToken.email }}
         </div>
-        <LogoutBtn to="/atm/logout" />
+        <LogoutBtn to="/logout" />
     </div>
     <div v-else class="form-inline my-2 my-lg-0">
-        <LoginBtn to="/atm/login" />
+        <LoginBtn to="/login" />
     </div>
 </template>

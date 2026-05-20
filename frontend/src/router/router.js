@@ -9,9 +9,9 @@ import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
 import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 
-import Login from '@/components/pages/atm/authentication/ATMLogin.vue'
-import UserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
-import Logout from '@/components/pages/atm/authentication/ATMLogout.vue'
+import Login from '@/components/pages/website/authentication/Login.vue'
+import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'
+import Logout from '@/components/pages/website/authentication/Logout.vue'
 
 import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'

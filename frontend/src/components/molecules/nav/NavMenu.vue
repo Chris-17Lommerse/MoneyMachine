@@ -4,12 +4,12 @@
     import { computed } from 'vue';
 
     const authStore = useAuthStore()
-    const atmDecodedAuthToken = computed(() => authStore.atmDecodedAuthToken ?? null)
+    const websiteDecodedAuthToken = computed(() => authStore.websiteDecodedAuthToken ?? null)
 </script>
 
 <template>
     <ul class="navbar-nav mr-auto">
-        <template v-if="atmDecodedAuthToken !== null">
+        <template v-if="websiteDecodedAuthToken !== null">
             <NavLink to="/user-test" text="Test your JWT" />
             <NavLink to="/employee-test" text="Test your employee rights" />  
         </template>
