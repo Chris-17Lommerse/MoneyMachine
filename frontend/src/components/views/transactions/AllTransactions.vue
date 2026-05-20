@@ -1,21 +1,42 @@
 <script setup>
-import axios from '@/utils/axios.js';
+import apiClient from '@/utils/axios.js';
 import { ref, onMounted } from 'vue';
 const transactions = ref([])
 onMounted(async () => {
-try {
-    console.log(import.meta.env.VITE_API_URL)
-    const result = await axios.get("/api/transactions")
-    transactions.value = result.data
-} catch (error) {
-    console.log(error)
-}
+    try {
+
+        const response = await apiClient.get("/api/transactions")
+
+         console.log("RESPONSE:", response)
+
+        if (response.status === 200) {
+
+            transactions.value = response.data
+
+
+        }
+
+    }catch (error) {
+    console.log("FULL ERROR OBJECT:", error)
+
+    console.log("RESPONSE:", error.response)
+    console.log("DATA:", error.response?.data)
+
+    console.log("MESSAGE:", error.response?.data?.message)
+    console.log("TYPE:", error.response?.data?.errorType)
+    console.log("CODE:", error.response?.data?.code)
+    console.log("LOCATION:", error.response?.data?.location)
+
+    console.log("STRINGIFIED:", JSON.stringify(error.response?.data))
+   
+
+    }
 })
 
 </script>
 
 <template>
-  <div class="text-center">
+    <div class="text-center">
     <h1 class="display-4">All Transactions</h1>
     <router-link to="/transactions/create" class="btn btn-primary mb-3">add transaction</router-link>
 
@@ -27,22 +48,20 @@ try {
                 <th> amount </th>
                 <th> time </th>
                 <th> type </th>
-                <th> iniciated by </th>
+                <th> initiated by </th>
                 <th> message </th>
             </tr>
         </thead>
         <tbody>
-            <div v-for="transaction in transactions" :key="transaction.Id">
-                <tr>
-                    <td>{{ transaction.FromAccount }}</td>
-                    <td> {{ transaction.ToAccount }}</td>
-                    <td> {{ transaction.Amount }}</td>
-                    <td> {{ transaction.Time }}</td>
-                    <td> {{ transaction.Type }}</td>
-                    <td> {{ transaction.IniciatedBy }}</td>
-                    <td> {{ transaction.Message }}</td>
-                </tr>
-            </div>
+            <tr  v-for="transaction in transactions" :key="transaction.transactionId">
+                <td>{{ transaction.fromAccount }}</td>
+                <td> {{ transaction.toAccount }}</td>
+                <td>€ {{ transaction.amount }}</td>
+                <td> {{ transaction.time }}</td>
+                <td> {{ transaction.type }}</td>
+                <td> {{ transaction.initiatedBy }}</td>
+                <td> {{ transaction.message }}</td>
+            </tr>
         </tbody>
     </table>
 </div>

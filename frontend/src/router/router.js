@@ -1,17 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import ATMLogout from '@/components/views/atm/authentication/ATMLogout.vue'
+import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 import AllTransactions from '@/components/views/transactions/allTransactions.vue'
 import Transaction from '@/components/views/transactions/transaction.vue'
-import CreateTransaction from '@/components/views/transactions/createTransaction.vue'
+import CreateTransaction from '@/components/views/transactions/CreateTransaction.vue'
 import TransactionLayout from '@/components/layout/transactionLayout.vue'
 
 import ATMLayout from '@/components/layout/ATMLayout.vue'
 
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
-import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 import UsersWithoutBankAccountPage from '@/components/pages/website/UsersWithoutBankAccountPage.vue'
 
 const routes = [
@@ -77,6 +76,7 @@ const routes = [
     {
         path: '/users', 
         component: UsersWithoutBankAccountPage
+
     },
 ]
 

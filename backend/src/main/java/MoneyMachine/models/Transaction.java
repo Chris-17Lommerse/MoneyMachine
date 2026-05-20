@@ -1,7 +1,7 @@
 package MoneyMachine.models;
 
 import java.math.BigDecimal;
-
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,4 +45,8 @@ public class Transaction {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
+
+     @Column(nullable = false)
+    @NotNull
+    private LocalDateTime dateTime;
 }

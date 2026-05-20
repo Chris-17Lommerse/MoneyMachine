@@ -1,6 +1,7 @@
 package MoneyMachine;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -80,6 +81,7 @@ public class DataSeeder implements ApplicationRunner {
         depositTransaction.setMessage("Hello deposit!");
         depositTransaction.setIsActive(true);
         depositTransaction.setToBankAccount(bankAccount);
+        depositTransaction.setDateTime(LocalDateTime.now());
 
         transactionRepository.save(depositTransaction);
 
@@ -89,6 +91,7 @@ public class DataSeeder implements ApplicationRunner {
         withdrawTransaction.setMessage("Hello withdraw!");
         withdrawTransaction.setIsActive(true);
         withdrawTransaction.setFromBankAccount(bankAccount);
+        withdrawTransaction.setDateTime(LocalDateTime.now());
 
         transactionRepository.save(withdrawTransaction);
 
@@ -99,6 +102,7 @@ public class DataSeeder implements ApplicationRunner {
         transferTransaction.setIsActive(true);
         transferTransaction.setFromBankAccount(bankAccount);
         transferTransaction.setToBankAccount(bankAccount);
+        transferTransaction.setDateTime(LocalDateTime.now());
 
         transactionRepository.save(transferTransaction);
     }
