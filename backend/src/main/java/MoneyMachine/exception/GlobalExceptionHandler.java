@@ -1,12 +1,14 @@
 package MoneyMachine.exception;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-
 import MoneyMachine.models.enums.ErrorType;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 
 @RestControllerAdvice
@@ -51,14 +53,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
     }
 
-    @ExceptionHandler(JWTDecodeException.class)
-    public ResponseEntity<ErrorResponse> handleJwtDecodeException(JWTDecodeException ex) {
-
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN,
-                "Failed to decode JWT");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
-    }
-
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentialsException(InvalidCredentialsException ex) {
 
@@ -72,14 +66,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.UNAUTHORIZED,
                 "Not authorized");
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
-    }
-
-    @ExceptionHandler(InvalidAuthTokenException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidAuthTokenExceptions(InvalidAuthTokenException ex) {
-
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 401, ErrorType.INVALID_AUTH_TOKEN,
-                "Invalid token");
         return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
     }
 

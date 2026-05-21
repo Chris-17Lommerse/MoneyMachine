@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import MoneyMachine.models.*;
 import MoneyMachine.models.dtos.responses.UserResponse;
+import MoneyMachine.models.dtos.responses.UserSummaryResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +14,18 @@ public class UserMapper {
 
     public UserResponse toResponse(User user) {
 
-        UserResponse response = new UserResponse();
-        response.setUserId(user.getId());
-        response.setFirstName(user.getFirstName());
-        response.setLastName(user.getLastName());
-        response.setEmail(user.getEmail());
-        response.setBsn(user.getBsn());
-        response.setPhoneNumber(user.getPhoneNumber());
-        response.setRole(user.getRole());
-        response.setActive(user.getIsActive());
-        response.setApproved(user.getIsApproved());
+        UserResponse userResponse = new UserResponse();
+        userResponse.setUserId(user.getId());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setBsn(user.getBsn());
+        userResponse.setPhoneNumber(user.getPhoneNumber());
+        userResponse.setRole(user.getRole());
+        userResponse.setActive(user.getIsActive());
+        userResponse.setApproved(user.getIsApproved());
 
-        return response;
+        return userResponse;
     }
 
     public User toEntity(UserResponse response) {
@@ -41,6 +42,17 @@ public class UserMapper {
         user.setIsApproved(response.isApproved());
 
         return user;
+    }
+
+    public UserSummaryResponse toSummaryResponse(User user) {
+
+        UserSummaryResponse userSummaryResponse = new UserSummaryResponse();
+        userSummaryResponse.setId(user.getId());
+        userSummaryResponse.setFirstName(user.getFirstName());
+        userSummaryResponse.setLastName(user.getLastName());
+        userSummaryResponse.setEmail(user.getEmail());
+
+        return userSummaryResponse;
     }
 
     public List<UserResponse> toDTOList(List<User> userList) {
