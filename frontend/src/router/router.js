@@ -5,6 +5,8 @@ import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
 import ATMLayout from '@/components/layout/ATMLayout.vue'
 import WebsiteLayout from '@/components/layout/WebsiteLayout.vue'
 
+import NotFound from '@/components/pages/website/NotFound.vue'
+
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
 import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
@@ -94,9 +96,13 @@ const routes = [
                     isWebsiteAuthenticated: true,
                     roles: ['EMPLOYEE']
                 }
+            },
+            {
+                path: '/:pathMatch(.*)*',
+                component: NotFound
             }
         ]
-    }
+    },
 ]
 
 const router = createRouter({
