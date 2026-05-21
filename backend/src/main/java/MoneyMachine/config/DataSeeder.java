@@ -37,8 +37,8 @@ public class DataSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
 
         User user = new User();
-        user.setFirstName("testFirstName");
-        user.setLastName("testLastName");
+        user.setFirstName("userFirstName");
+        user.setLastName("userLastName");
         user.setEmail("user@user.user");
         user.setBsn("123456789");
         user.setPhoneNumber("+31 6 12 34 56 78");
@@ -50,13 +50,13 @@ public class DataSeeder implements ApplicationRunner {
         userRepository.save(user);
 
         User userWithoutBankAccount = new User();
-        userWithoutBankAccount.setFirstName("test");
-        userWithoutBankAccount.setLastName("test");
-        userWithoutBankAccount.setEmail("test@test.test");
+        userWithoutBankAccount.setFirstName("employeeFirstName");
+        userWithoutBankAccount.setLastName("employeeLastName");
+        userWithoutBankAccount.setEmail("employee@employee.employee");
         userWithoutBankAccount.setBsn("123456749");
         userWithoutBankAccount.setPhoneNumber("+31 6 12 34 54 78");
         userWithoutBankAccount.setRole(Role.EMPLOYEE);
-        userWithoutBankAccount.setPassword(authenticationService.getHashedPassword("test"));
+        userWithoutBankAccount.setPassword(authenticationService.getHashedPassword("password"));
         userWithoutBankAccount.setIsActive(false);
         userWithoutBankAccount.setIsApproved(false);
 

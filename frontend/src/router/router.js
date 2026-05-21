@@ -36,7 +36,8 @@ const routes = [
                 path: 'logout', 
                 component: ATMLogout, 
                 meta: { 
-                    title: 'Logout'
+                    title: 'Logout',
+                    isAtmAuthenticated: true
                 }
             },
             { 
@@ -55,23 +56,44 @@ const routes = [
         children: [
             {
                 path: '/users', 
-                component: UsersWithoutBankAccountPage
+                component: UsersWithoutBankAccountPage,
+                meta: { 
+                    title: 'Users',
+                    isWebsiteAuthenticated: true
+                }
             },
             {
                 path: '/login', 
-                component: Login
+                component: Login,
+                meta: { 
+                    title: 'Users',
+                }
             },
             {
                 path: '/logout', 
-                component: Logout
+                component: Logout,
+                meta: { 
+                    title: 'Users',
+                    isWebsiteAuthenticated: true
+                }
             },
             {
                 path: '/user-test', 
-                component: UserAuthorizationTest
+                component: UserAuthorizationTest,
+                meta: { 
+                    title: 'User test',
+                    isWebsiteAuthenticated: true
+                }
+
             },
             {
                 path: '/employee-test', 
-                component: EmployeeAuthorizationTest
+                component: EmployeeAuthorizationTest,
+                meta: { 
+                    title: 'Employee test',
+                    isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
+                }
             }
         ]
     }
@@ -88,8 +110,35 @@ router.beforeEach((to) => {
     const errorHandlingStore = useErrorHandlingStore()
 
     if (to.meta.isAtmAuthenticated && authStore.atmDecodedAuthToken === null) {
-        errorHandlingStore.setErrorMessage('You need to be logged in to perform this action.')
+        errorHandlingStore.setErrorMessage('You need to be logged in into the ATM to perform this action.')
         return '/atm/login'
+    }
+
+    if (to.meta.isWebsiteAuthenticated) {
+
+        const websiteDecodedAuthToken = authStore.websiteDecodedAuthToken
+
+        if (websiteDecodedAuthToken === null) {
+            errorHandlingStore.setErrorMessage('You need to be logged in to perform this action.')
+            return '/login'
+        }
+
+        if (to.meta.roles) {
+
+            let isAuthorized = false
+
+            for (const role of to.meta.roles) {
+                if (websiteDecodedAuthToken.role === role){
+                    isAuthorized = true
+                    break
+                }
+            }
+
+            if (isAuthorized === false) {
+                errorHandlingStore.setErrorMessage(`Your account doesn't have the right role to perform this action.`)
+                return '/login'
+            }
+        }
     }
     
     if (to.meta.title) {
