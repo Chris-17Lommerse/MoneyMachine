@@ -21,7 +21,7 @@ import EmployeeAuthorizationTest from '@/components/pages/website/authentication
 const routes = [
     {
         path: '/',
-        redirect: '/atm/login'
+        redirect: '/login'
     },
     {
         path: '/atm',
