@@ -12,21 +12,6 @@ import FirstNameDataFieldAtom from '../../../atoms/users/textelements/datafields
 import LastNameDataFieldAtom from '../../../atoms/users/textelements/datafields/LastNameDataFieldAtom.vue';
 import PhoneNumberDataFieldAtom from '../../../atoms/users/textelements/datafields/PhoneNumberDataFieldAtom.vue';
 const props = defineProps({
-    user: {
-        type: Object,
-        required: true,
-        validator: (value) => {
-            return typeof value.userId === 'number' &&
-                typeof value.firstName === 'string' &&
-                typeof value.lastName === 'string' &&
-                typeof value.email === 'string' &&
-                typeof value.bsn === 'string' &&
-                typeof value.phoneNumber === 'string' &&
-                typeof value.role === 'string' &&
-                typeof value.isActive === 'boolean' &&
-                typeof value.isApproved === 'boolean'
-        }
-    },
     bankAccount: {
         type: Object,
         required: true,
@@ -46,11 +31,6 @@ const props = defineProps({
 
 <template>
     <tr class="tabe table-dark">
-        <FirstNameDataFieldAtom :user="user" />
-        <LastNameDataFieldAtom :user="user" />
-        <EmailDataFieldAtom :user="user" />
-        <BSNNumberDataFieldAtom :user="user" />
-        <PhoneNumberDataFieldAtom :user="user" />
         <IBANNumberDataFieldAtom :bank-account="bankAccount" />
         <BankAccountTypeDataFieldAtom :bank-account="bankAccount" />
         <BalanceDataFieldAtom :bank-account="bankAccount" />

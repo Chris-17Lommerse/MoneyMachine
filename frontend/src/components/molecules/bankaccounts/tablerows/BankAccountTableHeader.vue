@@ -17,11 +17,6 @@ import IsActiveTableHeaderAtom from '../../../atoms/bankaccounts/textelements/ta
 
 <template>
     <tr class="table table-light">
-        <FirstNameTableHeaderAtom />
-        <LastNameTableHeaderAtom />
-        <EmailTableHeaderAtom />
-        <BSNNumberTableHeaderAtom />
-        <PhoneNumberTableHeaderAtom />
         <IBANNumberTableHeaderAtom />
         <BankAccountTypeTableHeaderAtom />
         <BalanceTableHeaderAtom />
