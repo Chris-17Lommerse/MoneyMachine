@@ -4,12 +4,11 @@
     import { useAuthStore } from "@/stores/authStore.js"
 
     const authStore = useAuthStore();
-    const user = ref('')
+    const response = ref('')
 
     onMounted(async () => {
         try {
-            const response = await axios.get('/users/me')
-            user.value = response.data
+            response.value = await axios.get('/users/employee-test')
         }
         catch (ex){
             if (ex.response){
@@ -20,12 +19,8 @@
 </script>
 
 <template>
-    <strong>Logged in user returned from backend</strong>
+    <strong>Response from backend:</strong>
     <br>
-    {{ JSON.stringify(user, null, 2) }}
+    {{ response.data }}
     <br>
-    <br>
-    <strong>Decoded JWT from frontend cached in authStore</strong> 
-    <br>
-    {{ JSON.stringify(authStore.atmDecodedAuthToken, null, 2) }}
 </template>

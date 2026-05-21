@@ -3,7 +3,7 @@
     import axios from "@/utils/axios.js"
     import { useAuthStore } from "@/stores/authStore.js"
 
-    const authStore = useAuthStore();
+    const authStore = useAuthStore()
     const user = ref('')
 
     onMounted(async () => {
@@ -27,5 +27,5 @@
     <br>
     <strong>Decoded JWT from frontend cached in authStore</strong> 
     <br>
-    {{ JSON.stringify(authStore.atmDecodedAuthToken, null, 2) }}
+    {{ JSON.stringify(authStore.websiteDecodedAuthToken, null, 2) }}
 </template>

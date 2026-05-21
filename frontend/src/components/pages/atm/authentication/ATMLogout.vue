@@ -8,10 +8,10 @@
 
     if (authStore.atmAuthToken !== null) {
         authStore.setAtmAuthToken(null)
-        errorHandlingStore.setSuccessMessage("Successfully logged out of your account.")
+        errorHandlingStore.successMessage = "Successfully logged out of your account."
     }
     else {
-        errorHandlingStore.setErrorMessage("You already are logged out.")
+        errorHandlingStore.errorMessage = "You already are logged out."
     }
 
     router.push('/atm/login')
