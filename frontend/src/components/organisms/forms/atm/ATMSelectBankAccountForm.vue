@@ -3,6 +3,7 @@
     import { useErrorHandlingStore } from '@/stores/errorHandlingStore.js'
     import { useAuthStore } from '@/stores/authStore.js'
     import axios from '@/utils/axios.js'
+    import router from '@/router/router.js'
 
     import FormLabel from '@/components/atoms/forms/FormLabel.vue'
     import SubmitBtn from '@/components/atoms/buttons/SubmitBtn.vue'
@@ -18,7 +19,12 @@
     function handleSelectBankAccount(e) {
         try {
             e.preventDefault()
-            console.log(selectedBankAccountIban.value)
+
+            if (!selectedBankAccountIban.value || selectedBankAccountIban.value.trim() === '') {
+                throw new Error('Selected option must be a valid bank account iban.')
+            }
+            
+            router.push('/atm/bank-account/' + selectedBankAccountIban.value)
         }
         catch (ex){
             errorHandlingStore.errorMessage = ex.message   
