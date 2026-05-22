@@ -1,7 +1,8 @@
 <script setup>
-console.log("🔥 THIS IS THE FORM COMPONENT")
 import axios from '@/utils/axios.js'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 const transaction = ref({
   fromAccount: "",
@@ -14,6 +15,7 @@ const transaction = ref({
 const createTransaction = async () => {
   try {
     await axios.post("/api/transactions", transaction.value)
+    router.push("/transactions") 
   }catch (error) {
     console.log("FULL ERROR OBJECT:", error)
 
@@ -33,6 +35,7 @@ const createTransaction = async () => {
 </script>
                 
 <template>
+  <router-link to="/transactions" class="btn btn-primary mb-3">terug</router-link>
   <form @submit.prevent="createTransaction">
     <div class="mb-3">
       <label for="fromAccount" class="form-label">From Account</label>
@@ -54,7 +57,7 @@ const createTransaction = async () => {
       <label for="initiatedBy" class="form-label">Initiated By</label>
       <input v-model="transaction.initiatedBy" type="text" class="form-control" id="initiatedBy" name="initiatedBy">
     </div>
-    <button @click="createTransaction" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">create</button>
 
   </form>
  

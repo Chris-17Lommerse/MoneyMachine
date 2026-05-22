@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -33,10 +34,10 @@ public class DataSeeder implements ApplicationRunner {
         this.bankAccountRepository = bankAccountRepository;
         this.authenticationService = authenticationService;
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
+        
         User user = new User();
         user.setFirstName("testFirstName");
         user.setLastName("testLastName");

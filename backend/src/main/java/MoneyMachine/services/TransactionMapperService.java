@@ -69,38 +69,26 @@ public class TransactionMapperService {
     public TransferTransaction toTransferEntity( TransferRequest transfer) {
        
         TransferTransaction t= mapper.toTransferEntity(transfer);
-        User user = userRepository.findById(transfer.getInitiatedBy());
-        if (user == null) 
-        {
-            throw new RuntimeException("User not found");
-        } 
+        User user =userRepository.findById(transfer.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setDateTime(java.time.LocalDateTime.now());
+        t.setIsActive(true);
         return t;
 
     }
     public WithdrawTransaction toWithdrawEntity( WithdrawRequest withdraw) {
        
         WithdrawTransaction t= mapper.toWithdrawEntity(withdraw);
-        User user = userRepository.findById(withdraw.getInitiatedBy());
-        if (user == null) 
-        {
-            throw new RuntimeException("User not found");
-        } 
+        User user =userRepository.findById(withdraw.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setDateTime(java.time.LocalDateTime.now());
+        t.setIsActive(true);
         return t;
     }
     public DepositTransaction toDepositEntity( DepositRequest deposit) {
        
         DepositTransaction t= mapper.toDepositEntity(deposit);
-         User user = userRepository.findById(deposit.getInitiatedBy());
-        if (user == null) 
-        {
-            throw new RuntimeException("User not found");
-        } 
+         User user =userRepository.findById(deposit.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setDateTime(java.time.LocalDateTime.now());
+        t.setIsActive(true);
         return t;
     }
     

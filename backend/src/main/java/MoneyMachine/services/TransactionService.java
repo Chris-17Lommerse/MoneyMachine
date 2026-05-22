@@ -54,7 +54,7 @@ public class TransactionService {
     }
    @Transactional(rollbackFor = Exception.class)
     public TransactionResponse createTransfer(TransferRequest transaction)
-    {  
+    { 
       BankAccount fromAccount = bankAccountRepository.findById(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
         validateTransfer(transaction, fromAccount);
         
@@ -63,8 +63,8 @@ public class TransactionService {
 
         bankAccountRepository.pay(transaction.getFromAccount(), transaction.getAmount());
         bankAccountRepository.receive(transaction.getToAccount(), transaction.getAmount());
-       TransferTransaction saved = transactionRepository.save(transferTransaction);
-       return mapper.toResponse(saved);
+        TransferTransaction saved = transactionRepository.save(transferTransaction);
+        return mapper.toResponse(saved);
     }  
     private void validateTransfer(TransferRequest transaction, BankAccount fromAccount) {
         validateSufficientBalance(fromAccount, transaction.getAmount());

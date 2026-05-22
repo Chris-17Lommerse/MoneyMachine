@@ -32,6 +32,20 @@ onMounted(async () => {
 
     }
 })
+function formatDateTime(dateString) {
+    if (!dateString) return ""
+
+    const date = new Date(dateString)
+
+    return date.toLocaleString("nl-NL", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    })
+}
 
 </script>
 
@@ -57,7 +71,7 @@ onMounted(async () => {
                 <td>{{ transaction.fromAccount }}</td>
                 <td> {{ transaction.toAccount }}</td>
                 <td>€ {{ transaction.amount }}</td>
-                <td> {{ transaction.time }}</td>
+               <td>{{ formatDateTime(transaction.time) }}</td>
                 <td> {{ transaction.type }}</td>
                 <td> {{ transaction.initiatedBy }}</td>
                 <td> {{ transaction.message }}</td>

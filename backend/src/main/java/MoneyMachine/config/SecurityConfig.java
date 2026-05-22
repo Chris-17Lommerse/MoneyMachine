@@ -53,6 +53,7 @@ public class SecurityConfig {
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/login", "/users/register", "/h2-console/**").anonymous()
+                .requestMatchers("/api/transactions/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -21,7 +21,7 @@ public class WithdrawRequest {
     @NotNull
     private String type;
     @NotNull
-    private int initiatedBy;
+    private long initiatedBy;
     @NotNull
     private String message;
 

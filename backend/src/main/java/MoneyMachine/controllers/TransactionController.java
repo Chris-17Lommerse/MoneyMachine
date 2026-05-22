@@ -10,7 +10,7 @@ import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.services.TransactionService;
 
 @RestController
-public class TransactionController extends BaseController {
+public class TransactionController {
     private TransactionService transactionService;
     
     public TransactionController(TransactionService transactionService) {
@@ -29,7 +29,7 @@ public class TransactionController extends BaseController {
     }
 
     @PostMapping("/api/transactions")
-    public ResponseEntity<?> createTRansfer(@RequestBody TransferRequest transaction) {
+    public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) {
        
        return ResponseEntity.ok(transactionService.createTransfer(transaction));
     }
