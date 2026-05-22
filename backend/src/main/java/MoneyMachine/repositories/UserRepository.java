@@ -7,6 +7,6 @@ import MoneyMachine.models.User;
 
 @Repository
 public interface UserRepository extends ListCrudRepository<User, Long> {
-    User findByEmail(String username);
+    User findByEmail(String email);
     Iterable<User> findByBankAccountsIsEmpty();
 }
