@@ -10,30 +10,35 @@ import org.springframework.web.client.HttpServerErrorException.InternalServerErr
 import MoneyMachine.exception.InvalidCredentialsException;
 import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
-import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.dtos.requests.LoginRequest;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.services.interfaces.*;
+import MoneyMachine.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("users")
-public class UsersController extends BaseController {
+public class UsersController {
 
+    private final JwtUtil jwtUtil;
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper,
+            JwtUtil jwtUtil) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("login")
@@ -46,18 +51,34 @@ public class UsersController extends BaseController {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
-        LoginResponse loginResponse = new LoginResponse(authenticationService.generateAuthTokenFromUserAndLoginType(user, loginRequest.getLoginType()));
+        String authToken = jwtUtil.generateAuthTokenFromUser(user, loginRequest.getLoginType());
+
+        LoginResponse loginResponse = new LoginResponse(authToken, "Bearer", jwtUtil.getAuthTokenExpirationTime(),
+                userMapper.toSummaryResponse(user));
 
         return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response, @RequestParam LoginType loginType) throws Exception {
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
-        User user = this.authenticationService.getLoggedInUserByLoginType(request, response, loginType);
+        User user = authenticationService.getLoggedInUser();
         UserResponse userResponse = userMapper.toResponse(user);
 
         return ResponseEntity.status(200).body(userResponse);
+    }
+
+    @GetMapping("employee-test")
+    @PreAuthorize("hasRole('USER') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<String> employeeTest() {
+        return ResponseEntity.status(200).body("Yes yo have employee powers");
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("@authorizationService.isAllowedToGetUserById(#id)")
+    public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
+        return ResponseEntity.status(200).body("You are allowed to get this user");
     }
 
     @GetMapping()
