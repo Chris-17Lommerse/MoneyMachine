@@ -2,6 +2,9 @@ package MoneyMachine.factories;
 
 import java.util.Random;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class IbanGenerator {
     public String generateIBAN()
     {

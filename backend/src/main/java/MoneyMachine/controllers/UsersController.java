@@ -82,7 +82,7 @@ public class UsersController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    // @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
         try {
             List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();

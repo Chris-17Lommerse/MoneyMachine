@@ -9,7 +9,9 @@ import MoneyMachine.strategies.SavingsStrategy;
 import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class BankAccountTypeFactory {
     private final Map<BankAccountType, BankAccountTypeStrategy> strategies = new HashMap<>();
     
