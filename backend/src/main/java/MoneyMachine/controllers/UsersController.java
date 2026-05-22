@@ -8,9 +8,12 @@ import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 import MoneyMachine.exception.InvalidCredentialsException;
+import MoneyMachine.mappers.BankAccountMapper;
 import MoneyMachine.mappers.UserMapper;
+import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.LoginRequest;
+import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
@@ -28,16 +31,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UsersController {
 
-    private final JwtUtil jwtUtil;
     private final UserService userService;
     private final AuthenticationService authenticationService;
+    private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
+    private final BankAccountService bankAccountService;
+    private final BankAccountMapper bankAccountMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil, BankAccountService bankAccountService, BankAccountMapper bankAccountMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
         this.jwtUtil = jwtUtil;
+        this.bankAccountService = bankAccountService;
+        this.bankAccountMapper = bankAccountMapper;
     }
 
     @PostMapping("login")
@@ -65,14 +72,23 @@ public class UsersController {
         return ResponseEntity.status(200).body(userResponse);
     }
 
+    @GetMapping("{id}/bank-accounts")
+    @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
+    public ResponseEntity<List<BankAccountResponse>> getBankAccountsByUserId(@PathVariable Long id) throws Exception {
+
+        List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(id);
+        
+        return ResponseEntity.status(200).body(bankAccountMapper.toDTOList(bankAccounts));
+    }
+
     @GetMapping("employee-test")
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<String> employeeTest() {
         return ResponseEntity.status(200).body("You have the employee super powers that can power every power in the power universe and are website logged in.");
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("@authorizationService.isAllowedToGetUserById(#id)")
+    @GetMapping("{id}")
+    @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
     public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
         return ResponseEntity.status(200).body("This is a test involving authorization based on conditionals put in @PreAuthorize and AuthorizationService.java.");
     }
