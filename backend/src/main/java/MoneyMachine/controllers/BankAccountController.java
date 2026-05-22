@@ -22,7 +22,6 @@ public class BankAccountController {
     }
 
     @PostMapping()
-    // @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<BankAccountResponse> createBankAccount(
             @RequestBody BankAccountCreationRequest bankAccountCreationRequest) throws Exception {
         BankAccountResponse bankAccountResponse = bankAccountService
@@ -31,7 +30,6 @@ public class BankAccountController {
     }
 
     @GetMapping()
-    // @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts(Pageable pageable) {
         BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         return ResponseEntity.ok(bankAccounts);
