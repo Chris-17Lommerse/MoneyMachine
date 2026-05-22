@@ -8,6 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
+  <td>
   <RouterLink
     :to="{
       path: `/users/${userId}/bank-accounts`
@@ -15,4 +16,5 @@ const props = defineProps({
   >
     Approve Customer
   </RouterLink>
+  </td>
 </template>

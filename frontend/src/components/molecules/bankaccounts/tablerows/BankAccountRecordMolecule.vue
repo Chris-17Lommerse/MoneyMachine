@@ -1,4 +1,8 @@
 <script setup>
+import CloseBankAccountButtonAtom from '../../../atoms/bankaccounts/buttons/CloseBankAccountButtonAtom.vue';
+import TransferMoneyButtonAtom from '../../../atoms/bankaccounts/buttons/TransferMoneyButtonAtom.vue';
+import UpdateTransferLimitsButtonAtom from '../../../atoms/bankaccounts/buttons/UpdateTransferLimitsButtonAtom.vue';
+import ViewTransactionHistoryButtonAtom from '../../../atoms/bankaccounts/buttons/ViewTransactionHistoryButtonAtom.vue';
 import AbsoluteLimitDataFieldAtom from '../../../atoms/bankaccounts/textelements/datafields/AbsoluteLimitDataFieldAtom.vue';
 import BalanceDataFieldAtom from '../../../atoms/bankaccounts/textelements/datafields/BalanceDataFieldAtom.vue';
 import BankAccountTypeDataFieldAtom from '../../../atoms/bankaccounts/textelements/datafields/BankAccountTypeDataFieldAtom.vue';
@@ -38,5 +42,11 @@ const props = defineProps({
         <DailyTransferLimitDataFieldAtom :bank-account="bankAccount" />
         <SingleTransferLimitDataFieldAtom :bank-account="bankAccount" />
         <IsActiveDataFieldAtom :bank-account="bankAccount" />
+        <td class="flex flex-column">
+            <CloseBankAccountButtonAtom />
+            <UpdateTransferLimitsButtonAtom />
+            <ViewTransactionHistoryButtonAtom />
+            <TransferMoneyButtonAtom />
+        </td>
     </tr>
 </template>
