@@ -14,7 +14,7 @@ import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
         error.value = null;
         try {
             const result = await axios.get("/bank-accounts");
-            usersWithBankAccounts.value = result.data.users;
+            usersWithBankAccounts.value = result.data.items;
             console.log(result.data);
         }
         catch (err) {
@@ -57,6 +57,6 @@ import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
                 Try Again
             </button>
         </section>
-        <BankAccountsTableGrid v-else :bankccounts="usersWithoutBankAccounts" />
+        <BankAccountsTableGrid v-else :bankAccounts="usersWithBankAccounts" />
     </section>
 </template>
