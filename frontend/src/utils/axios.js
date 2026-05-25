@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore.js'
 import { useErrorHandlingStore } from '@/stores/errorHandlingStore'
 import router from '@/router/router.js'
@@ -8,7 +8,7 @@ const apiClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-});
+})
 
 apiClient.interceptors.request.use(
     (config) => {
@@ -18,22 +18,22 @@ apiClient.interceptors.request.use(
         let authToken = null
 
         if (currentPath.startsWith('/atm')) {
-            authToken = authStore.atmAuthToken;
+            authToken = authStore.atmAuthToken
         }
         else{
-            // WEBSITE JWT RELATED
+            authToken = authStore.websiteAuthToken
         }
 
         if (authToken) {
-            config.headers.Authorization = `Bearer ${authToken}`;
+            config.headers.Authorization = `Bearer ${authToken}`
         }
 
-        return config;
+        return config
     },
     (error) => {
-        return Promise.reject(error);
+        return Promise.reject(error)
     }
-);
+)
 
 apiClient.interceptors.response.use(
     response => {
@@ -46,19 +46,20 @@ apiClient.interceptors.response.use(
         if (error.response && error.response.status === 401 && error.response.data && error.response.data.errorType == "INVALID_AUTH_TOKEN") {
             
             const currentPath = router.currentRoute.value.path
-            errorHandlingStore.setErrorMessage('You must login again for the following reason: ' + error.response.data.details)
+            errorHandlingStore.errorMessage = 'You must login again for the following reason: ' + error.response.data.details
 
             if (currentPath.startsWith('/atm')) {
                 authStore.setAtmAuthToken(null)
                 router.push('/atm/login')
             }
             else {
-                // WEBSITE JWT RELATED
+                authStore.setWebsiteAuthToken(null)
+                router.push('/login')
             }
         }
 
-        return Promise.reject(error);
+        return Promise.reject(error)
     }
-);
+)
 
-export default apiClient;
+export default apiClient

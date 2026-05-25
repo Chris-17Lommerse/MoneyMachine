@@ -2,14 +2,14 @@
     import { ref } from 'vue'
     import axios from '@/utils/axios.js'
     import { useAuthStore } from '@/stores/authStore.js'
-    import { useErrorHandlingStore } from '../../../../stores/errorHandlingStore'
+    import { useErrorHandlingStore } from '@/stores/errorHandlingStore.js'
 
     import AuthsubmitBtn from '@/components/atoms/buttons/AuthSubmitBtn.vue'
     import BaseFormField from '@/components/molecules/forms/BaseFormField.vue'
     import SuccessAlert from '@/components/atoms/errorHandling/SuccessAlert.vue'
     import ErrorAlert from '@/components/atoms/errorHandling/ErrorAlert.vue'
     
-    const authStore = useAuthStore()
+    const authStore = useAuthStore();
     const errorHandlingStore = useErrorHandlingStore()
 
     const email = ref('')
@@ -22,11 +22,11 @@
             const form = new FormData()
             form.append('email', email.value)
             form.append('password', password.value)
-            form.append('loginType', 'ATM')
+            form.append('loginType', 'WEBSITE')
 
             const response = await axios.post('/users/login', form)
 
-            authStore.setAtmAuthToken(response.data.accessToken)
+            authStore.setWebsiteAuthToken(response.data.accessToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
         }
         catch (ex){

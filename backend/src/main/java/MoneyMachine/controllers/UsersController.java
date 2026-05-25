@@ -70,15 +70,15 @@ public class UsersController {
     }
 
     @GetMapping("employee-test")
-    @PreAuthorize("hasRole('USER') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<String> employeeTest() {
-        return ResponseEntity.status(200).body("Yes yo have employee powers");
+        return ResponseEntity.status(200).body("You have the employee super powers that can power every power in the power universe and are website logged in.");
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@authorizationService.isAllowedToGetUserById(#id)")
     public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
-        return ResponseEntity.status(200).body("You are allowed to get this user");
+        return ResponseEntity.status(200).body("This is a test involving authorization based on conditionals put in @PreAuthorize and AuthorizationService.java.");
     }
 
     @GetMapping()

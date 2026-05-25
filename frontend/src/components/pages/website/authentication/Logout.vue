@@ -6,14 +6,14 @@
     const authStore = useAuthStore()
     const errorHandlingStore = useErrorHandlingStore()
 
-    if (authStore.atmAuthToken !== null) {
-        authStore.setAtmAuthToken(null)
+    if (authStore.websiteAuthToken !== null) {
+        authStore.setWebsiteAuthToken(null)
         errorHandlingStore.successMessage = "Successfully logged out of your account."
     }
     else {
         errorHandlingStore.errorMessage = "You already are logged out."
     }
 
-    router.push('/atm/login')
+    router.push('/login')
 </script>
 
