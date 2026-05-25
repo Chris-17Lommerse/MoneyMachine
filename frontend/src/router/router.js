@@ -144,7 +144,12 @@ router.beforeEach((to) => {
 
     if (to.meta.isAtmAuthenticated && authStore.atmDecodedAuthToken === null) {
         errorHandlingStore.errorMessage = 'You need to be logged in into the ATM to perform this action.'
-        return '/atm/login'
+        return { 
+            path: '/atm/login', 
+            query: { 
+                _refresh: Date.now() 
+            } 
+        }
     }
 
     if (to.meta.isWebsiteAuthenticated) {
@@ -153,7 +158,12 @@ router.beforeEach((to) => {
 
         if (websiteDecodedAuthToken === null) {
             errorHandlingStore.errorMessage = 'You need to be logged in to perform this action.'
-            return '/login'
+            return { 
+                path: '/login', 
+                query: { 
+                    _refresh: Date.now() 
+                } 
+            }
         }
 
         if (to.meta.roles) {
@@ -169,7 +179,12 @@ router.beforeEach((to) => {
 
             if (isAuthorized === false) {
                 errorHandlingStore.errorMessage = `Your account doesn't have the right role to perform this action.`
-                return '/login'
+                return { 
+                    path: '/login', 
+                    query: { 
+                        _refresh: Date.now() 
+                    } 
+                }
             }
         }
     }
