@@ -78,8 +78,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(ExpiredJwtException ex) {
-        
+    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(NotFoundException ex) {
+
         ErrorResponse errorResponse = new ErrorResponse(404, ErrorType.NOT_FOUND, "Not found", ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }

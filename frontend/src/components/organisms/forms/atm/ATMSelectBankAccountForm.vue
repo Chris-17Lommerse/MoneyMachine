@@ -42,10 +42,10 @@
             let message = null;
 
             if (ex.response){
-                message = errorHandlingStore.errorMessage = ex.response.data.message
+                message = errorHandlingStore.errorMessage = ex.response.data.details
             }
             else{
-                message = ex.message
+                message = ex.details
             }
 
             errorAlertRef.value.displayErrorMessage()

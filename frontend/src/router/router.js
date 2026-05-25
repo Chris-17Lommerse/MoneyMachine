@@ -9,9 +9,9 @@ import NotFound from '@/components/pages/website/NotFound.vue'
 
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
-import ATMBankAccountSelection from '@/components/pages/atm/authentication/ATMBankAccountSelection.vue'
-import ATMDeposit from '@/components/pages/atm/authentication/ATMDeposit.vue'
-import ATMMyBankAccount from '@/components/pages/atm/authentication/ATMMyBankAccount.vue'
+import ATMBankAccountSelection from '@/components/pages/atm/ATMBankAccountSelection.vue'
+import ATMDeposit from '@/components/pages/atm//ATMDeposit.vue'
+import ATMMyBankAccount from '@/components/pages/atm/ATMMyBankAccount.vue'
 
 import Login from '@/components/pages/website/authentication/Login.vue'
 import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'

@@ -18,11 +18,11 @@
         }
         catch (ex){
             if (ex.response){
-                errorHandlingStore.errorMessage = ex.response.data.message
+                errorHandlingStore.errorMessage = ex.response.data.details
                 router.push('/atm/select-bank-account')
             }
             else {
-                useErrorHandlingStore.errorMessage = ex.message
+                useErrorHandlingStore.errorMessage = ex.details
             }
         }
     })
