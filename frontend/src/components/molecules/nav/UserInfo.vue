@@ -13,7 +13,7 @@
         <div class="nav-link">
             Logged in as: {{ websiteDecodedAuthToken.email }}
         </div>
-        <LogoutBtn to="/logout" />
+        <LogoutBtn />
     </div>
     <div v-else class="form-inline my-2 my-lg-0">
         <LoginBtn to="/login" />

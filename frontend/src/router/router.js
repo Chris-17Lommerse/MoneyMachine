@@ -9,14 +9,12 @@ import NotFound from '@/components/pages/website/NotFound.vue'
 
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
-import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 import ATMBankAccountSelection from '@/components/pages/atm/authentication/ATMBankAccountSelection.vue'
 import ATMDeposit from '@/components/pages/atm/authentication/ATMDeposit.vue'
 import ATMMyBankAccount from '@/components/pages/atm/authentication/ATMMyBankAccount.vue'
 
 import Login from '@/components/pages/website/authentication/Login.vue'
 import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'
-import Logout from '@/components/pages/website/authentication/Logout.vue'
 
 import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'
@@ -35,14 +33,6 @@ const routes = [
                 component: ATMLogin, 
                 meta: { 
                     title: 'Login'
-                }
-            },
-            { 
-                path: 'logout', 
-                component: ATMLogout, 
-                meta: { 
-                    title: 'Logout',
-                    isAtmAuthenticated: true
                 }
             },
             { 
@@ -96,14 +86,6 @@ const routes = [
                 component: Login,
                 meta: { 
                     title: 'Users',
-                }
-            },
-            {
-                path: '/logout', 
-                component: Logout,
-                meta: { 
-                    title: 'Users',
-                    isWebsiteAuthenticated: true
                 }
             },
             {

@@ -21,12 +21,11 @@
         try {
             e.preventDefault()
 
-            const form = new FormData()
-            form.append('email', email.value)
-            form.append('password', password.value)
-            form.append('loginType', 'ATM')
-
-            const response = await axios.post('/users/login', form)
+            const response = await axios.post('/users/login', {
+                'email': email.value,
+                'password': password.value,
+                'loginType': 'ATM'
+            })
 
             authStore.setAtmAuthToken(response.data.accessToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
@@ -50,6 +49,7 @@
 <template>
     <form @submit="handleLogin">
         <ErrorAlert ref="errorAlertRef" />
+        <SuccessAlert />
         <BaseFormField labelName="Email" type="email" id="email" name="email" placeholder="Enter your email address" v-model="email"/>
         <BaseFormField labelName="Password" type="password" id="password" name="password" placeholder="Enter your password" v-model="password"/>
         <AuthsubmitBtn text="Login" />
