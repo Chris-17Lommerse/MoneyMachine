@@ -35,10 +35,10 @@ public class BankAccountController {
         User loggedInUser = this.authenticationService.getLoggedInUser();
 
         if (loggedInUser.getRole() == Role.USER) {
-            bankAccount = bankAccountService.getBankAccountByIban(iban);
+            bankAccount = bankAccountService.getBankAccountByIbanAndUserId(iban, loggedInUser.getId());
         }
         else {
-            bankAccount = bankAccountService.getBankAccountByIbanAndUserId(iban, loggedInUser.getId());
+            bankAccount = bankAccountService.getBankAccountByIban(iban);
         }
 
         return ResponseEntity.status(200).body(bankAccountMapper.toResponse(bankAccount));
