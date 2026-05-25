@@ -49,7 +49,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
 
-        String iban = generateIBAN();
+        String iban = generateIban();
         BankAccount bankAccount = new BankAccount(iban, user, balance, absoluteLimit, singleTransferLimit, dailyTransferLimit, bankAccountType, true, LocalDateTime.now());
         BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountType);
         strategy.applyBankAccountRules(bankAccount);
@@ -62,7 +62,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         Optional<User> optionalUser = userRepository.findById(bankAccountCreationRequest.getUserId());
         User user = optionalUser.get();
 
-        String iban = generateIBAN();
+        String iban = generateIban();
         BankAccount bankAccount = new BankAccount(iban, user, bankAccountCreationRequest.getBalance(),
                 bankAccountCreationRequest.getAbsoluteLimit(), bankAccountCreationRequest.getSingleTransferLimit(),
                 bankAccountCreationRequest.getDailyTransferLimit(), bankAccountCreationRequest.getBankAccountType(),
@@ -84,10 +84,10 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountOverviewResponse;
     }
 
-    private String generateIBAN() {
-        String generatedIban = ibanGenerator.generateIBAN();
+    private String generateIban() {
+        String generatedIban = ibanGenerator.generateIban();
         while (bankAccountRepository.existsById(generatedIban)) {
-            generatedIban = ibanGenerator.generateIBAN();
+            generatedIban = ibanGenerator.generateIban();
         }
         return generatedIban;
     }

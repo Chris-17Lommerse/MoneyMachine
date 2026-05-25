@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class IbanGenerator {
-    public String generateIBAN()
+    public String generateIban()
     {
         Random random = new Random();
         String cardPrefix = "NL";
