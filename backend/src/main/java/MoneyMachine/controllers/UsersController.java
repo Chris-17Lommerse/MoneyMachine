@@ -33,7 +33,8 @@ public class UsersController {
     private final AuthenticationService authenticationService;
     private final UserMapper userMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil) {
+    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper,
+            JwtUtil jwtUtil) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
@@ -43,25 +44,28 @@ public class UsersController {
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
 
-        User user = authenticationService.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+        User user = authenticationService.getUserByEmailAndPassword(loginRequest.getEmail(),
+                loginRequest.getPassword());
 
-        if (user == null){
+        if (user == null) {
             throw new InvalidCredentialsException("Password or username is not correct.");
         }
 
         String authToken = jwtUtil.generateAuthTokenFromUser(user, loginRequest.getLoginType());
 
-        LoginResponse loginResponse = new LoginResponse(authToken, "Bearer", jwtUtil.getAuthTokenExpirationTime(), userMapper.toSummaryResponse(user));
+        LoginResponse loginResponse = new LoginResponse(authToken, "Bearer", jwtUtil.getAuthTokenExpirationTime(),
+                userMapper.toSummaryResponse(user));
 
         return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
         User user = authenticationService.getLoggedInUser();
         UserResponse userResponse = userMapper.toResponse(user);
-        
+
         return ResponseEntity.status(200).body(userResponse);
     }
 
@@ -78,6 +82,7 @@ public class UsersController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
         try {
             List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
@@ -89,7 +94,8 @@ public class UsersController {
                     "Unauthorized - Authentication required", exUnauthorized.getMessage());
             return ResponseEntity.status(401).body(errorResponse);
         } catch (InternalServerError exInternalServerError) {
-            ErrorResponse errorResponse = new ErrorResponse(500, MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
+            ErrorResponse errorResponse = new ErrorResponse(500,
+                    MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
                     "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }

@@ -3,6 +3,6 @@
 
 <template>
     <li class="nav-item">
-        <a href="/transaction" class="nav-link">Transaction Overview</a>
+        <a href="/transactions" class="nav-link">Transaction Overview</a>
     </li>
 </template>
