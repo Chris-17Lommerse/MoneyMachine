@@ -1,7 +1,6 @@
 package MoneyMachine.exception;
 
 import org.springframework.security.access.AccessDeniedException;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -75,6 +74,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExpiredJwtExceptions(ExpiredJwtException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.INVALID_AUTH_TOKEN, "Expired token", "Your authentication token has expired.");
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(ExpiredJwtException ex) {
+        
+        ErrorResponse errorResponse = new ErrorResponse(404, ErrorType.NOT_FOUND, "Not found", ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 }

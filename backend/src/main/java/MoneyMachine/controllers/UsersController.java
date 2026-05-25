@@ -3,7 +3,6 @@ package MoneyMachine.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
@@ -27,7 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping("users")
 public class UsersController {
 
@@ -78,7 +77,7 @@ public class UsersController {
 
         List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(id);
         
-        return ResponseEntity.status(200).body(bankAccountMapper.toDTOList(bankAccounts));
+        return ResponseEntity.status(200).body(bankAccountMapper.toResponseList(bankAccounts));
     }
 
     @GetMapping("employee-test")

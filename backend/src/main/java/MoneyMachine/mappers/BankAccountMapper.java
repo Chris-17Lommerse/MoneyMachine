@@ -24,7 +24,7 @@ public class BankAccountMapper {
         return bankAccountResponse;
     }
 
-    public List<BankAccountResponse> toDTOList(List<BankAccount> bankAccountList)
+    public List<BankAccountResponse> toResponseList(List<BankAccount> bankAccountList)
     {
         List<BankAccountResponse> bankAccountResponses = new ArrayList<BankAccountResponse>();
 

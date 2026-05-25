@@ -55,7 +55,7 @@ public class UserMapper {
         return userSummaryResponse;
     }
 
-    public List<UserResponse> toDTOList(List<User> userList) {
+    public List<UserResponse> toResponseList(List<User> userList) {
 
         List<UserResponse> userResponses = new ArrayList<UserResponse>();
 
