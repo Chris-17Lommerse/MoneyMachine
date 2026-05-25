@@ -4,6 +4,7 @@
     import axios from '@/utils/axios';
     import TabMolecule from '@/components/molecules/tabs/TabMolecule.vue';
 import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
+import Navbar from '../../organisms/layout/Navbar.vue';
 
     const loading = ref(true);
     const error = ref(null);
@@ -34,6 +35,9 @@ import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
 </script>
 
 <template>
+    <header>
+        <Navbar />
+    </header>
     <TabMolecule />
     <section>
         <!-- Loading State -->
