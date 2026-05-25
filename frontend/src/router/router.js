@@ -10,7 +10,7 @@ import NotFound from '@/components/pages/website/NotFound.vue'
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
 import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
-import UsersWithoutBankAccountPage from '@/components/pages/website/UsersWithoutBankAccountPage.vue'
+import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
 import CreateBankAccountPage from '../components/pages/website/CreateBankAccountPage.vue'
 import UsersWithBankAccuntsPage from '../components/pages/website/UsersWithBankAccuntsPage.vue'
 
@@ -18,7 +18,6 @@ import Login from '@/components/pages/website/authentication/Login.vue'
 import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'
 import Logout from '@/components/pages/website/authentication/Logout.vue'
 
-import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'
 
 const routes = [
@@ -64,7 +63,8 @@ const routes = [
                 component: UsersWithoutBankAccountPage,
                 meta: { 
                     title: 'Users',
-                    isWebsiteAuthenticated: true
+                    isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
                 }
             },
             {
@@ -108,7 +108,12 @@ const routes = [
     },
     {
         path: '/bank-accounts',
-        component: UsersWithBankAccuntsPage
+        component: UsersWithBankAccuntsPage,
+        meta: {
+            title: 'bank-accounts',
+            isWebsiteAuthenticated: true,
+            roles: ['EMPLOYEE']
+        }
     },
     {
         path: '/users/:user_id/bank-accounts',

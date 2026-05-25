@@ -2,6 +2,7 @@ package MoneyMachine.controllers;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
@@ -22,6 +23,7 @@ public class BankAccountController {
     }
 
     @PostMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<BankAccountResponse> createBankAccount(
             @RequestBody BankAccountCreationRequest bankAccountCreationRequest) throws Exception {
         BankAccountResponse bankAccountResponse = bankAccountService
@@ -30,6 +32,7 @@ public class BankAccountController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts(Pageable pageable) {
         BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         return ResponseEntity.ok(bankAccounts);
