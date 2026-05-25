@@ -15,6 +15,7 @@
 
     const selectedBankAccountIban = ref('')
     const bankAccounts = ref(null)
+    const errorAlertRef = ref(null)
 
     function handleSelectBankAccount(e) {
         try {
@@ -33,15 +34,21 @@
 
     onMounted(async () => {
         try {
-            bankAccounts.value = (await axios.get('users/' + authStore.atmDecodedAuthToken.sub + '/bank-accounts')).data
+            const response = await axios.get('users/' + authStore.atmDecodedAuthToken.sub + '/bank-accounts')
+            bankAccounts.value = response.data
         }
         catch (ex){
+
+            let message = null;
+
             if (ex.response){
-                errorHandlingStore.errorMessage = ex.response.data.message
+                message = errorHandlingStore.errorMessage = ex.response.data.message
             }
-            else {
-                errorHandlingStore.errorMessage = ex.message
+            else{
+                message = ex.message
             }
+
+            errorAlertRef.value.displayErrorMessage()
         }
     })
 </script>
@@ -49,7 +56,7 @@
 <template>
 
     <SuccessAlert />
-    <ErrorAlert />
+    <ErrorAlert ref="errorAlertRef"/>
 
     <form @submit="handleSelectBankAccount">
         <div class="mb-3">
