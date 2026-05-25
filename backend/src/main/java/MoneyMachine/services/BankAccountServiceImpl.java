@@ -20,6 +20,7 @@ import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
@@ -31,6 +32,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     private IbanGenerator ibanGenerator;
     private BankAccountTypeFactory bankAccountTypeFactory;
     private UserRepository userRepository;
+    private static final BigDecimal balance = BigDecimal.valueOf(0);
+    private static final BigDecimal absoluteLimit = BigDecimal.valueOf(0);
+    private static final BigDecimal dailyTransferLimit = BigDecimal.valueOf(20000);
+    private static final BigDecimal singleTransferLimit = BigDecimal.valueOf(5000);
 
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository,
             BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator,
@@ -44,12 +49,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
 
-
-        BankAccount bankAccount = new BankAccount();
-
+        String iban = generateIBAN();
+        BankAccount bankAccount = new BankAccount(iban, user, balance, absoluteLimit, singleTransferLimit, dailyTransferLimit, bankAccountType, true, LocalDateTime.now());
         BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountType);
         strategy.applyBankAccountRules(bankAccount);
-
         bankAccountRepository.save(bankAccount);
         BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
         return bankAccountRespnse;
