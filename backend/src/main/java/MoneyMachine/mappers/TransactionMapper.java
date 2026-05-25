@@ -25,20 +25,20 @@ public interface TransactionMapper {
     @Mapping(target = "toBankAccount", ignore = true)
     @Mapping(target = "dateTime", ignore = true)
     @Mapping(target = "initiatingUser", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "active", ignore = true)
     
     TransferTransaction toTransferEntity(TransferRequest r);
 
     @Mapping(target = "fromBankAccount", ignore = true)
     @Mapping(target = "dateTime", ignore = true)
     @Mapping(target = "initiatingUser", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "active", ignore = true)
     WithdrawTransaction toWithdrawEntity(WithdrawRequest r);
 
     @Mapping(target = "toBankAccount", ignore = true)
     @Mapping(target = "dateTime", ignore = true)
     @Mapping(target = "initiatingUser", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "active", ignore = true)
 
     DepositTransaction toDepositEntity(DepositRequest r);
 }

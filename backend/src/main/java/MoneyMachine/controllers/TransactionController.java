@@ -17,24 +17,24 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping("/api/transactions")
+    @GetMapping("/transactions")
     public ResponseEntity<?> getTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions());  
     }
 
-    @GetMapping("/api/transactions/account/{accountId}")
+    @GetMapping("/transactions/account/{accountId}")
     public ResponseEntity<?> getTransactionsByAccountiban(@PathVariable String Iban)
     {
         return ResponseEntity.ok(transactionService.getAllTransactionsByAccountId(Iban));
     }
 
-    @PostMapping("/api/transactions")
+    @PostMapping("/transactions/transfer")
     public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) {
        
        return ResponseEntity.ok(transactionService.createTransfer(transaction));
     }
 
-    @GetMapping("/api/transactions/{id}")
+    @GetMapping("/transactions/{id}")
     public ResponseEntity<?> getTransactionById(@PathVariable Long id) { 
         return ResponseEntity.ok(transactionService.getTransactionByid(id));
     }

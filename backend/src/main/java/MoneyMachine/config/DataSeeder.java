@@ -91,7 +91,7 @@ public class DataSeeder implements ApplicationRunner {
         depositTransaction.setInitiatingUser(user);
         depositTransaction.setAmount(new BigDecimal("10"));
         depositTransaction.setMessage("Hello deposit!");
-        depositTransaction.setIsActive(true);
+        depositTransaction.setActive(true);
         depositTransaction.setToBankAccount(bankAccount1);
         depositTransaction.setDateTime(LocalDateTime.now());
 
@@ -101,7 +101,7 @@ public class DataSeeder implements ApplicationRunner {
         withdrawTransaction.setInitiatingUser(user);
         withdrawTransaction.setAmount(new BigDecimal("10"));
         withdrawTransaction.setMessage("Hello withdraw!");
-        withdrawTransaction.setIsActive(true);
+        withdrawTransaction.setActive(true);
         withdrawTransaction.setFromBankAccount(bankAccount1);
         withdrawTransaction.setDateTime(LocalDateTime.now());
 
@@ -111,7 +111,7 @@ public class DataSeeder implements ApplicationRunner {
         transferTransaction.setInitiatingUser(user);
         transferTransaction.setAmount(new BigDecimal("10"));
         transferTransaction.setMessage("Hello transfer!");
-        transferTransaction.setIsActive(true);
+        transferTransaction.setActive(true);
         transferTransaction.setFromBankAccount(bankAccount1);
         transferTransaction.setToBankAccount(bankAccount2);
         transferTransaction.setDateTime(LocalDateTime.now());

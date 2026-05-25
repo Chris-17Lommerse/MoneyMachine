@@ -49,7 +49,7 @@ public class Transaction {
 
     @Column(nullable = false)
     @NotNull
-    private Boolean isActive;
+    private Boolean active;
 
     
     @CreationTimestamp

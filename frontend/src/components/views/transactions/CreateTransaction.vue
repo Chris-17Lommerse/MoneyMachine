@@ -1,5 +1,5 @@
 <script setup>
-import axios from '@/utils/axios.js'
+import apiClient from '@/utils/axios.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -14,7 +14,7 @@ const transaction = ref({
 
 const createTransaction = async () => {
   try {
-    await axios.post("/api/transactions", transaction.value)
+    await apiClient.post("transactions/transfer", transaction.value)
     router.push("/transactions") 
   }catch (error) {
     console.log("FULL ERROR OBJECT:", error)

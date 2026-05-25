@@ -5,7 +5,7 @@ const transactions = ref([])
 onMounted(async () => {
     try {
 
-        const response = await apiClient.get("/api/transactions")
+        const response = await apiClient.get("/transactions")
 
          console.log("RESPONSE:", response)
 

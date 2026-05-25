@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
 import AllTransactions from '@/components/views/transactions/allTransactions.vue'
 import Transaction from '@/components/views/transactions/transaction.vue'
 import CreateTransaction from '@/components/views/transactions/CreateTransaction.vue'
@@ -86,7 +85,7 @@ const routes = [
     },
     {
         path: '/users', 
-        component: UsersWithoutBankAccountPage
+        component: UsersWithoutBankAccountPage,
 
         path: '/',
         component: WebsiteLayout,
