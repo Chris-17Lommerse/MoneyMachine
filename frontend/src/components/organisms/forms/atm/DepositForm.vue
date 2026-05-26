@@ -46,8 +46,9 @@
 </script>
 
 <template>
-    <form @submit="handleDeposit">
-        <ErrorAlert ref="errorAlertRef" />
+    <ErrorAlert ref="errorAlertRef" />
+    
+    <form @submit="handleDeposit">    
         <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" id="amount" placeholder="Enter amount of money" v-model="amount"/>
         <SubmitBtn text="Deposit" />
     </form>

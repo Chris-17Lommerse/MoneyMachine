@@ -47,9 +47,11 @@
 </script>
 
 <template>
-    <form @submit="handleWithdraw">
-        <ErrorAlert ref="errorAlertRef" />
-        <div>Absolute limit: {{ getPriceFormatted(bankAccount?.absoluteLimit) }}</div>
+    <ErrorAlert ref="errorAlertRef" />
+    <h4>Current balance: {{ getPriceFormatted(bankAccount?.balance) }}</h4>  
+    <h4>Absolute limit: {{ getPriceFormatted(bankAccount?.absoluteLimit) }}</h4>
+    
+    <form @submit="handleWithdraw" class="mt-4">    
         <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" id="amount" placeholder="Enter amount of money" v-model="amount"/>
         <SubmitBtn text="Withdraw" />
     </form>
