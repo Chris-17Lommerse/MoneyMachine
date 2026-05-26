@@ -32,16 +32,12 @@
             router.push('/atm/select-bank-account')
         }
         catch (ex){
-            let message = null;
-
             if (ex.response){
-                message = errorHandlingStore.errorMessage = ex.response.data.details
+                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
             }
             else{
-                message = ex.details
+                errorAlertRef.value.displayErrorMessage(ex.details)
             }
-
-            errorAlertRef.value.displayErrorMessage(message)
         }
     }
 </script>

@@ -63,7 +63,7 @@
             <FormLabel id="bankAccount" labelName="Select a bank account" />
             <select v-model="selectedBankAccountIban" id="bankAccount" class="custom-select">
                 <option value="" disabled>Select an account</option>
-                <option v-for="bankAccount in bankAccounts" :value="bankAccount.iban">{{ bankAccount.iban }}</option>
+                <option v-for="bankAccount in bankAccounts" :value="bankAccount.iban">{{ bankAccount.iban }} | {{ bankAccount.bankAccountType }}</option>
             </select>
         </div>
 

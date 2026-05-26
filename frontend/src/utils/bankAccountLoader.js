@@ -11,13 +11,13 @@ async function getBankAccountByIban(iban, failureRedirectUrl) {
     catch (ex){
         if (ex.response){
             errorHandlingStore.errorMessage = ex.response.data.details
-
-            if (failureRedirectUrl !== undefined) {
-                router.push(failureRedirectUrl)
-            }
         }
         else {
             useErrorHandlingStore.errorMessage = ex.details
+        }
+
+        if (failureRedirectUrl !== undefined) {
+            router.push(failureRedirectUrl)
         }
     }
 }
