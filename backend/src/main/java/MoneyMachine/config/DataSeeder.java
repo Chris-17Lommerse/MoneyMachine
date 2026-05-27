@@ -62,24 +62,36 @@ public class DataSeeder implements ApplicationRunner {
 
         userRepository.save(userWithoutBankAccount);
 
-        BankAccount bankAccount = new BankAccount();
-        bankAccount.setIban("NL91ABNA0417164300");
-        bankAccount.setUser(user);
-        bankAccount.setBalance(new BigDecimal("100"));
-        bankAccount.setAbsoluteLimit(new BigDecimal("-100"));
-        bankAccount.setSingleTransferLimit(new BigDecimal("100"));
-        bankAccount.setDailyTransferLimit(new BigDecimal("100"));
-        bankAccount.setBankAccountType(BankAccountType.CHECKING);
-        bankAccount.setIsActive(true);
+        BankAccount checkingBankAccount = new BankAccount();
+        checkingBankAccount.setIban("NL91ABNA0417164300");
+        checkingBankAccount.setUser(user);
+        checkingBankAccount.setBalance(new BigDecimal("100"));
+        checkingBankAccount.setAbsoluteLimit(new BigDecimal("-100"));
+        checkingBankAccount.setSingleTransferLimit(new BigDecimal("100"));
+        checkingBankAccount.setDailyTransferLimit(new BigDecimal("100"));
+        checkingBankAccount.setBankAccountType(BankAccountType.CHECKING);
+        checkingBankAccount.setIsActive(true);
 
-        bankAccountRepository.save(bankAccount);
+        bankAccountRepository.save(checkingBankAccount);
+
+        BankAccount savingsBankAccount = new BankAccount();
+        savingsBankAccount.setIban("NL47ABNA0582937105");
+        savingsBankAccount.setUser(user);
+        savingsBankAccount.setBalance(new BigDecimal("133767"));
+        savingsBankAccount.setAbsoluteLimit(new BigDecimal("-1000"));
+        savingsBankAccount.setSingleTransferLimit(new BigDecimal("300"));
+        savingsBankAccount.setDailyTransferLimit(new BigDecimal("1000"));
+        savingsBankAccount.setBankAccountType(BankAccountType.SAVINGS);
+        savingsBankAccount.setIsActive(true);
+
+        bankAccountRepository.save(savingsBankAccount);
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(user);
         depositTransaction.setAmount(new BigDecimal("10"));
         depositTransaction.setMessage("Hello deposit!");
         depositTransaction.setIsActive(true);
-        depositTransaction.setToBankAccount(bankAccount);
+        depositTransaction.setToBankAccount(checkingBankAccount);
 
         transactionRepository.save(depositTransaction);
 
@@ -88,7 +100,7 @@ public class DataSeeder implements ApplicationRunner {
         withdrawTransaction.setAmount(new BigDecimal("10"));
         withdrawTransaction.setMessage("Hello withdraw!");
         withdrawTransaction.setIsActive(true);
-        withdrawTransaction.setFromBankAccount(bankAccount);
+        withdrawTransaction.setFromBankAccount(checkingBankAccount);
 
         transactionRepository.save(withdrawTransaction);
 
@@ -97,8 +109,8 @@ public class DataSeeder implements ApplicationRunner {
         transferTransaction.setAmount(new BigDecimal("10"));
         transferTransaction.setMessage("Hello transfer!");
         transferTransaction.setIsActive(true);
-        transferTransaction.setFromBankAccount(bankAccount);
-        transferTransaction.setToBankAccount(bankAccount);
+        transferTransaction.setFromBankAccount(checkingBankAccount);
+        transferTransaction.setToBankAccount(checkingBankAccount);
 
         transactionRepository.save(transferTransaction);
     }
