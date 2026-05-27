@@ -11,9 +11,6 @@
             type: String,
             default: 'text'
         },
-        min: {
-            type: String,
-        },
         step: {
             type: String,
         },

@@ -2,6 +2,7 @@
     import { onMounted, ref } from 'vue'
     import { getPriceFormatted } from '@/utils/stringFormatter.js'
     import router from '@/router/router.js'
+    import axios from '@/utils/axios.js'
     import { useErrorHandlingStore } from '@/stores/errorHandlingStore.js'
     import { useBankAccountStore } from '@/stores/bankAccountStore.js'
     import { throwIfMoneyAmountIsNotValid } from '@/utils/inputValidator.js'
@@ -17,12 +18,17 @@
     const bankAccount = ref(null)
     const errorAlertRef = ref(null)
 
-    function handleDeposit(e) {
+    async function handleDeposit(e) {
         try {
             e.preventDefault()
-            throwIfMoneyAmountIsNotValid(amount.value)
+            throwIfMoneyAmountIsNotValid(amount.value, bankAccount.value.singleTransferLimit)
 
-            errorHandlingStore.successMessage = 'Successfully deposited [PRICE] to your balance.'
+            const response = await axios.post('/transactions/deposit', {
+                'toBankAcountIban': bankAccount.value.iban,
+                'amount': amount.value
+            })
+
+            errorHandlingStore.successMessage = 'Successfully deposited '+ getPriceFormatted(response.data.amount) +' to your balance.'
             router.push('/atm/bank-account/' + router.currentRoute.value.params.iban)
         }
         catch (ex) {
@@ -44,7 +50,7 @@
     <ErrorAlert ref="errorAlertRef" />
     
     <form @submit="handleDeposit">    
-        <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" min="0.00" step="0.01" id="amount" placeholder="Enter amount of money" v-model="amount"/>
+        <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" step="0.01" id="amount" placeholder="Enter amount of money" v-model="amount"/>
         <SubmitBtn text="Deposit" />
     </form>
 </template>

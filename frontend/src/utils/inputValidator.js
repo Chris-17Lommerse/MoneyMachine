@@ -1,15 +1,17 @@
-function throwIfMoneyAmountIsNotValid(amount) {
+function throwIfMoneyAmountIsNotValid(amount, singleTransferLimit) {
     
     if (amount <= 0) {
         throw new Error('Amount cannot be less or equal to 0.')
+    }
+
+    if (amount > singleTransferLimit) {
+        throw new Error('Amount cannot be more than the single transfer limit.')
     }
 }
 
 function throwIfWithdrawAmountIsNotValid(amount, totalAmount, absoluteLimit) {
 
-    throwIfMoneyAmountIsNotValid(amount)
-
-    if (totalAmount !== undefined && absoluteLimit !== undefined && totalAmount - amount < absoluteLimit) {
+    if (totalAmount - amount < absoluteLimit) {
         throw new Error('Total amount cannot be less the absolute limit.')
     }
 }
