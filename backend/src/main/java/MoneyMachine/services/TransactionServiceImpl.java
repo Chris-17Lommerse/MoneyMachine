@@ -30,10 +30,14 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    private void throwIfMoneyAmountIsNotValid(BigDecimal amount) {
+    private void throwIfMoneyAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
     
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidArgumentsException("Amount cannot be less or equal to 0.");
+        }
+
+        if (amount.compareTo(bankAccount.getSingleTransferLimit()) > 0) {
+            throw new InvalidArgumentsException(String.format("Amount cannot be more than the single transfer limit %s.", bankAccount.getSingleTransferLimit()));
         }
     }
 
@@ -46,10 +50,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public DepositTransaction depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
-        
-        throwIfMoneyAmountIsNotValid(amount);
 
         BankAccount toBankAccount = bankAccountService.getBankAccountByIban(toIban);
+        throwIfMoneyAmountIsNotValid(amount, toBankAccount);
 
         this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
 
@@ -69,10 +72,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public WithdrawTransaction withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
-        
-        throwIfMoneyAmountIsNotValid(amount);
 
         BankAccount fromBankAccount = bankAccountService.getBankAccountByIban(fromIban);
+        throwIfMoneyAmountIsNotValid(amount, fromBankAccount);
         throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
 
         this.bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
