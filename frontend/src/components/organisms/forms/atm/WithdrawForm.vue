@@ -46,7 +46,7 @@
     <h4>Absolute limit: {{ getPriceFormatted(bankAccount?.absoluteLimit) }}</h4>
     
     <form @submit="handleWithdraw" class="mt-4">    
-        <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" id="amount" placeholder="Enter amount of money" v-model="amount"/>
+        <BaseFormField :labelName="'Amount (max ' + getPriceFormatted(bankAccount?.singleTransferLimit) + ')'" type="number" min="0.00" step="0.01" id="amount" placeholder="Enter amount of money" v-model="amount"/>
         <SubmitBtn text="Withdraw" />
     </form>
 </template>

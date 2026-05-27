@@ -7,6 +7,12 @@
         id: {
             type: String,
         },
+        min: {
+            type: String,
+        },
+        step: {
+            type: String,
+        },
         placeholder: {
             type: String,
         },
@@ -27,5 +33,5 @@
 </script>
 
 <template>
-    <input class="form-control" :type="props.type" :id="props.id" :placeholder="props.placeholder" :value="props.modelValue" @change="onBaseInputChange" :required="props.isRequired"/>
+    <input class="form-control" :type="props.type" :min="props.min" :step="props.step" :id="props.id" :placeholder="props.placeholder" :value="props.modelValue" @change="onBaseInputChange" :required="props.isRequired"/>
 </template>
