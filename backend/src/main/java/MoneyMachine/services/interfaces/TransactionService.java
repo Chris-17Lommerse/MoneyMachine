@@ -9,6 +9,6 @@ import MoneyMachine.models.WithdrawTransaction;
 
 @Service
 public interface TransactionService {
-    DepositTransaction depositAmountIntoBankAccount(String iban, BigDecimal amount);
-    WithdrawTransaction withdrawAmountIntoBankAccount(String iban, BigDecimal amount);
+    DepositTransaction depositAmountIntoBankAccount(String toIban, BigDecimal amount);
+    WithdrawTransaction withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount);
 }
