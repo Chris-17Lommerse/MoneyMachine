@@ -39,8 +39,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void throwIfWithdrawAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
 
-        throwIfMoneyAmountIsNotValid(amount);
-
         if (bankAccount.getBalance().subtract(amount).compareTo(bankAccount.getAbsoluteLimit()) < 0) {
             throw new InvalidArgumentsException("Total amount cannot be less the absolute limit.");
         }
@@ -52,9 +50,10 @@ public class TransactionServiceImpl implements TransactionService {
         throwIfMoneyAmountIsNotValid(amount);
 
         BankAccount toBankAccount = bankAccountService.getBankAccountByIban(toIban);
-        User loggedInUser = authenticationService.getLoggedInUser();
 
         this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
+
+        User loggedInUser = authenticationService.getLoggedInUser();
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);
@@ -70,7 +69,25 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public WithdrawTransaction withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'withdrawAmountIntoBankAccount'");
+        
+        throwIfMoneyAmountIsNotValid(amount);
+
+        BankAccount fromBankAccount = bankAccountService.getBankAccountByIban(fromIban);
+        throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
+
+        this.bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
+
+        User loggedInUser = authenticationService.getLoggedInUser();
+        
+        WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
+        withdrawTransaction.setInitiatingUser(loggedInUser);
+        withdrawTransaction.setAmount(amount);
+        withdrawTransaction.setMessage(String.format("Withdrawn € %s from bank account: %s.", amount, fromIban));
+        withdrawTransaction.setIsActive(true);
+        withdrawTransaction.setFromBankAccount(fromBankAccount);
+
+        transactionRepository.save(withdrawTransaction);
+
+        return withdrawTransaction;
     }
 }
