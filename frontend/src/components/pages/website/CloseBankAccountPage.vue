@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from '@/utils/axios';
+import CloseBankAccountOrganism from '../../organisms/bankaccounts/CloseBankAccountOrganism.vue';
 
 const loading = ref(true);
 const error = ref(null);
@@ -53,5 +54,6 @@ onMounted(() => {
                 Try Again
             </button>
         </section>
+        <CloseBankAccountOrganism v-else :bankAccount="bankAccount" />
     </section>
 </template>

@@ -19,6 +19,7 @@ import UserAuthorizationTest from '@/components/pages/website/authentication/Use
 import Logout from '@/components/pages/website/authentication/Logout.vue'
 
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'
+import CloseBankAccountPage from '../components/pages/website/CloseBankAccountPage.vue'
 
 const routes = [
     {
@@ -105,6 +106,15 @@ const routes = [
                 component: UsersWithBankAccuntsPage,
                 meta: {
                     title: 'bank-accounts',
+                    isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
+                }
+            },
+            {
+                path: '/bank-accounts/closeBankAccount',
+                component: CloseBankAccountPage,
+                meta: {
+                    title: "close-bank-accounts-preview",
                     isWebsiteAuthenticated: true,
                     roles: ['EMPLOYEE']
                 }

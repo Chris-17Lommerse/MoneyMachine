@@ -2,5 +2,5 @@
 </script>
 
 <template>
-     <a href="" class="btn btn-danger">Close bank account</a>
+     <a href="/bank-accounts/closeBankAccount" class="btn btn-danger">Close bank account</a>
 </template>
