@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("users")
-public class UsersController {
+public class UserController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
@@ -37,7 +37,7 @@ public class UsersController {
     private final BankAccountService bankAccountService;
     private final BankAccountMapper bankAccountMapper;
 
-    public UsersController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil, BankAccountService bankAccountService, BankAccountMapper bankAccountMapper) {
+    public UserController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil, BankAccountService bankAccountService, BankAccountMapper bankAccountMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.userMapper = userMapper;
