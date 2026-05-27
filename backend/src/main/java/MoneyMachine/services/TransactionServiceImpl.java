@@ -50,9 +50,11 @@ public class TransactionServiceImpl implements TransactionService {
     public DepositTransaction depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
         
         throwIfMoneyAmountIsNotValid(amount);
-        
+
         BankAccount toBankAccount = bankAccountService.getBankAccountByIban(toIban);
         User loggedInUser = authenticationService.getLoggedInUser();
+
+        this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);

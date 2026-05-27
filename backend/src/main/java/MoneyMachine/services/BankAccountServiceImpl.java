@@ -1,5 +1,6 @@
 package MoneyMachine.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,5 +47,10 @@ public class BankAccountServiceImpl implements BankAccountService {
         }
 
         throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
+    }
+
+    @Override
+    public void setBankAccountBalance(String iban, BigDecimal newBalance) {
+        this.bankAccountRepository.setBalanceByIban(iban, newBalance);
     } 
 }
