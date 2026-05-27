@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import MoneyMachine.exception.InvalidArgumentsException;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -29,10 +30,27 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    private void throwIfMoneyAmountIsNotValid(BigDecimal amount) {
+    
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidArgumentsException("Amount cannot be less or equal to 0.");
+        }
+    }
+
+    private void throwIfWithdrawAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
+
+        throwIfMoneyAmountIsNotValid(amount);
+
+        if (bankAccount.getBalance().subtract(amount).compareTo(bankAccount.getAbsoluteLimit()) < 0) {
+            throw new InvalidArgumentsException("Total amount cannot be less the absolute limit.");
+        }
+    }
+
     @Override
     public DepositTransaction depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
         
-        //POLICY CHECKS
+        throwIfMoneyAmountIsNotValid(amount);
+        
         BankAccount toBankAccount = bankAccountService.getBankAccountByIban(toIban);
         User loggedInUser = authenticationService.getLoggedInUser();
 

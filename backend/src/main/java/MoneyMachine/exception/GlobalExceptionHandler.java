@@ -83,4 +83,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(404, ErrorType.NOT_FOUND, "Not found", ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
+
+    @ExceptionHandler(InvalidArgumentsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidArgumentsExceptions(InvalidArgumentsException ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse(400, ErrorType.INVALID_ARGUMENTS, "Invalid arguments", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
+    }
 }
