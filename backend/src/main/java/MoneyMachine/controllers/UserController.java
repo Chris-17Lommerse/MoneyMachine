@@ -9,6 +9,7 @@ import org.springframework.web.client.HttpServerErrorException.InternalServerErr
 import MoneyMachine.mappers.BankAccountMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.dtos.requests.LoginRequest;
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 import MoneyMachine.models.dtos.responses.LoginResponse;
@@ -56,11 +57,11 @@ public class UserController {
 
     @GetMapping("{id}/bank-accounts")
     @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
-    public ResponseEntity<List<BankAccountResponse>> getBankAccountsByUserId(@PathVariable Long id) throws Exception {
+    public ResponseEntity<BankAccountOverviewResponse> getBankAccountsByUserId(@PathVariable Long id) throws Exception {
 
-        List<BankAccount> bankAccounts = bankAccountService.findBankAccountsByUserId(id);
+        BankAccountOverviewResponse bankAccountOverviewResponse = bankAccountService.getAllBankAccountsByUserId(id);
         
-        return ResponseEntity.status(200).body(bankAccountMapper.toResponseList(bankAccounts));
+        return ResponseEntity.status(200).body(bankAccountOverviewResponse);
     }
 
     @GetMapping("employee-test")

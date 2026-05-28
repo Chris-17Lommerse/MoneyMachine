@@ -49,8 +49,11 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public List<BankAccount> findBankAccountsByUserId(Long id) {
-        return bankAccountRepository.findAllByUserId(id);
+    public BankAccountOverviewResponse getAllBankAccountsByUserId(Long id) {
+        
+        List<BankAccount> bankAccounts = bankAccountRepository.findAllByUserId(id);
+
+        return new BankAccountOverviewResponse(bankAccountMapper.toResponseList(bankAccounts), 1, 999);
     }
 
     @Override
