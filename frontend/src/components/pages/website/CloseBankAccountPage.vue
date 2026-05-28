@@ -3,16 +3,18 @@ import { onMounted, ref } from 'vue';
 import axios from '@/utils/axios';
 import CloseBankAccountOrganism from '../../organisms/bankaccounts/CloseBankAccountOrganism.vue';
 import { useRoute } from 'vue-router';
-const loading = ref(true);
+import { useRouter } from 'vue-router';
+const loadingFetch = ref(true);
+const loadingClose = ref(true);
 const error = ref(null);
 const bankAccount = ref();
 const isActive = {
     isActive: false
 };
 const route = useRoute();
-
+const router = useRouter();
 const fetchBankAccount = async () => {
-    loading.value = true;
+    loadingFetch.value = true;
     error.value = null;
     try {
         const result = await axios.get(`/bank-accounts/${route.params.iban}`);
@@ -26,18 +28,23 @@ const fetchBankAccount = async () => {
         bankAccount.value = [];
     }
     finally {
-        loading.value = false;
+        loadingFetch.value = false;
     }
 };
 
 const deActivateBankAccount = async () => {
-    loading.value = true;
+    loadingClose.value = true;
     error.value = null;
-    try
-    {
+    try {
         const result = await axios.patch(`/bank-accounts/${route.params.iban}`, isActive);
         bankAccount.value = result.data;
-        console.log(result.data)
+        console.log(result.data);
+        await router.push({
+            path: "/bank-accounts",
+            state: {
+                success: "Successfully deactivated this bank account"
+            }
+        });
     }
     catch (err) {
         console.log("Error fetching bank account", err);
@@ -46,19 +53,23 @@ const deActivateBankAccount = async () => {
         bankAccount.value = null;
     }
     finally {
-        loading.value = false;
+        loadingClose.value = false;
     }
 }
 
 onMounted(() => {
     fetchBankAccount();
+
+    if (history.state?.success) {
+        success.value = history.state.success;
+    }
 })
 </script>
 
 <template>
     <section>
         <!-- Loading State -->
-        <section v-if="loading" class="min-h-screen flex items-center justify-center">
+        <section v-if="loadingFetch" class="min-h-screen flex items-center justify-center">
             <section class="text-center">
                 <section class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4">
                     <p class="text-blue">Loading bankaccount</p>

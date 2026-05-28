@@ -1,40 +1,46 @@
 <script setup>
-    import UsersTableGridTemplate from '@/components/organisms/UsersTableGrid.vue';
-    import { onMounted, ref } from 'vue';
-    import axios from '@/utils/axios';
-    import TabMolecule from '@/components/molecules/tabs/TabMolecule.vue';
+import UsersTableGridTemplate from '@/components/organisms/UsersTableGrid.vue';
+import { onMounted, ref } from 'vue';
+import axios from '@/utils/axios';
+import TabMolecule from '@/components/molecules/tabs/TabMolecule.vue';
 import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
+import SuccessAlert from '../../atoms/errorHandling/SuccessAlert.vue';
 
-    const loading = ref(true);
-    const error = ref(null);
-    const usersWithBankAccounts = ref([])
+const loading = ref(true);
+const error = ref(null);
+const usersWithBankAccounts = ref([])
+const success = ref(null);
 
-    const fetchUsersWithAccount = async () => {
-        loading.value = true;
-        error.value = null;
-        try {
-            const result = await axios.get("/bank-accounts");
-            usersWithBankAccounts.value = result.data.items;
-            console.log(result.data);
-        }
-        catch (err) {
-            console.log("Error fetching users with bank accounts", err);
-            error.value =
-                err.message || "Failed to fetch users wit bank accounts. Please try again later.";
-            usersWithBankAccounts.value = [];
-        }
-        finally {
-            loading.value = false;
-        }
-    };
+const fetchUsersWithAccount = async () => {
+    loading.value = true;
+    error.value = null;
+    try {
+        const result = await axios.get("/bank-accounts");
+        usersWithBankAccounts.value = result.data.items;
+        console.log(result.data);
+    }
+    catch (err) {
+        console.log("Error fetching users with bank accounts", err);
+        error.value =
+            err.message || "Failed to fetch users wit bank accounts. Please try again later.";
+        usersWithBankAccounts.value = [];
+    }
+    finally {
+        loading.value = false;
+    }
+};
 
-    onMounted(() => {
-        fetchUsersWithAccount();
-    })
+onMounted(() => {
+    fetchUsersWithAccount();
+    setTimeout(() => {
+        success.value = null 
+    }, 4000)
+})
 </script>
 
 <template>
     <TabMolecule />
+    <SuccessAlert v-if="success" :message="success" />
     <section>
         <!-- Loading State -->
         <section v-if="loading" class="min-h-screen flex items-center justify-center">
@@ -44,7 +50,6 @@ import BankAccountsTableGrid from '../../organisms/BankAccountsTableGrid.vue';
                 </section>
             </section>
         </section>
-
         <!-- Error State -->
         <section v-else-if="error" class="min-h-screen flex items-center justify-center">
             <section class="text-red-600 text-5xl mb-4">⚠️</section>
