@@ -9,7 +9,6 @@ import org.springframework.web.client.HttpServerErrorException.InternalServerErr
 import MoneyMachine.mappers.BankAccountMapper;
 import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.BankAccount;
-import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.LoginRequest;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
@@ -17,7 +16,6 @@ import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.services.interfaces.*;
-import MoneyMachine.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -31,16 +29,12 @@ public class UserController {
 
     private final UserService userService;
     private final AuthenticationService authenticationService;
-    private final JwtUtil jwtUtil;
-    private final UserMapper userMapper;
     private final BankAccountService bankAccountService;
     private final BankAccountMapper bankAccountMapper;
 
-    public UserController(UserService userService, AuthenticationService authenticationService, UserMapper userMapper, JwtUtil jwtUtil, BankAccountService bankAccountService, BankAccountMapper bankAccountMapper) {
+    public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService, BankAccountMapper bankAccountMapper) {
         this.userService = userService;
         this.authenticationService = authenticationService;
-        this.userMapper = userMapper;
-        this.jwtUtil = jwtUtil;
         this.bankAccountService = bankAccountService;
         this.bankAccountMapper = bankAccountMapper;
     }
@@ -48,19 +42,15 @@ public class UserController {
     @PostMapping("login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
 
-        User user = authenticationService.getUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-        String authToken = jwtUtil.generateAuthTokenFromUser(user, loginRequest.getLoginType());
-        LoginResponse loginResponse = new LoginResponse(authToken, "Bearer", jwtUtil.getAuthTokenExpirationTime(), userMapper.toSummaryResponse(user));
+        LoginResponse loginResponse = authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword(), loginRequest.getLoginType());
 
         return ResponseEntity.status(201).body(loginResponse);
     }
 
     @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        User user = authenticationService.getLoggedInUser();
-        UserResponse userResponse = userMapper.toResponse(user);
+        UserResponse userResponse = authenticationService.getLoggedInUserResponse();
 
         return ResponseEntity.status(200).body(userResponse);
     }
