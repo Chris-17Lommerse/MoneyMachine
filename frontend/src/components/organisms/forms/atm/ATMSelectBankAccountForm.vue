@@ -35,7 +35,7 @@
     onMounted(async () => {
         try {
             const response = await axios.get('users/' + authStore.atmDecodedAuthToken.sub + '/bank-accounts')
-            bankAccounts.value = response.data
+            bankAccounts.value = response.data.items
 
             if (bankAccounts.value.length === 0) {
                 errorHandlingStore.errorMessage = 'You do not have any bank accounts. Please contact an employee to approve your account.'
