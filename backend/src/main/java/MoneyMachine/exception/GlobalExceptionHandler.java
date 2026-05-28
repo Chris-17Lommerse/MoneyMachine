@@ -50,8 +50,8 @@ public class GlobalExceptionHandler {
         String locationInfo = getLocationOfException(ex);
         ErrorResponse errorResponse = new ErrorResponse(500, ErrorType.INTERNAL_SERVER_ERROR, ex.getMessage(), locationInfo);
 
-        ErrorResponse errorDTO = generateErrorDtoByExceptionAndErrorInfo(ex, 500, ErrorType.UNAUTHORIZED, null);
-        return ResponseEntity.status(errorDTO.getCode()).body(errorDTO);
+        
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
