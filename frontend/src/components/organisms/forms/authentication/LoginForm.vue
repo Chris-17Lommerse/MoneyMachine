@@ -3,6 +3,7 @@
     import axios from '@/utils/axios.js'
     import { useAuthStore } from '@/stores/authStore.js'
     import { useErrorHandlingStore } from '@/stores/errorHandlingStore.js'
+    import router from '@/router/router.js'
 
     import AuthsubmitBtn from '@/components/atoms/buttons/AuthSubmitBtn.vue'
     import BaseFormField from '@/components/molecules/forms/BaseFormField.vue'
@@ -14,35 +15,40 @@
 
     const email = ref('')
     const password = ref('')
+    const errorAlertRef = ref(null)
 
     async function handleLogin(e) {
         try {
             e.preventDefault()
 
-            const form = new FormData()
-            form.append('email', email.value)
-            form.append('password', password.value)
-            form.append('loginType', 'WEBSITE')
-
-            const response = await axios.post('/users/login', form)
+            const response = await axios.post('/users/login', {
+                'email': email.value,
+                'password': password.value,
+                'loginType': 'WEBSITE'
+            })
 
             authStore.setWebsiteAuthToken(response.data.accessToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
+            router.push('/user-test')
         }
-        catch (ex){
+        catch (ex) {
             if (ex.response){
-                errorHandlingStore.errorMessage = ex.response.data.message
+                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
+            }
+            else{
+                errorAlertRef.value.displayErrorMessage(ex.message)
             }
         }
     }
 </script>
 
 <template>
-    <form @submit="handleLogin">
-        <ErrorAlert />
-        <SuccessAlert />
-        <BaseFormField labelName="Email" type="email" id="email" name="email" placeholder="Enter your email address" v-model="email"/>
-        <BaseFormField labelName="Password" type="password" id="password" name="password" placeholder="Enter your password" v-model="password"/>
+    <ErrorAlert ref="errorAlertRef" />
+    <SuccessAlert />
+
+    <form @submit="handleLogin">    
+        <BaseFormField labelName="Email" type="email" id="email" placeholder="Enter your email address" v-model="email"/>
+        <BaseFormField labelName="Password" type="password" id="password" placeholder="Enter your password" v-model="password"/>
         <AuthsubmitBtn text="Login" />
   </form>
 </template>

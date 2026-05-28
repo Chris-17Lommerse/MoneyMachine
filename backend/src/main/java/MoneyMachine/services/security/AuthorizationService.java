@@ -29,7 +29,7 @@ public class AuthorizationService {
         return false;
     }
 
-    public boolean isAllowedToGetUserById(Long id) {
+    public boolean isAllowedToInteractWithUserId(Long id) {
 
         User user = authenticationService.getLoggedInUser();
 

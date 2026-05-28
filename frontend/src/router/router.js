@@ -9,14 +9,17 @@ import NotFound from '@/components/pages/website/NotFound.vue'
 
 import ATMLogin from '@/components/pages/atm/authentication/ATMLogin.vue'
 import ATMUserAuthorizationTest from '@/components/pages/atm/authentication/ATMUserAuthorizationTest.vue'
-import ATMLogout from '@/components/pages/atm/authentication/ATMLogout.vue'
+import ATMBankAccountSelection from '@/components/pages/atm/ATMBankAccountSelection.vue'
+import Deposit from '@/components/pages/atm//Deposit.vue'
+import ATMMyBankAccount from '@/components/pages/atm/ATMMyBankAccount.vue'
+import Withdraw from '@/components/pages/atm/Withdraw.vue'
+
 import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
-import CreateBankAccountPage from '../components/pages/website/CreateBankAccountPage.vue'
-import UsersWithBankAccuntsPage from '../components/pages/website/UsersWithBankAccountsPage.vue'
+import CreateBankAccountPage from '@/components/pages/website/CreateBankAccountPage.vue'
+import UsersWithBankAccuntsPage from '@/components/pages/website/UsersWithBankAccountsPage.vue'
 
 import Login from '@/components/pages/website/authentication/Login.vue'
 import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'
-import Logout from '@/components/pages/website/authentication/Logout.vue'
 
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'
 
@@ -36,11 +39,35 @@ const routes = [
                     title: 'Login'
                 }
             },
-            {
-                path: 'logout',
-                component: ATMLogout,
-                meta: {
-                    title: 'Logout',
+            { 
+                path: 'select-bank-account', 
+                component: ATMBankAccountSelection, 
+                meta: { 
+                    title: 'Select your bank account',
+                    isAtmAuthenticated: true
+                }
+            },
+            { 
+                path: 'bank-account/:iban', 
+                component: ATMMyBankAccount, 
+                meta: { 
+                    title: 'My bank account',
+                    isAtmAuthenticated: true
+                }
+            },
+            { 
+                path: 'deposit/:iban', 
+                component: Deposit, 
+                meta: { 
+                    title: 'Deposit',
+                    isAtmAuthenticated: true
+                }
+            },
+            { 
+                path: 'withdraw/:iban', 
+                component: Withdraw, 
+                meta: { 
+                    title: 'Withdraw',
                     isAtmAuthenticated: true
                 }
             },
@@ -75,15 +102,7 @@ const routes = [
                 }
             },
             {
-                path: '/logout',
-                component: Logout,
-                meta: {
-                    title: 'Users',
-                    isWebsiteAuthenticated: true
-                }
-            },
-            {
-                path: '/user-test',
+                path: '/user-test', 
                 component: UserAuthorizationTest,
                 meta: {
                     title: 'User test',
@@ -133,7 +152,12 @@ router.beforeEach((to) => {
 
     if (to.meta.isAtmAuthenticated && authStore.atmDecodedAuthToken === null) {
         errorHandlingStore.errorMessage = 'You need to be logged in into the ATM to perform this action.'
-        return '/atm/login'
+        return { 
+            path: '/atm/login', 
+            query: { 
+                _refresh: Date.now() 
+            } 
+        }
     }
 
     if (to.meta.isWebsiteAuthenticated) {
@@ -142,7 +166,12 @@ router.beforeEach((to) => {
 
         if (websiteDecodedAuthToken === null) {
             errorHandlingStore.errorMessage = 'You need to be logged in to perform this action.'
-            return '/login'
+            return { 
+                path: '/login', 
+                query: { 
+                    _refresh: Date.now() 
+                } 
+            }
         }
 
         if (to.meta.roles) {
@@ -158,7 +187,12 @@ router.beforeEach((to) => {
 
             if (isAuthorized === false) {
                 errorHandlingStore.errorMessage = `Your account doesn't have the right role to perform this action.`
-                return '/login'
+                return { 
+                    path: '/login', 
+                    query: { 
+                        _refresh: Date.now() 
+                    } 
+                }
             }
         }
     }

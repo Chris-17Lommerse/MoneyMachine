@@ -7,7 +7,7 @@
         id: {
             type: String,
         },
-        name: {
+        step: {
             type: String,
         },
         placeholder: {
@@ -30,5 +30,5 @@
 </script>
 
 <template>
-    <input class="form-control" :type="props.type" :id="props.id" :name="props.name" :placeholder="props.placeholder" :value="props.modelValue" @change="onBaseInputChange" :required="props.isRequired"/>
+    <input class="form-control" :type="props.type" :step="props.step" :id="props.id" :placeholder="props.placeholder" :value="props.modelValue" @change="onBaseInputChange" :required="props.isRequired"/>
 </template>

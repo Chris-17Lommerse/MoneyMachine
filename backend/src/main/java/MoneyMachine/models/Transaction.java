@@ -1,6 +1,9 @@
 package MoneyMachine.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,4 +48,8 @@ public class Transaction {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
+
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDateTime dateTime;
 }

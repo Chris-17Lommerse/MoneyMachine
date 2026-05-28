@@ -21,10 +21,11 @@ public class BankAccountMapper {
         bankAccountResponse.setSingleTransferLimit(bankAccount.getSingleTransferLimit());
         bankAccountResponse.setDailyTransferLimit(bankAccount.getDailyTransferLimit());
         bankAccountResponse.setActive(bankAccount.getIsActive());
+        
         return bankAccountResponse;
     }
 
-    public List<BankAccountResponse> toDTOList(List<BankAccount> bankAccountList)
+    public List<BankAccountResponse> toResponseList(List<BankAccount> bankAccountList)
     {
         List<BankAccountResponse> bankAccountResponses = new ArrayList<BankAccountResponse>();
 

@@ -12,9 +12,3 @@
         </div>
     </section>
 </template>
-
-<style scoped>
-    .authentication-box {
-        width: 450px;
-    }
-</style>

@@ -6,7 +6,7 @@
 
     <Navbar />
 
-    <main class="container">
-        <router-view></router-view>
+    <main class="container vh-100">
+        <RouterView />
     </main>
 </template>

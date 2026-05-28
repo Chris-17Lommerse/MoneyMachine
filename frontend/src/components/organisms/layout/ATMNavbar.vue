@@ -1,7 +1,7 @@
 <script setup>
     import NavBrand from '@/components/atoms/nav/NavBrand.vue'
     import NavToggler from '@/components/atoms/nav/NavToggler.vue'
-    import ATMUserInfo from '@/components/molecules/nav/ATMUserInfo.vue';
+    import UserInfo from '@/components/molecules/nav/UserInfo.vue';
     import ATMNavMenu from '@/components/molecules/nav/ATMNavMenu.vue';
 </script>
 
@@ -12,7 +12,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ATMNavMenu />
-            <ATMUserInfo />
+            <UserInfo :isAtm="true" />
         </div>
     </nav>
 </template>

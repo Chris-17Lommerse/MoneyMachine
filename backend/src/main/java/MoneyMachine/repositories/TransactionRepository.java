@@ -1,11 +1,11 @@
 package MoneyMachine.repositories;
 
-import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import MoneyMachine.models.Transaction;
 
 @Repository
-public interface TransactionRepository extends ListCrudRepository<Transaction, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     
 }

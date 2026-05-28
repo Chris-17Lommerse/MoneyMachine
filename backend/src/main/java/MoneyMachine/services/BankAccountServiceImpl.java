@@ -1,31 +1,37 @@
 package MoneyMachine.services;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import MoneyMachine.exception.NotFoundException;
+import org.springframework.stereotype.Service;
+
+import MoneyMachine.models.BankAccount;
+import MoneyMachine.repositories.BankAccountRepository;
+import MoneyMachine.services.interfaces.BankAccountService;
+
 import MoneyMachine.mappers.BankAccountMapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.enums.BankAccountType;
-import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
-import MoneyMachine.services.interfaces.BankAccountService;
 
 import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import MoneyMachine.factories.BankAccountTypeFactory;
 import MoneyMachine.factories.IbanGenerator;
-import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.List;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
+
     private BankAccountMapper bankAccountMapper;
     private BankAccountRepository bankAccountRepository;
     private IbanGenerator ibanGenerator;
@@ -42,8 +48,46 @@ public class BankAccountServiceImpl implements BankAccountService {
         this.userRepository = userRepository;
     }
 
-    public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
+    @Override
+    public BankAccountOverviewResponse getAllBankAccountsByUserId(Long id, Pageable pageable) {
 
+        Page<BankAccount> page = bankAccountRepository.findAllByUserId(id, pageable);
+        List<BankAccount> bankAccounts = page.getContent();
+
+        return new BankAccountOverviewResponse(bankAccountMapper.toResponseList(bankAccounts), page.getNumber(), page.getSize());
+    }
+
+    @Override
+    public BankAccount getBankAccountByIban(String iban) {
+        
+        Optional<BankAccount> bankAccount = bankAccountRepository.findById(iban);
+
+        if (bankAccount.isPresent()) {
+            return bankAccount.get();
+        }
+
+        throw new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban));
+    } 
+
+    @Override
+    public BankAccount getBankAccountByIbanAndUserId(String iban, Long id) {
+        
+        Optional<BankAccount> bankAccount = bankAccountRepository.findByIbanAndUserId(iban, id);
+
+        if (bankAccount.isPresent()) {
+            return bankAccount.get();
+        }
+
+        throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
+    }
+
+    @Override
+    public void setBankAccountBalance(String iban, BigDecimal newBalance) {
+        this.bankAccountRepository.setBalanceByIban(iban, newBalance);
+    } 
+
+    @Override
+    public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
 
         BankAccount bankAccount = new BankAccount();
 
@@ -55,6 +99,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountRespnse;
     }
 
+    @Override
     public BankAccountResponse createBankAccountFromRequest(BankAccountCreationRequest bankAccountCreationRequest) {
         Optional<User> optionalUser = userRepository.findById(bankAccountCreationRequest.getUserId());
         User user = optionalUser.get();
@@ -72,11 +117,12 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountRespnse;
     }
 
+    @Override
     public BankAccountOverviewResponse getAllBankAccounts(Pageable pageable)
     {
         Page<BankAccount> page = bankAccountRepository.findAll(pageable);
         List<BankAccount> bankAccounts = page.getContent();
-        List<BankAccountResponse> items = bankAccountMapper.toDTOList(bankAccounts);
+        List<BankAccountResponse> items = bankAccountMapper.toResponseList(bankAccounts);
         BankAccountOverviewResponse bankAccountOverviewResponse = new BankAccountOverviewResponse(items, page.getNumber(), page.getSize());
         return bankAccountOverviewResponse;
     }

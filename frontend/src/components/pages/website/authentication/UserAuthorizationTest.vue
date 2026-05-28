@@ -2,6 +2,7 @@
     import { onMounted, ref } from 'vue'
     import axios from "@/utils/axios.js"
     import { useAuthStore } from "@/stores/authStore.js"
+    import SuccessAlert from '@/components/atoms/errorHandling/SuccessAlert.vue'
 
     const authStore = useAuthStore()
     const user = ref('')
@@ -20,6 +21,7 @@
 </script>
 
 <template>
+    <SuccessAlert />
     <strong>Logged in user returned from backend</strong>
     <br>
     {{ JSON.stringify(user, null, 2) }}

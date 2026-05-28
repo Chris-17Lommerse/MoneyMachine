@@ -11,10 +11,10 @@
             type: String,
             default: 'text'
         },
-        id: {
+        step: {
             type: String,
         },
-        name: {
+        id: {
             type: String,
         },
         placeholder: {
@@ -40,6 +40,6 @@
 <template>
     <div class="mb-3">
         <FormLabel :labelName="props.labelName" :id="props.id" />
-        <BaseInput v-model="value" :type="props.type" :id="props.id" :name="props.name" :placeholder="props.placeholder" :isRequired="isRequired" />
+        <BaseInput v-model="value" :type="props.type" :min="props.min" :step="props.step" :id="props.id" :placeholder="props.placeholder" :isRequired="isRequired" />
     </div>
 </template>
