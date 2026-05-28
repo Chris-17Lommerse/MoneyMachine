@@ -3,6 +3,8 @@ package MoneyMachine.models;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import MoneyMachine.models.enums.BankAccountType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +60,6 @@ public class BankAccount {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
-    @NotNull
+    @CreationTimestamp
     private LocalDateTime createdAt;
 }
