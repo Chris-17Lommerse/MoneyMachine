@@ -56,11 +56,12 @@ public class UserController {
     }
 
     @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
 
         User user = authenticationService.getLoggedInUser();
         UserResponse userResponse = userMapper.toResponse(user);
-        
+
         return ResponseEntity.status(200).body(userResponse);
     }
 
@@ -86,6 +87,7 @@ public class UserController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
         try {
             List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
@@ -97,7 +99,8 @@ public class UserController {
                     "Unauthorized - Authentication required", exUnauthorized.getMessage());
             return ResponseEntity.status(401).body(errorResponse);
         } catch (InternalServerError exInternalServerError) {
-            ErrorResponse errorResponse = new ErrorResponse(500, MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
+            ErrorResponse errorResponse = new ErrorResponse(500,
+                    MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
                     "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }

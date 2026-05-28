@@ -13,6 +13,12 @@ import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/bank-accounts")
@@ -42,5 +48,21 @@ public class BankAccountController {
         }
 
         return ResponseEntity.status(200).body(bankAccountMapper.toResponse(bankAccount));
+    }
+
+    @PostMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<BankAccountResponse> createBankAccount(
+            @RequestBody BankAccountCreationRequest bankAccountCreationRequest) throws Exception {
+        BankAccountResponse bankAccountResponse = bankAccountService
+                .createBankAccountFromRequest(bankAccountCreationRequest);
+        return ResponseEntity.status(201).body(bankAccountResponse);
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts(Pageable pageable) {
+        BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
+        return ResponseEntity.ok(bankAccounts);
     }
 }

@@ -21,6 +21,7 @@ public class BankAccountMapper {
         bankAccountResponse.setSingleTransferLimit(bankAccount.getSingleTransferLimit());
         bankAccountResponse.setDailyTransferLimit(bankAccount.getDailyTransferLimit());
         bankAccountResponse.setActive(bankAccount.getIsActive());
+        
         return bankAccountResponse;
     }
 

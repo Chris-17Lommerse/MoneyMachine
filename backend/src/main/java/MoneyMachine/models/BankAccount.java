@@ -1,6 +1,7 @@
 package MoneyMachine.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import MoneyMachine.models.enums.BankAccountType;
 import jakarta.persistence.Column;
@@ -57,4 +58,6 @@ public class BankAccount {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
+    @NotNull
+    private LocalDateTime createdAt;
 }

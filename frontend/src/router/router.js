@@ -14,10 +14,13 @@ import Deposit from '@/components/pages/atm//Deposit.vue'
 import ATMMyBankAccount from '@/components/pages/atm/ATMMyBankAccount.vue'
 import Withdraw from '@/components/pages/atm/Withdraw.vue'
 
+import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
+import CreateBankAccountPage from '@/components/pages/website/CreateBankAccountPage.vue'
+import UsersWithBankAccuntsPage from '@/components/pages/website/UsersWithBankAccountsPage.vue'
+
 import Login from '@/components/pages/website/authentication/Login.vue'
 import UserAuthorizationTest from '@/components/pages/website/authentication/UserAuthorizationTest.vue'
 
-import UsersWithoutBankAccountPage from '@/components/pages/website/users/UsersWithoutBankAccountPage.vue'
 import EmployeeAuthorizationTest from '@/components/pages/website/authentication/EmployeeAuthorizationTest.vue'
 
 const routes = [
@@ -29,10 +32,10 @@ const routes = [
         path: '/atm',
         component: ATMLayout,
         children: [
-            { 
-                path: 'login', 
-                component: ATMLogin, 
-                meta: { 
+            {
+                path: 'login',
+                component: ATMLogin,
+                meta: {
                     title: 'Login'
                 }
             },
@@ -68,10 +71,10 @@ const routes = [
                     isAtmAuthenticated: true
                 }
             },
-            { 
-                path: 'user-test', 
+            {
+                path: 'user-test',
                 component: ATMUserAuthorizationTest,
-                meta: { 
+                meta: {
                     title: 'UserTest',
                     isAtmAuthenticated: true
                 }
@@ -83,34 +86,44 @@ const routes = [
         component: WebsiteLayout,
         children: [
             {
-                path: '/users', 
+                path: '/users',
                 component: UsersWithoutBankAccountPage,
-                meta: { 
+                meta: {
                     title: 'Users',
-                    isWebsiteAuthenticated: true
+                    isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
                 }
             },
             {
-                path: '/login', 
+                path: '/login',
                 component: Login,
-                meta: { 
+                meta: {
                     title: 'Users',
                 }
             },
             {
                 path: '/user-test', 
                 component: UserAuthorizationTest,
-                meta: { 
+                meta: {
                     title: 'User test',
                     isWebsiteAuthenticated: true
                 }
 
             },
             {
-                path: '/employee-test', 
+                path: '/employee-test',
                 component: EmployeeAuthorizationTest,
-                meta: { 
+                meta: {
                     title: 'Employee test',
+                    isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
+                }
+            },
+            {
+                path: '/bank-accounts',
+                component: UsersWithBankAccuntsPage,
+                meta: {
+                    title: 'bank-accounts',
                     isWebsiteAuthenticated: true,
                     roles: ['EMPLOYEE']
                 }
@@ -120,6 +133,10 @@ const routes = [
                 component: NotFound
             }
         ]
+    },
+    {
+        path: '/users/:user_id/bank-accounts',
+        component: CreateBankAccountPage
     },
 ]
 
@@ -162,7 +179,7 @@ router.beforeEach((to) => {
             let isAuthorized = false
 
             for (const role of to.meta.roles) {
-                if (websiteDecodedAuthToken.role === role){
+                if (websiteDecodedAuthToken.role === role) {
                     isAuthorized = true
                     break
                 }
@@ -179,7 +196,7 @@ router.beforeEach((to) => {
             }
         }
     }
-    
+
     if (to.meta.title) {
         document.title = to.meta.title
     }
