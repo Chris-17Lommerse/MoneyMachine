@@ -74,7 +74,7 @@ public class TransactionMapperService {
         TransferTransaction t= mapper.toTransferEntity(transfer);
         User user =userRepository.findById(transfer.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setActive(true);
+        t.setIsActive(true);
         return t;
 
     }
@@ -83,7 +83,7 @@ public class TransactionMapperService {
         WithdrawTransaction t= mapper.toWithdrawEntity(withdraw);
         User user =userRepository.findById(withdraw.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setActive(true);
+        t.setIsActive(true);
         return t;
     }
     public DepositTransaction toDepositEntity( DepositRequest deposit) {
@@ -91,7 +91,7 @@ public class TransactionMapperService {
         DepositTransaction t= mapper.toDepositEntity(deposit);
         User user =userRepository.findById(deposit.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
-        t.setActive(true);
+        t.setIsActive(true);
         return t;
     }
     

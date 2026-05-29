@@ -36,8 +36,6 @@ public class TransactionController {
        return ResponseEntity.ok(transactionService.createTransfer(transaction));
     }
 
-   
-}
     @PostMapping("deposit")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('ATM')")
     public ResponseEntity<DepositTransactionResponse> deposit(@RequestBody DepositRequest depositRequest) {
