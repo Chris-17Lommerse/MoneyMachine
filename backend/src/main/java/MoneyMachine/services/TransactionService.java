@@ -14,25 +14,16 @@ import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
-import MoneyMachine.repositories.DepositTransactionRepository;
-import MoneyMachine.repositories.WithdrawTransactionRepository;
-import MoneyMachine.repositories.TransferTransactionRepository;
 @Service
 public class TransactionService {
     private TransactionRepository transactionRepository;
     private BankAccountRepository bankAccountRepository;
-    private DepositTransactionRepository depositTransactionRepository;
-    private WithdrawTransactionRepository withdrawTransactionRepository;
-    private TransferTransactionRepository transferTransactionRepository;
     private TransactionMapperService mapper;
 
-    public TransactionService(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, DepositTransactionRepository depositTransactionRepository, WithdrawTransactionRepository withdrawTransactionRepository, TransferTransactionRepository transferTransactionRepository, TransactionMapperService mapper) {
-        this.transactionRepository = transactionRepository;
+    public TransactionService(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper) {
         this.bankAccountRepository = bankAccountRepository;
-        this.depositTransactionRepository = depositTransactionRepository;
-        this.withdrawTransactionRepository = withdrawTransactionRepository;
-        this.transferTransactionRepository = transferTransactionRepository;
         this.mapper = mapper;
+        this.transactionRepository = transactionRepository;
     }
 
     public List<TransactionResponse> getAllTransactions()
@@ -41,11 +32,7 @@ public class TransactionService {
     }
     public List<TransactionResponse> getAllTransactionsByAccountId(String iban)
     {
-       List<Transaction> transactions = new  ArrayList<Transaction>();
-        transactions.addAll(transferTransactionRepository.findByFromBankAccount_Iban(iban));
-        transactions.addAll(transferTransactionRepository.findByToBankAccount_Iban(iban));
-        transactions.addAll(depositTransactionRepository.findByToBankAccount_Iban(iban));
-        transactions.addAll(withdrawTransactionRepository.findByFromBankAccount_Iban(iban));
+       List<Transaction> transactions = transactionRepository.findAllByToOrFromIban(iban);
         return mapper.getAllTransactions(transactions);
     }
     public TransactionResponse getTransactionByid(long id)

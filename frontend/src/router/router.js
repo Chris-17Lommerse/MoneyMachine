@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import AllTransactions from '@/components/views/transactions/allTransactions.vue'
-import Transaction from '@/components/views/transactions/transaction.vue'
-import CreateTransaction from '@/components/views/transactions/CreateTransaction.vue'
-import TransactionLayout from '@/components/layout/transactionLayout.vue'
+import AllTransactions from '@/components/pages/website/transactions/allTransactions.vue'
+import CreateTransaction from '@/components/pages/website/transactions/CreateTransaction.vue'
 
 import ATMLayout from '@/components/layout/ATMLayout.vue'
 import WebsiteLayout from '@/components/layout/WebsiteLayout.vue'
@@ -60,29 +58,26 @@ const routes = [
     },
     {
         path: '/transactions',
-        component: TransactionLayout,
+        component: WebsiteLayout,
         children: [
             {
                 path: '',
                 component: AllTransactions,
                 meta: {
-                    title: 'All Transactions'
+                    isWebsiteAuthenticated: true,
+                    title: 'All Transactions',
+                    roles: ['EMPLOYEE']
                 }
             },
             {
                 path: 'create',
                 component: CreateTransaction,
                 meta: {
-                    title: 'Create Transaction'
+                    isWebsiteAuthenticated: true,
+                    title: 'Create Transaction',
+                    roles: ['EMPLOYEE']
                 }
             },
-            {
-                path: ':id',
-                component: Transaction,
-                meta: {
-                    title: 'Transaction Details'
-                }
-            }
         ]
     },
     {

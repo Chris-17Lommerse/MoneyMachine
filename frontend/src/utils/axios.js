@@ -4,7 +4,7 @@ import { useErrorHandlingStore } from '@/stores/errorHandlingStore'
 import router from '@/router/router.js'
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080',//import.meta.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
