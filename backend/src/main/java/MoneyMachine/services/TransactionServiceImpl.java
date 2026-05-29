@@ -54,17 +54,33 @@ public class TransactionServiceImpl implements TransactionService {
     {
        return mapper.toResponse(transactionRepository.findById(id).orElseThrow());
     }
-   @Transactional(rollbackFor = Exception.class)
-    public TransactionResponse createTransfer(TransferRequest transaction)
+    @Transactional(rollbackFor = Exception.class)
+    public TransactionResponse createTransferAsUser(TransferRequest transaction,User user)
     { 
         BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
         BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
-        validateTransfer(transaction, fromAccount,toAccount);
+        validateTransferForUser(transaction, fromAccount,toAccount,user);
 
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
 
-        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction);
+        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
+        transferTransaction.setFromBankAccount(fromAccount);
+        transferTransaction.setToBankAccount(toAccount);
+        TransferTransaction saved = transactionRepository.save(transferTransaction);
+        return mapper.toResponse(saved);
+    }  
+   @Transactional(rollbackFor = Exception.class)
+    public TransactionResponse createTransferAsEmployee(TransferRequest transaction,User user)
+    { 
+        BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
+        BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
+        validateTransferForEmployee(transaction, fromAccount,toAccount);
+
+        fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
+        toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
+
+        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
         transferTransaction.setFromBankAccount(fromAccount);
         transferTransaction.setToBankAccount(toAccount);
         TransferTransaction saved = transactionRepository.save(transferTransaction);
@@ -115,14 +131,27 @@ public class TransactionServiceImpl implements TransactionService {
 
         return transactionMapper.toWithdrawTransactionResponse(withdrawTransaction);
     }
-    
-    private void validateTransfer(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount) {
+
+    private void validateTransferForEmployee(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount) {
+        baseValidateTransfer(transaction, fromAccount, toAccount);
+        
+    }
+    private void validateTransferForUser(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount, User user) {
+        baseValidateTransfer(transaction, fromAccount, toAccount);
+        validateUserOwnsFromAccount(fromAccount, user);
+    }
+    private void baseValidateTransfer(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount) {
         validateSufficientBalance(fromAccount, transaction.getAmount());
         validateWithinSingleTransferLimit(fromAccount, transaction.getAmount());
         validateNotSameAccountTransfer(fromAccount,toAccount);
         validatePositiveAmount(transaction.getAmount());
         validateNotDiffrentUserSavingsTransfer( fromAccount,toAccount);
         
+    }
+    private void validateUserOwnsFromAccount(BankAccount fromAccount, User user) {
+        if (fromAccount.getUser().getId() != user.getId()) {
+            throw new IllegalArgumentException("Users can only transfer from their own accounts");
+        }
     }
     private void validateSufficientBalance(BankAccount fromAccount, BigDecimal amount) {
         if (fromAccount.getBalance().subtract(amount).compareTo(fromAccount.getAbsoluteLimit()) < 0) {

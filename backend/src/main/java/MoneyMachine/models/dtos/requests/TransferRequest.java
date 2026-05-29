@@ -23,8 +23,6 @@ public class TransferRequest  {
     @NotNull
     private String type;
     @NotNull
-    private long initiatedBy;
-    @NotNull
     private String message;
     
 

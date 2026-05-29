@@ -67,10 +67,9 @@ public class TransactionMapperService {
 
         return response;
     }
-    public TransferTransaction toTransferEntity( TransferRequest transfer) {
+    public TransferTransaction toTransferEntity( TransferRequest transfer,User user) {
        
         TransferTransaction t= mapper.toTransferEntity(transfer);
-        User user =userRepository.findById(transfer.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
         t.setInitiatingUser(user);
         t.setIsActive(true);
         return t;

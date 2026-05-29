@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
@@ -17,6 +18,7 @@ public interface TransactionService {
     public List<TransactionResponse> getAllTransactions();
     public List<TransactionResponse> getAllTransactionsByAccountId(String iban);
     public TransactionResponse getTransactionByid(long id);
-    public TransactionResponse createTransfer(TransferRequest transaction);
+    public TransactionResponse createTransferAsUser(TransferRequest transaction,User user);
+    public TransactionResponse createTransferAsEmployee(TransferRequest transaction,User user);
     
 }

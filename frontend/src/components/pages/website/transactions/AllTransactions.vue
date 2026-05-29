@@ -52,7 +52,7 @@ function formatDateTime(dateString) {
 <template>
     <div class="text-center">
     <h1 class="display-4">All Transactions</h1>
-    <router-link to="/transactions/create" class="btn btn-primary mb-3">add transaction</router-link>
+    <router-link to="/transactions/create/employee" class="btn btn-primary mb-3">add transaction</router-link>
 
     <table class="table table-bordered table-striped table-hover">
         <thead>
