@@ -52,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
 
-        BankAccount toBankAccount = bankAccountService.getBankAccountByIban(toIban);
+        BankAccount toBankAccount = bankAccountService.findBankAccountEntityByIban(toIban);
         throwIfMoneyAmountIsNotValid(amount, toBankAccount);
 
         this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
@@ -74,7 +74,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
 
-        BankAccount fromBankAccount = bankAccountService.getBankAccountByIban(fromIban);
+        BankAccount fromBankAccount = bankAccountService.findBankAccountEntityByIban(fromIban);
         throwIfMoneyAmountIsNotValid(amount, fromBankAccount);
         throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
 
