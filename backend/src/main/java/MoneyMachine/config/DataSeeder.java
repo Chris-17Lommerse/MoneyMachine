@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -33,7 +32,7 @@ public class DataSeeder implements ApplicationRunner {
         this.bankAccountRepository = bankAccountRepository;
         this.authenticationService = authenticationService;
     }
-    @Transactional(rollbackFor = Exception.class)
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         
@@ -48,7 +47,7 @@ public class DataSeeder implements ApplicationRunner {
         user.setIsActive(true);
         user.setIsApproved(true);
 
-        user = userRepository.save(user);
+        userRepository.save(user);
 
         User userWithoutBankAccount = new User();
         userWithoutBankAccount.setFirstName("employeeFirstName");
@@ -61,7 +60,7 @@ public class DataSeeder implements ApplicationRunner {
         userWithoutBankAccount.setIsActive(false);
         userWithoutBankAccount.setIsApproved(false);
 
-        userWithoutBankAccount = userRepository.save(userWithoutBankAccount);
+        userRepository.save(userWithoutBankAccount);
 
         BankAccount checkingBankAccount = new BankAccount();
         checkingBankAccount.setIban("NL91ABNA0417164300");
@@ -113,6 +112,6 @@ public class DataSeeder implements ApplicationRunner {
         transferTransaction.setFromBankAccount(checkingBankAccount);
         transferTransaction.setToBankAccount(checkingBankAccount);
 
-       transferTransaction= transactionRepository.save(transferTransaction);
+        transactionRepository.save(transferTransaction);
     }
 }

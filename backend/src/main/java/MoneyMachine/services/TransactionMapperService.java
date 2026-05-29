@@ -11,9 +11,7 @@ import MoneyMachine.models.Transaction;
 import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
-import MoneyMachine.models.dtos.requests.DepositRequest;
 import MoneyMachine.models.dtos.requests.TransferRequest;
-import MoneyMachine.models.dtos.requests.WithdrawRequest;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
@@ -76,24 +74,5 @@ public class TransactionMapperService {
         t.setInitiatingUser(user);
         t.setIsActive(true);
         return t;
-
     }
-    public WithdrawTransaction toWithdrawEntity( WithdrawRequest withdraw) {
-       
-        WithdrawTransaction t= mapper.toWithdrawEntity(withdraw);
-        User user =userRepository.findById(withdraw.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
-        t.setInitiatingUser(user);
-        t.setIsActive(true);
-        return t;
-    }
-    public DepositTransaction toDepositEntity( DepositRequest deposit) {
-       
-        DepositTransaction t= mapper.toDepositEntity(deposit);
-        User user =userRepository.findById(deposit.getInitiatedBy()).orElseThrow(() -> new RuntimeException("User not found")) ;
-        t.setInitiatingUser(user);
-        t.setIsActive(true);
-        return t;
-    }
-    
-
 }
