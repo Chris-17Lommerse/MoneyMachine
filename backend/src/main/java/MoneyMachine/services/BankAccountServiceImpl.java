@@ -140,6 +140,6 @@ public class BankAccountServiceImpl implements BankAccountService {
 
 @Override
 public BankAccount findBankAccountEntityByIban(String iban) {
-    return bankAccountRepository.findById(iban).orElseThrow(() -> new NotFoundException(...));
+    return bankAccountRepository.findById(iban).orElseThrow(null);
 }
 }
