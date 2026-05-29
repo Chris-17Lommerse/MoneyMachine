@@ -40,11 +40,12 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+<dependency>
+<groupId>org.projectlombok</groupId>
+<artifactId>lombok</artifactId>
+<version>1.18.42</version>
+<scope>provided</scope>
+</dependency>
 		<dependency> 
 			<groupId>com.h2database</groupId> 
 			<artifactId>h2</artifactId> 
@@ -141,12 +142,13 @@
 							<goal>testCompile</goal>
 						</goals>
 						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
+<annotationProcessorPaths>
+<path>
+<groupId>org.projectlombok</groupId>
+<artifactId>lombok</artifactId>
+<version>1.18.42</version>
+</path>
+</annotationProcessorPaths>
 						</configuration>
 					</execution>
 				</executions>
