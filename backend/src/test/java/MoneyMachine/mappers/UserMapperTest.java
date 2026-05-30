@@ -4,10 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import java.util.List;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.Role;
 public class UserMapperTest {
+    private List<User> users;
     private User user;
 
     @BeforeEach
@@ -31,5 +32,22 @@ public class UserMapperTest {
         userMapper.toResponse(user);
         assertNotNull(userMapper);
         assertNotEquals(user.getBsn(), userMapper.toResponse(user).getBsn());
+        assertNotNull(user.getFirstName(), userMapper.toResponse(user).getFirstName());
+    }
+
+    @Test
+    void toSummaryResponseShuldNotBeNull()
+    {
+        UserMapper userMapper = new UserMapper();
+        userMapper.toSummaryResponse(user);
+        assertNotNull(user.getFirstName(), userMapper.toSummaryResponse(user).getFirstName());
+    }
+
+    @Test
+    void toResponseList()
+    {
+        UserMapper userMapper = new UserMapper();
+        userMapper.toResponseList(users);
+        assertNotEquals(userMapper.toResponseList(users).size(), 0);
     }
 }

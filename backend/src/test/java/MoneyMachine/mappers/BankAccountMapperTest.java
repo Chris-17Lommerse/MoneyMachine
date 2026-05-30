@@ -43,6 +43,8 @@ public class BankAccountMapperTest {
     @Test
     void toResponseListShouldNotBeNull()
     {
-        
+        BankAccountMapper bankAccountMapper = new BankAccountMapper();
+        bankAccountMapper.toResponseList(bankAccounts);
+        assertNotEquals(bankAccountMapper.toResponseList(bankAccounts).size(), 0);
     }
 }
