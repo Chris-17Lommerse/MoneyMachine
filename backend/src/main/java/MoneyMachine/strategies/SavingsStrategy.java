@@ -8,25 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SavingsStrategy implements BankAccountTypeStrategy {
-
-    @Override
+    private static BigDecimal maxSingleTransferLimit; 
     public void applyBankAccountRules(BankAccount bankAccount)
     {
-        if(bankAccount.getAbsoluteLimit() == null)
-        {
-            BigDecimal absoluteLimit = BigDecimal.valueOf(20000);
-            bankAccount.setAbsoluteLimit(absoluteLimit);
-        }
-
-        if (bankAccount.getDailyTransferLimit() == null) {
-            BigDecimal dailyTransferLimit = BigDecimal.valueOf(100000);
-            bankAccount.setDailyTransferLimit(dailyTransferLimit);
-        }
-        
-        if(bankAccount.getSingleTransferLimit() == null)
-        {
-            BigDecimal singleTransferLimit = BigDecimal.valueOf(5000);
-             bankAccount.setSingleTransferLimit(singleTransferLimit);
-        }
+        bankAccount.setSingleTransferLimit(maxSingleTransferLimit);
     }
 }

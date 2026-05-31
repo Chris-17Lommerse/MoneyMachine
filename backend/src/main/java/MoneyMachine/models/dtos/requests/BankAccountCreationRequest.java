@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BankAccountCreationRequest {
-    private String iban;
     private Long userId;
     private BankAccountType bankAccountType;
     private BigDecimal balance;
