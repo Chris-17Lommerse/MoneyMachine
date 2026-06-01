@@ -4,7 +4,7 @@
     import BaseFormField from '@/components/molecules/forms/BaseFormField.vue'
     import SubmitBtn from '@/components/atoms/buttons/SubmitBtn.vue'
 
-    const props = defineProps({
+    defineProps({
         vModel: {
             type: Object,
             required: true
