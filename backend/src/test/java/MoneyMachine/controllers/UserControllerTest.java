@@ -40,16 +40,34 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    void login_whenLoginAsEmployee_getAuthenticationResponse() throws Exception {
+    void login_whenLoginAsUser_getAuthenticationResponse() throws Exception {
 
         Map<String, Object> request = new HashMap<>();
-        request.put("email", "employee@employee.employee");
+        request.put("email", "user@user.user");
         request.put("password", "password");
         request.put("loginType", "ATM");
 
         mockMvc.perform(post("/users/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().is(201));
+            .andExpect(status().is(201))
+            .andExpect(jsonPath("$.accessToken").exists())
+            .andExpect(jsonPath("$.expiresIn").exists())
+            .andExpect(jsonPath("$.userSummaryResponse").exists())
+            .andExpect(jsonPath("$.userSummaryResponse.id").value(1));
+    }
+
+     @Test
+    void invalidLogin_whenInvalidPassword_returnInvalidCredentials() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("email", "user@user.user");
+        request.put("password", "invalidPassword");
+        request.put("loginType", "ATM");
+
+        mockMvc.perform(post("/users/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is(401));
     }
 }
