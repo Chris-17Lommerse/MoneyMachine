@@ -27,7 +27,7 @@
             throwIfWithdrawAmountIsNotValid(amount.value, bankAccount.value.balance, bankAccount.value.absoluteLimit)
 
             const response = await axios.post('/transactions/withdraw', {
-                'fromBankAcountIban': bankAccount.value.iban,
+                'fromBankAcountIban': routeIban,
                 'amount': vModel.value.amount
             })
 
