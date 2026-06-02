@@ -168,7 +168,7 @@ paths:
             schema:
                 $ref: '#/components/schemas/LoginRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Returns access token and user summary
           headers:
           content:
@@ -222,7 +222,7 @@ paths:
             schema:
               $ref: '#/components/schemas/TransferRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Transfer completed
           content:
             application/json:
@@ -380,7 +380,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchRequest'
+              $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
         '200':
           description: Successful operation - User updated; returns the updated user
@@ -1165,7 +1165,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchRequest'
+              $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
         '200':
           description: Successful operation - Bank account status updated; returns the updated bank account
@@ -1232,7 +1232,7 @@ paths:
             schema:
               $ref: '#/components/schemas/WithdrawRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Amount withdrawn
           content:
             application/json:
@@ -1308,7 +1308,7 @@ paths:
             schema:
               $ref: '#/components/schemas/DepositRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Amount deposited
           content:
             application/json:
@@ -1726,12 +1726,27 @@ components:
           format: date-time
           example: "2024-04-28T10:30:00Z"
 
-    PatchRequest:
+    BankAccountPatchRequest:
       type: object
       properties:
         isActive:
           type: boolean
           example: false
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+          description: Maximum amount allowed for a single transfer
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+          description: Maximum total amount that can be transferred in a single day
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+          description: The minimum allowed balance (overdraft limit) for the account
     
     IbanLookupResponse:
       type: object
