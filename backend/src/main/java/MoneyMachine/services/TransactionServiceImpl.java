@@ -2,8 +2,11 @@ package MoneyMachine.services;
 
 import java.math.BigDecimal;
 
+import MoneyMachine.models.enums.Role;
+
 import org.springframework.stereotype.Service;
 
+import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.mappers.TransactionMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -42,6 +45,13 @@ public class TransactionServiceImpl implements TransactionService {
         }
     }
 
+    private void throwIfUserCannotInteractWithBankAccount(User user, BankAccount bankAccount) {
+        
+        if (user.getRole() != Role.EMPLOYEE && bankAccount.getUser().getId() != user.getId()) {
+            throw new NotAuthorizedException(String.format("You cannot perform actions on bank account: %s.", bankAccount.getIban()));
+        }
+    }
+
     private void throwIfWithdrawAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
 
         if (bankAccount.getBalance().subtract(amount).compareTo(bankAccount.getAbsoluteLimit()) < 0) {
@@ -53,11 +63,11 @@ public class TransactionServiceImpl implements TransactionService {
     public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
 
         BankAccount toBankAccount = bankAccountService.findBankAccountEntityByIban(toIban);
+        User loggedInUser = authenticationService.getLoggedInUser();
+        throwIfUserCannotInteractWithBankAccount(loggedInUser, toBankAccount);
         throwIfMoneyAmountIsNotValid(amount, toBankAccount);
 
         this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
-
-        User loggedInUser = authenticationService.getLoggedInUser();
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);
@@ -75,12 +85,12 @@ public class TransactionServiceImpl implements TransactionService {
     public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
 
         BankAccount fromBankAccount = bankAccountService.findBankAccountEntityByIban(fromIban);
+        User loggedInUser = authenticationService.getLoggedInUser();
+        throwIfUserCannotInteractWithBankAccount(loggedInUser, fromBankAccount);
         throwIfMoneyAmountIsNotValid(amount, fromBankAccount);
         throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
 
         this.bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
-
-        User loggedInUser = authenticationService.getLoggedInUser();
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(loggedInUser);
