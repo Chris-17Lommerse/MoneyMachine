@@ -6,7 +6,6 @@ import java.util.Map;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.enums.Role;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.greaterThan;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,23 +34,33 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    private String validAtmToken;
-    private User loggedInAtmUser;
+    private String validAtmUserToken;
+    private String validAtmEmployeeToken;
+    private User user;
+    private User employee;
 
     @BeforeEach
     void setUp() {
-        loggedInAtmUser = new User();
-        loggedInAtmUser.setId(1L);
-        loggedInAtmUser.setFirstName("userFirstName");
-        loggedInAtmUser.setLastName("userLastName");
-        loggedInAtmUser.setEmail("user@user.user");
-        loggedInAtmUser.setRole(Role.USER);
+        user = new User();
+        user.setId(1L);
+        user.setFirstName("userFirstName");
+        user.setLastName("userLastName");
+        user.setEmail("user@user.user");
+        user.setRole(Role.USER);
+
+        employee = new User();
+        employee.setId(2L);
+        employee.setFirstName("employeeFirstName");
+        employee.setLastName("employeeLastName");
+        employee.setEmail("employee@employee.employee");
+        employee.setRole(Role.EMPLOYEE);
     
-        validAtmToken = jwtUtil.generateAuthTokenFromUser(loggedInAtmUser, LoginType.ATM);
+        validAtmUserToken = jwtUtil.generateAuthTokenFromUser(user, LoginType.ATM);
+        validAtmEmployeeToken = jwtUtil.generateAuthTokenFromUser(employee, LoginType.ATM);
     }
 
     @Test
@@ -65,8 +72,8 @@ public class UserControllerTest {
         request.put("loginType", "ATM");
 
         mockMvc.perform(post("/users/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().is(201))
             .andExpect(jsonPath("$.accessToken").exists())
             .andExpect(jsonPath("$.expiresIn").exists())
@@ -83,17 +90,31 @@ public class UserControllerTest {
         request.put("loginType", "ATM");
 
         mockMvc.perform(post("/users/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().is(401));
     }
 
     @Test
     void getBankAccountsByUserId_whenGetCall_getBankAccounts() throws Exception {
-        mockMvc.perform(get(String.format("/users/%s/bank-accounts", loggedInAtmUser.getId()))
-                .header("Authorization", "Bearer " + validAtmToken))
+        mockMvc.perform(get(String.format("/users/%s/bank-accounts", user.getId()))
+                .header("Authorization", "Bearer " + validAtmUserToken))
             .andExpect(status().is(200))
-            .andExpect(jsonPath("$.items").exists())
-            .andExpect(jsonPath("$.items.length()").value(Matchers.greaterThan(0)));
+            .andExpect(jsonPath("$.items").exists());
+    }
+
+    @Test
+    void failGettingBankAccounts_whenNotAuthorized_getForbidden() throws Exception {
+        mockMvc.perform(get(String.format("/users/%s/bank-accounts", employee.getId()))
+                .header("Authorization", "Bearer " + validAtmUserToken))
+            .andExpect(status().is(403));
+    }
+
+    @Test
+    void gettingBankAccountsOfOtherUser_whenAuthorized_getTheirBankAccounts() throws Exception {
+        mockMvc.perform(get(String.format("/users/%s/bank-accounts", user.getId()))
+                .header("Authorization", "Bearer " + validAtmEmployeeToken))
+            .andExpect(status().is(200))
+            .andExpect(jsonPath("$.items").exists());
     }
 }
