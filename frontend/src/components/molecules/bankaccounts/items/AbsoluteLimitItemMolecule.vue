@@ -1,6 +1,6 @@
 <script setup>
-import AbsoluteLimitListDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/AbsoluteLimitListDataFieldAtom.vue";
 import AbsoluteLimitLabelAtom from "@/atoms/bankaccounts/textelements/labels/AbsoluteLimitLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -23,6 +23,6 @@ const props = defineProps({
 <template>
     <section class="flex flex-row">
     <AbsoluteLimitLabelAtom />
-    <AbsoluteLimitListDataFieldAtom :bankAccount="bankAccount" />
+    <BaseListDataFieldAtomForParagraphs :text="bankAccount.absoluteLimit" />
     </section>
 </template>

@@ -1,6 +1,5 @@
 <script setup>
 import CloseAccountTitle from "@/atoms/bankaccounts/textelements/CloseBankAccountTitle.vue";
-import BankAccountTypeListDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/BankAccountTypeListDataFieldAtom.vue";
 import ButtonSetMolecule from "@/molecules/bankaccounts/buttons/ButtonSetMolecule.vue";
 import AbsoluteLimitItemMolecule from "@/molecules/bankaccounts/items/AbsoluteLimitItemMolecule.vue";
 import BalanceItemMolecule from "@/molecules/bankaccounts/items/BalanceItemMolecule.vue";
@@ -8,6 +7,7 @@ import DailyTransferLimitItemMolecule from "@/molecules/bankaccounts/items/Daily
 import IBANNumberItemMolecule from "@/molecules/bankaccounts/items/IBANNumberItemMolecule.vue";
 import IsActiveItemMolecule from "@/molecules/bankaccounts/items/IsActiveItemMolecule.vue";
 import SingleTransferLimitItemMolecule from "@/molecules/bankaccounts/items/SingleTransferLimitItemMolecule.vue";
+import BaseListDataFieldAtomForHeadings from "../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForHeadings.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -31,7 +31,7 @@ const emits = defineEmits(['closeAccount'])
 <template>
     <section class="flex flex-col">
         <CloseAccountTitle />
-        <BankAccountTypeListDataFieldAtom :bankAccount="bankAccount" />
+        <BaseListDataFieldAtomForHeadings :text="bankAccount.bankAccountType" />
         <IBANNumberItemMolecule :bankAccount="bankAccount" />
         <BalanceItemMolecule :bankAccount="bankAccount" />
         <AbsoluteLimitItemMolecule :bankAccount="bankAccount" />

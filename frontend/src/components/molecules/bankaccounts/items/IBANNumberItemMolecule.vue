@@ -1,6 +1,6 @@
 <script setup>
-import IBANNumberListDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/IBANNumberListDataFieldAtom.vue";
 import IBANNumberLabelAtom from "@/atoms/bankaccounts/textelements/labels/IBANNumberLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -23,6 +23,6 @@ const props = defineProps({
 <template>
     <section class="flex flex-row">
         <IBANNumberLabelAtom />
-        <IBANNumberListDataFieldAtom :bankAccount="bankAccount" />
+        <BaseListDataFieldAtomForParagraphs :text="bankAccount.iban" />
     </section>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
-import IsActiveLidtDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/IsActiveLidtDataFieldAtom.vue";
 import IsActiveLabelAtom from "@/atoms/bankaccounts/textelements/labels/IsActiveLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -23,6 +23,6 @@ const props = defineProps({
 <template>
     <section class="flex flex-row">
         <IsActiveLabelAtom />
-        <IsActiveLidtDataFieldAtom :bankAccount="bankAccount" />
+        <BaseListDataFieldAtomForParagraphs :text="bankAccount.isActive" />
     </section>
 </template>

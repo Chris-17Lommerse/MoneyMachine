@@ -3,18 +3,7 @@ import CloseBankAccountButtonAtom from "@/atoms/bankaccounts/buttons/CloseBankAc
 import TransferMoneyButtonAtom from "@/atoms/bankaccounts/buttons/TransferMoneyButtonAtom.vue";
 import UpdateTransferLimitsButtonAtom from "@/atoms/bankaccounts/buttons/UpdateTransferLimitsButtonAtom.vue";
 import ViewTransactionHistoryButtonAtom from "@/atoms/bankaccounts/buttons/ViewTransactionHistoryButtonAtom.vue";
-import AbsoluteLimitDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/AbsoluteLimitDataFieldAtom.vue";
-import BalanceDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/BalanceDataFieldAtom.vue";
-import BankAccountTypeDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/BankAccountTypeDataFieldAtom.vue";
-import DailyTransferLimitDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/DailyTransferLimitDataFieldAtom.vue";
-import IBANNumberDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/IBANNumberDataFieldAtom.vue";
-import IsActiveDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/IsActiveDataFieldAtom.vue";
-import SingleTransferLimitDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/SingleTransferLimitDataFieldAtom.vue";
-import BSNNumberDataFieldAtom from "@/atoms/users/textelements/datafields/BSNNumberDataFieldAtom.vue";
-import EmailDataFieldAtom from "@/atoms/users/textelements/datafields/EmailDataFieldAtom.vue";
-import FirstNameDataFieldAtom from "@/atoms/users/textelements/datafields/FirstNameDataFieldAtom.vue";
-import LastNameDataFieldAtom from "@/atoms/users/textelements/datafields/LastNameDataFieldAtom.vue";
-import PhoneNumberDataFieldAtom from "@/atoms/users/textelements/datafields/PhoneNumberDataFieldAtom.vue";
+import BaseTableDataFieldAtom from "@/atoms/bankaccounts/textelements/datafields/BaseTableDataFieldAtom.vue";
 const props = defineProps({
     bankAccount: {
         type: Object,
@@ -35,13 +24,13 @@ const props = defineProps({
 
 <template>
     <tr class="tabe table-dark">
-        <IBANNumberDataFieldAtom :bank-account="bankAccount.iban" />
-        <BankAccountTypeDataFieldAtom :bank-account="bankAccount.bankAccountType" />
-        <BalanceDataFieldAtom :bank-account="bankAccount.balance" />
-        <AbsoluteLimitDataFieldAtom :bank-account="bankAccount.absoluteLimit" />
-        <DailyTransferLimitDataFieldAtom :bank-account="bankAccount.DailyTransferLimitDataFieldAtom" />
-        <SingleTransferLimitDataFieldAtom :bank-account="bankAccount.SingleTransferLimitDataFieldAtom" />
-        <IsActiveDataFieldAtom :bank-account="bankAccount.IsActiveDataFieldAtom" />
+        <BaseTableDataFieldAtom :text="bankAccount.iban" />
+        <BaseTableDataFieldAtom :text="bankAccount.bankAccountType" />
+        <BaseTableDataFieldAtom :text="bankAccount.balance" />
+        <BaseTableDataFieldAtom :text="bankAccount.absoluteLimit" />
+        <BaseTableDataFieldAtom :text="bankAccount.dailyTransferLimit" />
+        <BaseTableDataFieldAtom :text="bankAccount.singleTransferLimit" />
+        <BaseTableDataFieldAtom :text="bankAccount.isActive" />
         <td class="flex flex-column">
             <CloseBankAccountButtonAtom :bankAccount="bankAccount" />
             <UpdateTransferLimitsButtonAtom />

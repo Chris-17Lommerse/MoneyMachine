@@ -8,5 +8,5 @@ const props = defineProps({
 </script>
 
 <template>
-    <td>{{ text }}</td>
+    <p>{{ text }}</p>
 </template>

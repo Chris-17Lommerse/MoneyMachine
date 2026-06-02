@@ -1,6 +1,6 @@
 <script setup>
-import SingleTransferLimitListDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/SingleTransferLimitListDataFieldAtom.vue";
 import SingleTransferLimitLabelAtom from "@/atoms/bankaccounts/textelements/labels/SingleTransferLimitLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -23,6 +23,6 @@ const props = defineProps({
 <template>
     <section class="flex flex-row">
     <SingleTransferLimitLabelAtom />
-    <SingleTransferLimitListDataFieldAtom :bankAccount="bankAccount"/>
+    <BaseListDataFieldAtomForParagraphs :text="bankAccount.singleTransferLimit"/>
     </section>
 </template>

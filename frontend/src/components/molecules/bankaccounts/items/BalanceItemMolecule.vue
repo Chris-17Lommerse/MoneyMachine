@@ -1,6 +1,6 @@
 <script setup>
-import BalanceListDataFieldAtom from "@/atoms/bankaccounts/textelements/listdatafields/BalanceListDataFieldAtom.vue";
 import BalanceLabelAtom from "@/atoms/bankaccounts/textelements/labels/BalanceLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -23,6 +23,6 @@ const props = defineProps({
 <template>
     <section class="flex flex-row">
     <BalanceLabelAtom />
-    <BalanceListDataFieldAtom :bankAccount="bankAccount" />
+    <BaseListDataFieldAtomForParagraphs :text="bankAccount.balance" />
     </section>
 </template>
