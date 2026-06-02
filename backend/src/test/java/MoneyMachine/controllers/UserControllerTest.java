@@ -46,7 +46,7 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.userSummaryResponse.id").value(1));
     }
 
-     @Test
+    @Test
     void invalidLogin_whenInvalidPassword_returnInvalidCredentials() throws Exception {
 
         Map<String, Object> request = new HashMap<>();
@@ -58,5 +58,10 @@ public class UserControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().is(401));
+    }
+
+    @Test
+    void testGetBankAccountsByUserId() {
+    
     }
 }
