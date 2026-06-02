@@ -10,5 +10,5 @@ const emits = defineEmits(['closeAccount'])
 </script>
 
 <template>
-    <button @click="$emit('closeAccount', bankAccount.iban)" class="btn btn-danger">Close bank account</button>
+    <RouterLink @click="$emit('closeAccount', bankAccount.iban)" class="btn btn-danger">Close bank account</RouterLink>
 </template>
