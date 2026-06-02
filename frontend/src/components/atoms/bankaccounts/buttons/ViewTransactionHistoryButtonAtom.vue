@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <a href="" class="btn btn-primary">View transaction history</a>
+    <RouterLink :to="''" class="btn btn-primary">View transaction history</RouterLink>
 </template>

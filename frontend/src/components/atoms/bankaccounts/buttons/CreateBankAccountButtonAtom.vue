@@ -3,5 +3,5 @@
 </script>
 
 <template>
-    <a href="" class="btn btn-success">Create bank account</a>
+    <RouterLink :to="''" class="btn btn-success">Create bank account</RouterLink>
 </template>

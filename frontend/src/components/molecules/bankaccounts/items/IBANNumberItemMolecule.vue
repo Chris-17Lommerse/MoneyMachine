@@ -1,14 +1,14 @@
 <script setup>
-import BankAccountRecordMolecule from "@/molecules/bankaccounts/tablerows/BankAccountRecordMolecule.vue";
-import BankAccountTableHeader from "@/molecules/bankaccounts/tablerows/BankAccountTableHeader.vue";
+import IBANNumberLabelAtom from "@/atoms/bankaccounts/textelements/labels/IBANNumberLabelAtom.vue";
+import BaseListDataFieldAtomForParagraphs from "../../../atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForParagraphs.vue";
 
 const props = defineProps({
-    bankAccounts: {
+    bankAccount: {
         type: Object,
         required: true,
         validator: (value) => {
             return typeof value.iban === 'string' &&
-                typeof value.user === 'object' &&
+                typeof value.userId === 'number' &&
                 typeof value.balance === 'number' &&
                 typeof value.absoluteLimit === 'number' &&
                 typeof value.singleTransferLimit === 'number' &&
@@ -21,12 +21,8 @@ const props = defineProps({
 </script>
 
 <template>
-    <table class="table table-striped">
-        <thead>
-            <BankAccountTableHeader />
-        </thead>
-        <tbody>
-            <BankAccountRecordMolecule v-for="bankAccount in bankAccounts" :key="bankAccount.iban" :bankAccount="bankAccount" />
-        </tbody>
-    </table>
+    <section class="flex flex-row">
+        <IBANNumberLabelAtom />
+        <BaseListDataFieldAtomForParagraphs :text="bankAccount.iban" />
+    </section>
 </template>

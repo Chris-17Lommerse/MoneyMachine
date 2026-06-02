@@ -1,14 +1,14 @@
 <script setup>
-import BankAccountRecordMolecule from "@/molecules/bankaccounts/tablerows/BankAccountRecordMolecule.vue";
-import BankAccountTableHeader from "@/molecules/bankaccounts/tablerows/BankAccountTableHeader.vue";
+import CancelCloseBankAccountButton from "@/atoms/bankaccounts/buttons/CancelCloseBankAccountButton.vue";
+import CloseBankAccountButton from "@/atoms/bankaccounts/buttons/CloseBankAccountButton.vue";
 
 const props = defineProps({
-    bankAccounts: {
+    bankAccount: {
         type: Object,
         required: true,
         validator: (value) => {
             return typeof value.iban === 'string' &&
-                typeof value.user === 'object' &&
+                typeof value.userId === 'number' &&
                 typeof value.balance === 'number' &&
                 typeof value.absoluteLimit === 'number' &&
                 typeof value.singleTransferLimit === 'number' &&
@@ -18,15 +18,12 @@ const props = defineProps({
         }
     }
 })
+const emits = defineEmits(['closeAccount'])
 </script>
 
 <template>
-    <table class="table table-striped">
-        <thead>
-            <BankAccountTableHeader />
-        </thead>
-        <tbody>
-            <BankAccountRecordMolecule v-for="bankAccount in bankAccounts" :key="bankAccount.iban" :bankAccount="bankAccount" />
-        </tbody>
-    </table>
+    <section class="flex flex-row">
+        <CloseBankAccountButton @closeAccount="$emit('closeAccount', bankAccount.iban)" :bankAccount="bankAccount" />
+        <CancelCloseBankAccountButton />
+    </section>
 </template>

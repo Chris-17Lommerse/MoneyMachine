@@ -82,4 +82,11 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(400, ErrorType.ILLEGAL_ARGUMENTS, "Illegal arguments", ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(NotFoundException ex) {
+        
+        ErrorResponse errorResponse = new ErrorResponse(404, ErrorType.NOT_FOUND, "Not found", ex.getMessage());
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
+    }
 }
