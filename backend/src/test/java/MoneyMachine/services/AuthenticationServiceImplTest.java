@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,7 +43,6 @@ public class AuthenticationServiceImplTest {
     
     private User user;
     private UserSummaryResponse userSummary;
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
@@ -56,7 +54,7 @@ public class AuthenticationServiceImplTest {
         user.setBsn("123456789");
         user.setPhoneNumber("+31 6 12 34 56 78");
         user.setRole(Role.USER);
-        user.setPassword(passwordEncoder.encode("password"));
+        user.setPassword("mockPassword");
         user.setIsActive(true);
         user.setIsApproved(true);
 

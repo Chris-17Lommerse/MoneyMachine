@@ -35,7 +35,7 @@ public class DataSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-
+        
         User user = new User();
         user.setFirstName("userFirstName");
         user.setLastName("userLastName");

@@ -3,12 +3,9 @@ package MoneyMachine.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException.Unauthorized;
-import org.springframework.web.client.HttpServerErrorException.InternalServerError;
-
+import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.requests.LoginRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
-import MoneyMachine.models.dtos.responses.ErrorResponse;
 import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
@@ -75,20 +72,13 @@ public class UserController {
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
-        try {
             List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+            if(users == null)
+            {
+                throw new NotFoundException("There are no users found in the database");
+            }
             UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
             userOverviewResponse.setUsers(users);
             return ResponseEntity.ok(userOverviewResponse);
-        } catch (Unauthorized exUnauthorized) {
-            ErrorResponse errorResponse = new ErrorResponse(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
-                    "Unauthorized - Authentication required", exUnauthorized.getMessage());
-            return ResponseEntity.status(401).body(errorResponse);
-        } catch (InternalServerError exInternalServerError) {
-            ErrorResponse errorResponse = new ErrorResponse(500,
-                    MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
-                    "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
-            return ResponseEntity.status(500).body(errorResponse);
-        }
     }
 }

@@ -1,6 +1,6 @@
 <script setup>
-import BankAccountRecordMolecule from '../molecules/bankaccounts/tablerows/BankAccountRecordMolecule.vue';
-import BankAccountTableHeader from '../molecules/bankaccounts/tablerows/BankAccountTableHeader.vue';
+import BankAccountRecordMolecule from "@/molecules/bankaccounts/tablerows/BankAccountRecordMolecule.vue";
+import BankAccountTableHeader from "@/molecules/bankaccounts/tablerows/BankAccountTableHeader.vue";
 
 const props = defineProps({
     bankAccounts: {

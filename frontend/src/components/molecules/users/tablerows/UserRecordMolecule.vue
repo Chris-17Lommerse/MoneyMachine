@@ -1,10 +1,6 @@
 <script setup>
-import BSNNumberDataFieldAtom from '../../../atoms/users/textelements/datafields/BSNNumberDataFieldAtom.vue';
-import EmailDataFieldAtom from '../../../atoms/users/textelements/datafields/EmailDataFieldAtom.vue';
-import FirstNameDataFieldAtom from '../../../atoms/users/textelements/datafields/FirstNameDataFieldAtom.vue';
-import LastNameDataFieldAtom from '../../../atoms/users/textelements/datafields/LastNameDataFieldAtom.vue';
-import PhoneNumberDataFieldAtom from '../../../atoms/users/textelements/datafields/PhoneNumberDataFieldAtom.vue';
-import ApproveCustomerButtonAtom from '../../../atoms/users/buttons/ApproveCustomerButtonAtom.vue';
+import ApproveCustomerButtonAtom from "@/atoms/users/buttons/ApproveCustomerButtonAtom.vue";
+import BaseTableDataFieldAtom from "../../../atoms/bankaccounts/textelements/datafields/BaseTableDataFieldAtom.vue";
 
 const props = defineProps({
     user: {
@@ -28,11 +24,11 @@ const props = defineProps({
 
 <template>
   <tr class="table table-dark">
-    <FirstNameDataFieldAtom :user="user" />
-    <LastNameDataFieldAtom :user="user" />
-    <EmailDataFieldAtom :user="user" />
-    <BSNNumberDataFieldAtom :user="user" />
-    <PhoneNumberDataFieldAtom :user="user" />
+    <BaseTableDataFieldAtom :text="user.firstName" />
+    <BaseTableDataFieldAtom :text="user.lastName" />
+    <BaseTableDataFieldAtom :text="user.email" />
+    <BaseTableDataFieldAtom :text="user.bsn" />
+    <BaseTableDataFieldAtom :text="user.phoneNumber" />
     <ApproveCustomerButtonAtom :user-id="user.userId"/>
     </tr>  
 </template>

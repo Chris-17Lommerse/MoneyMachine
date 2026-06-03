@@ -14,9 +14,11 @@ import MoneyMachine.services.interfaces.BankAccountService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
+import MoneyMachine.models.dtos.requests.PatchRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 @RestController
 @RequestMapping("/bank-accounts")
@@ -28,22 +30,6 @@ public class BankAccountController {
     public BankAccountController(BankAccountService bankAccountService, AuthenticationService authenticationService) {
         this.bankAccountService = bankAccountService;
         this.authenticationService = authenticationService;
-    }
-
-    @GetMapping("{iban}")
-    public ResponseEntity<BankAccountResponse> getBankAccountByIban(@PathVariable String iban) {
-
-        BankAccountResponse bankAccountResponse;
-        User loggedInUser = authenticationService.getLoggedInUser();
-
-        if (loggedInUser.getRole() == Role.USER) {
-            bankAccountResponse = bankAccountService.getBankAccountByIbanAndUserId(iban, loggedInUser.getId());
-        } 
-        else {
-            bankAccountResponse = bankAccountService.getBankAccountByIban(iban);
-        }
-
-        return ResponseEntity.status(200).body(bankAccountResponse);
     }
 
     @PostMapping()
@@ -60,5 +46,29 @@ public class BankAccountController {
     public ResponseEntity<BankAccountOverviewResponse> getAllBankAccounts(Pageable pageable) {
         BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         return ResponseEntity.ok(bankAccounts);
+    }
+
+    @GetMapping("/{iban}")
+    public ResponseEntity<BankAccountResponse> getBankAccountByIban(@PathVariable String iban) {
+
+        BankAccountResponse bankAccountResponse;
+        User loggedInUser = authenticationService.getLoggedInUser();
+
+        if (loggedInUser.getRole() == Role.USER) {
+            bankAccountResponse = bankAccountService.getBankAccountByIbanAndUserId(iban, loggedInUser.getId());
+        } 
+        else {
+            bankAccountResponse = bankAccountService.getBankAccountByIban(iban);
+        }
+
+        return ResponseEntity.ok(bankAccountResponse);
+    }
+    
+    @PatchMapping("/{iban}")
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<BankAccountResponse> closeBankAccount(@RequestBody PatchRequest patchRequest,  @PathVariable String iban)
+    {
+        BankAccountResponse bankAccountResponse = bankAccountService.closeBankAccount(patchRequest, iban);
+        return ResponseEntity.ok(bankAccountResponse);
     }
 }

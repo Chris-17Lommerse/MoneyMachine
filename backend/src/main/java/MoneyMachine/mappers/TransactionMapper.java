@@ -1,7 +1,9 @@
 package MoneyMachine.mappers;
 
+import MoneyMachine.models.dtos.responses.TransactionResponse;
+import MoneyMachine.models.dtos.requests.TransferRequest;
 import org.springframework.stereotype.Component;
-
+import MoneyMachine.models.*;
 import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.DepositTransaction;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
@@ -9,6 +11,21 @@ import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
 
 @Component
 public class TransactionMapper {
+
+    public TransactionResponse toResponse(Transaction t) {
+        TransactionResponse response = new TransactionResponse();
+        response.setTransactionId(t.getTransactionId());
+        response.setAmount(t.getAmount());
+        response.setMessage(t.getMessage());
+        return response;
+    }
+
+    public TransferTransaction toTransferEntity(TransferRequest r) {
+        TransferTransaction transfer = new TransferTransaction();
+        transfer.setAmount(r.getAmount());
+        transfer.setMessage(r.getMessage());
+        return transfer;
+    }
 
     public WithdrawTransactionResponse toWithdrawTransactionResponse(WithdrawTransaction withdrawTransaction) {
 
