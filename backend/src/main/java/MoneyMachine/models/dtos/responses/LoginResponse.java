@@ -10,9 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginResponse {
-
-    private String accessToken;
-    private String tokenType;
-    private Date expiresIn;
-    private UserSummaryResponse userSummaryResponse;
+    private String authToken;
 }

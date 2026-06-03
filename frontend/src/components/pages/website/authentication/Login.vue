@@ -25,7 +25,7 @@
                 'loginType': 'WEBSITE'
             })
 
-            authStore.setWebsiteAuthToken(response.data.accessToken)
+            authStore.setWebsiteAuthToken(response.data.authToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
             router.push('/user-test')
         }

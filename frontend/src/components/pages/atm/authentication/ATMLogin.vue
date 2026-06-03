@@ -25,7 +25,7 @@
                 'loginType': 'ATM'
             })
 
-            authStore.setAtmAuthToken(response.data.accessToken)
+            authStore.setAtmAuthToken(response.data.authToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
             router.push('/atm/select-bank-account')
         }

@@ -72,13 +72,13 @@ public class UserController {
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
-            List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
-            if(users == null)
-            {
-                throw new NotFoundException("There are no users found in the database");
-            }
-            UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
-            userOverviewResponse.setUsers(users);
-            return ResponseEntity.ok(userOverviewResponse);
+        List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+        if(users == null)
+        {
+            throw new NotFoundException("There are no users found in the database");
+        }
+        UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
+        userOverviewResponse.setUsers(users);
+        return ResponseEntity.ok(userOverviewResponse);
     }
 }
