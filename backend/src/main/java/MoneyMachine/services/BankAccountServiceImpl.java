@@ -94,8 +94,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public void setBankAccountBalance(String iban, BigDecimal newBalance) {
-        this.bankAccountRepository.setBalanceByIban(iban, newBalance);
+    public void updateBalanceByIban(String iban, BigDecimal newBalance) {
+        this.bankAccountRepository.updateBalanceByIban(iban, newBalance);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class TransactionServiceImpl implements TransactionService {
         BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
         BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
         
-        transactionPolicy.enforceTransactionPolicy(user, transaction.getAmount(), fromAccount, toAccount);
+        transactionPolicy.enforceTransactionTransferPolicy(user, transaction.getAmount(), fromAccount, toAccount);
 
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
@@ -74,7 +74,7 @@ public class TransactionServiceImpl implements TransactionService {
         transferTransaction.setFromBankAccount(fromAccount);
         transferTransaction.setToBankAccount(toAccount);
         TransferTransaction saved = transactionRepository.save(transferTransaction);
-        
+
         return mapper.toResponse(saved);
     }  
 
@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
         BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
         BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
         
-        transactionPolicy.enforceTransactionPolicy(user, transaction.getAmount(), fromAccount, toAccount);
+        transactionPolicy.enforceTransactionTransferPolicy(user, transaction.getAmount(), fromAccount, toAccount);
 
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
@@ -103,8 +103,8 @@ public class TransactionServiceImpl implements TransactionService {
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
         User loggedInUser = authenticationService.getLoggedInUser();
 
-        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, null, toBankAccount);
-        bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
+        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, toBankAccount);
+        bankAccountService.updateBalanceByIban(toIban, toBankAccount.getBalance().add(amount));
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);
@@ -123,8 +123,8 @@ public class TransactionServiceImpl implements TransactionService {
         BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
         User loggedInUser = authenticationService.getLoggedInUser();
         
-        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, fromBankAccount, null);
-        bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
+        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, fromBankAccount);
+        bankAccountService.updateBalanceByIban(fromIban, fromBankAccount.getBalance().subtract(amount));
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(loggedInUser);
