@@ -24,6 +24,6 @@ public interface BankAccountService {
     BankAccountOverviewResponse getAllBankAccountsByUserId(Long id, Pageable pageable);
     BankAccountResponse getBankAccountByIban(String iban);
     BankAccountResponse getBankAccountByIbanAndUserId(String iban, Long id);
-    BankAccount findBankAccountEntityByIban(String iban);
+    BankAccount getBankAccountEntityByIban(String iban);
     void setBankAccountBalance(String iban, BigDecimal newBalance);
 }

@@ -105,12 +105,12 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount, String message) {
 
-        BankAccount toBankAccount = bankAccountService.findBankAccountEntityByIban(toIban);
+        BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
         User loggedInUser = authenticationService.getLoggedInUser();
         throwIfUserCannotInteractWithBankAccount(loggedInUser, toBankAccount);
         throwIfMoneyAmountIsNotValid(amount, toBankAccount);
 
-        this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
+        bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
 
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);
@@ -126,13 +126,13 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount, String message) {
 
-        BankAccount fromBankAccount = bankAccountService.findBankAccountEntityByIban(fromIban);
+        BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
         User loggedInUser = authenticationService.getLoggedInUser();
         throwIfUserCannotInteractWithBankAccount(loggedInUser, fromBankAccount);
         throwIfMoneyAmountIsNotValid(amount, fromBankAccount);
         throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
 
-        this.bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
+        bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(loggedInUser);
