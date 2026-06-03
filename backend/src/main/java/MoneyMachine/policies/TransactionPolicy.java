@@ -9,6 +9,6 @@ import MoneyMachine.models.User;
 public class TransactionPolicy {
 
     public void enforceTransactionPolicy(User user, BankAccount bankAccount) {
-    
+        // ENFORCE_ACTION
     }
 }
