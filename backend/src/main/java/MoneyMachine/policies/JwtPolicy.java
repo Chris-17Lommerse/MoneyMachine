@@ -11,6 +11,7 @@ public class JwtPolicy {
     private final String[] requiredClaims = {"role", "email", "firstName", "lastName", "loginType"};
 
     public void enforceJwtPolicy(Claims decodedAuthToken) {
+        
         enforceDecodedAuthTokenStructure(decodedAuthToken);
         enforceDecodedAuthTokenRequiredClaims(decodedAuthToken);
     }

@@ -37,7 +37,7 @@
         }
         catch (ex) {
             if (ex.response){
-                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
+                errorAlertRef.value.displayErrorMessage(ex.response.data.message)
                 bankAccount.value = await bankAccountStore.getBankAccountByIbanFromDatabase(routeIban, '/atm/select-bank-account')
             }
             else{

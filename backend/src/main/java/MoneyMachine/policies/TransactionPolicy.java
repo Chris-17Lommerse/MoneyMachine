@@ -31,7 +31,7 @@ public class TransactionPolicy {
     }
 
     private void enforceUserOwnsBankAccountAccount(User user, BankAccount fromAccount) {
-        
+
         if (fromAccount.getUser().getId() != user.getId()) {
             throw new NotAuthorizedException("Users can only transfer from their own accounts.");
         }
@@ -66,6 +66,7 @@ public class TransactionPolicy {
     }
 
     private void enforceNotDifferentUserSavingsTransfer(BankAccount fromAccount, BankAccount toAccount) {
+        
         if (fromAccount.getUser().getId() != toAccount.getUser().getId() && ( fromAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS || toAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS)) {
             throw new IllegalArgumentException("Transfer between different users' savings accounts is not allowed.");
         }

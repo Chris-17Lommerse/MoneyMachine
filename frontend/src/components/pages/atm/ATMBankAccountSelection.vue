@@ -46,7 +46,7 @@
         }
         catch (ex) {
             if (ex.response){
-                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
+                errorAlertRef.value.displayErrorMessage(ex.response.data.message)
             }
             else{
                 errorAlertRef.value.displayErrorMessage(ex.message)

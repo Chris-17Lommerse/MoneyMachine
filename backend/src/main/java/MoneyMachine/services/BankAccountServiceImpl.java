@@ -43,9 +43,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     // private static final BigDecimal dailyTransferLimit = BigDecimal.valueOf(20000);
     // private static final BigDecimal singleTransferLimit = BigDecimal.valueOf(5000);
 
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository,
-            BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator,
-            BankAccountTypeFactory bankAccountTypeFactory) {
+    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository, BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator, BankAccountTypeFactory bankAccountTypeFactory) {
         this.bankAccountRepository = bankAccountRepository;
         this.bankAccountMapper = bankAccountMapper;
         this.ibanGenerator = ibanGenerator;
@@ -83,7 +81,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             return bankAccountMapper.toResponse(bankAccount.get()); 
         }
 
-        throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
+        throw new NotFoundException(String.format("Bank account with IBAN %s owned by user ID %s does not exist.", iban, id));
     }
 
     @Override
