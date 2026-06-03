@@ -28,7 +28,8 @@
 
             const response = await axios.post('/transactions/withdraw', {
                 'fromBankAcountIban': routeIban,
-                'amount': vModel.value.amount
+                'amount': vModel.value.amount,
+                'message': 'Withdraw from ATM'
             })
 
             errorHandlingStore.successMessage = 'Successfully withdrawn '+ getPriceFormatted(response.data.amount) +' from your balance.'

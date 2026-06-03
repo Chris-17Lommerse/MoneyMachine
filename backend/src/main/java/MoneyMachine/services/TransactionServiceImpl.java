@@ -103,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
     }  
 
     @Override
-    public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
+    public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount, String message) {
 
         BankAccount toBankAccount = bankAccountService.findBankAccountEntityByIban(toIban);
         User loggedInUser = authenticationService.getLoggedInUser();
@@ -115,8 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(loggedInUser);
         depositTransaction.setAmount(amount);
-        depositTransaction.setMessage(String.format("Deposited € %s into bank account: %s.", amount, toIban));
-        depositTransaction.setIsActive(true);
+        depositTransaction.setMessage(message);
         depositTransaction.setToBankAccount(toBankAccount);
 
         transactionRepository.save(depositTransaction);
@@ -125,7 +124,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
+    public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount, String message) {
 
         BankAccount fromBankAccount = bankAccountService.findBankAccountEntityByIban(fromIban);
         User loggedInUser = authenticationService.getLoggedInUser();
@@ -138,8 +137,7 @@ public class TransactionServiceImpl implements TransactionService {
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(loggedInUser);
         withdrawTransaction.setAmount(amount);
-        withdrawTransaction.setMessage(String.format("Withdrawn € %s from bank account: %s.", amount, fromIban));
-        withdrawTransaction.setIsActive(true);
+        withdrawTransaction.setMessage(message);
         withdrawTransaction.setFromBankAccount(fromBankAccount);
 
         transactionRepository.save(withdrawTransaction);

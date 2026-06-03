@@ -57,7 +57,7 @@ public class TransactionController {
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('ATM')")
     public ResponseEntity<DepositTransactionResponse> deposit(@RequestBody DepositRequest depositRequest) {
         
-        DepositTransactionResponse depositTransactionResponse = transactionService.depositAmountIntoBankAccount(depositRequest.getToBankAcountIban(), depositRequest.getAmount());
+        DepositTransactionResponse depositTransactionResponse = transactionService.depositAmountIntoBankAccount(depositRequest.getToBankAcountIban(), depositRequest.getAmount(), depositRequest.getMessage());
 
         return ResponseEntity.status(201).body(depositTransactionResponse);
     }
@@ -66,7 +66,7 @@ public class TransactionController {
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('ATM')")
     public ResponseEntity<WithdrawTransactionResponse> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
         
-        WithdrawTransactionResponse withdrawTransactionResponse = transactionService.withdrawAmountIntoBankAccount(withdrawRequest.getFromBankAcountIban(), withdrawRequest.getAmount());
+        WithdrawTransactionResponse withdrawTransactionResponse = transactionService.withdrawAmountIntoBankAccount(withdrawRequest.getFromBankAcountIban(), withdrawRequest.getAmount(), withdrawRequest.getMessage());
 
         return ResponseEntity.status(201).body(withdrawTransactionResponse);
     }

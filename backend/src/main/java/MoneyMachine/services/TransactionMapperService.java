@@ -71,7 +71,6 @@ public class TransactionMapperService {
        
         TransferTransaction t= mapper.toTransferEntity(transfer);
         t.setInitiatingUser(user);
-        t.setIsActive(true);
         return t;
     }
 }

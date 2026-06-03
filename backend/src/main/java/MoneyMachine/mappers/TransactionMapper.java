@@ -36,7 +36,6 @@ public class TransactionMapper {
         withdrawTransactionResponse.setMessage(withdrawTransaction.getMessage());
         withdrawTransactionResponse.setAmount(withdrawTransaction.getAmount().doubleValue());
         withdrawTransactionResponse.setDateTime(withdrawTransaction.getDateTime());
-        withdrawTransactionResponse.setIsActive(withdrawTransaction.getIsActive());
 
         return withdrawTransactionResponse;
     }
@@ -50,7 +49,6 @@ public class TransactionMapper {
         depositTransactionResponse.setMessage(depositTransaction.getMessage());
         depositTransactionResponse.setAmount(depositTransaction.getAmount().doubleValue());
         depositTransactionResponse.setDateTime(depositTransaction.getDateTime());
-        depositTransactionResponse.setIsActive(depositTransaction.getIsActive());
 
         return depositTransactionResponse;
     }

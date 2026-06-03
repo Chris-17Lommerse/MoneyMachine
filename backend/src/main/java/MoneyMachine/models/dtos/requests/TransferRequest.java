@@ -16,15 +16,12 @@ public class TransferRequest  {
     private String fromAccount;
     @NotNull
     private String toAccount;
-   @NotNull
+    @NotNull
     private Long transactionId;
     @NotNull
     private BigDecimal amount;
     @NotNull
     private String type;
     @NotNull
-    private String message;
-    
-
-    
+    private String message;   
 }
