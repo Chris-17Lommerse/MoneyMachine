@@ -17,6 +17,13 @@ public class TransactionPolicy {
         enforceTransactionPolicy(user, amount, fromBankAccount);
         enforceNotSameAccountTransfer(fromBankAccount, toBankAccount);
         enforceNotDifferentUserSavingsTransfer(fromBankAccount, toBankAccount);
+        enforceWithinAbsoluteLimit(fromBankAccount, amount); 
+    }
+
+    public void enforceTransactionWithdrawPolicy(User user, BigDecimal amount, BankAccount fromBankAccount) {
+        
+        enforceTransactionPolicy(user, amount, fromBankAccount);
+        enforceWithinAbsoluteLimit(fromBankAccount, amount); 
     }
 
     public void enforceTransactionPolicy(User user, BigDecimal amount, BankAccount bankAccount) {
@@ -26,8 +33,7 @@ public class TransactionPolicy {
         }
 
         enforcePositiveAmount(amount);
-        enforceWithinSingleTransferLimit(bankAccount, amount);
-        enforceWithinAbsoluteLimit(bankAccount, amount);    
+        enforceWithinSingleTransferLimit(bankAccount, amount);   
     }
 
     private void enforceUserOwnsBankAccountAccount(User user, BankAccount fromAccount) {

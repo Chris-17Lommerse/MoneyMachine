@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.DepositRequest;
 import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.requests.WithdrawRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 import MoneyMachine.services.AuthenticationServiceImpl;
 import MoneyMachine.services.interfaces.TransactionService;
@@ -37,20 +39,11 @@ public class TransactionController {
 
     @PostMapping("transfer")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) {
+    public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transferRequest) {
         
-        User loggedInUser = authenticationService.getLoggedInUser();
-        
-        if(loggedInUser.getRole()==MoneyMachine.models.enums.Role.EMPLOYEE)
-        {
-            return ResponseEntity.ok(transactionService.createTransferAsEmployee(transaction,loggedInUser));
-        }
-        else if (loggedInUser.getRole()==MoneyMachine.models.enums.Role.USER)
-        {
-            return ResponseEntity.ok(transactionService.createTransferAsUser(transaction,loggedInUser));
-        }
+        TransferTransactionResponse transferTransactionResponse = transactionService.transferAmountBetweenBankAccounts(transferRequest.getFromBankAcountIban(), transferRequest.getToBankAcountIban(), transferRequest.getAmount(), transferRequest.getMessage());
          
-        return ResponseEntity.status(500).body("unknown role");
+        return ResponseEntity.status(201).body(transferTransactionResponse);
     }
 
     @PostMapping("deposit")

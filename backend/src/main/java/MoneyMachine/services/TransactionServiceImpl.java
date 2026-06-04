@@ -16,9 +16,8 @@ import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
-import MoneyMachine.models.dtos.responses.TransactionResponse;
+import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
-import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.services.interfaces.AuthenticationService;
@@ -29,7 +28,6 @@ import MoneyMachine.services.interfaces.TransactionService;
 public class TransactionServiceImpl implements TransactionService {
     
     private final TransactionPolicy transactionPolicy;
-    private BankAccountRepository bankAccountRepository;
     private TransactionMapperService mapper;
     private final BankAccountService bankAccountService;
     private final AuthenticationService authenticationService;
@@ -37,7 +35,6 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionMapper transactionMapper;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper, BankAccountService bankAccountService, AuthenticationService authenticationService, TransactionMapper transactionMapper, TransactionPolicy transactionPolicy) {
-        this.bankAccountRepository = bankAccountRepository;
         this.mapper = mapper;
         this.transactionRepository = transactionRepository;
         this.bankAccountService = bankAccountService;
@@ -46,58 +43,50 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionPolicy = transactionPolicy;
     }
 
-    public List<TransactionResponse> getAllTransactions() {
+    public List<TransferTransactionResponse> getAllTransactions() {
         return mapper.getAllTransactions(transactionRepository.findAll());
     }
 
-    public List<TransactionResponse> getAllTransactionsByAccountId(String iban) {
+    public List<TransferTransactionResponse> getAllTransactionsByAccountId(String iban) {
         List<Transaction> transactions = transactionRepository.findAllByToOrFromIban(iban);
         return mapper.getAllTransactions(transactions);
     }
 
-    public TransactionResponse getTransactionByid(long id) {
+    public TransferTransactionResponse getTransactionByid(long id) {
        return mapper.toResponse(transactionRepository.findById(id).orElseThrow());
     }
 
+    private void fillCommonTransactionProperties(Transaction transaction, User initiatingUser, BigDecimal amount, String message) {
+        
+        transaction.setInitiatingUser(initiatingUser);
+        transaction.setAmount(amount);
+        transaction.setMessage(message);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionResponse createTransferAsUser(TransferRequest transaction, User user) { 
+    public TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message) { 
         
-        BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
-        BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
+        User loggedInUser = authenticationService.getLoggedInUser();
+        BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
+        BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
         
-        transactionPolicy.enforceTransactionTransferPolicy(user, transaction.getAmount(), fromAccount, toAccount);
+        transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount);
+        bankAccountService.updateBalanceByIban(fromIban, fromBankAccount.getBalance().subtract(amount));
+        bankAccountService.updateBalanceByIban(toIban, toBankAccount.getBalance().add(amount));
 
-        fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
-        toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
+        TransferTransaction transferTransaction = new TransferTransaction();
+        fillCommonTransactionProperties(transferTransaction, loggedInUser, amount, message);
+        transferTransaction.setFromBankAccount(toBankAccount);
+        transferTransaction.setToBankAccount(toBankAccount);
 
-        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
-        transferTransaction.setFromBankAccount(fromAccount);
-        transferTransaction.setToBankAccount(toAccount);
-        TransferTransaction saved = transactionRepository.save(transferTransaction);
+        transactionRepository.save(transferTransaction);
 
-        return mapper.toResponse(saved);
-    }  
-
-    @Transactional(rollbackFor = Exception.class)
-    public TransactionResponse createTransferAsEmployee(TransferRequest transaction, User user) { 
-
-        BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
-        BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
-        
-        transactionPolicy.enforceTransactionTransferPolicy(user, transaction.getAmount(), fromAccount, toAccount);
-
-        fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
-        toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
-
-        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
-        transferTransaction.setFromBankAccount(fromAccount);
-        transferTransaction.setToBankAccount(toAccount);
-        TransferTransaction saved = transactionRepository.save(transferTransaction);
-
-        return mapper.toResponse(saved);
+        return transactionMapper.toTransferTransactionResponse(transferTransaction);
     }  
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount, String message) {
 
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
@@ -107,9 +96,7 @@ public class TransactionServiceImpl implements TransactionService {
         bankAccountService.updateBalanceByIban(toIban, toBankAccount.getBalance().add(amount));
 
         DepositTransaction depositTransaction = new DepositTransaction();
-        depositTransaction.setInitiatingUser(loggedInUser);
-        depositTransaction.setAmount(amount);
-        depositTransaction.setMessage(message);
+        fillCommonTransactionProperties(depositTransaction, loggedInUser, amount, message);
         depositTransaction.setToBankAccount(toBankAccount);
 
         transactionRepository.save(depositTransaction);
@@ -118,18 +105,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount, String message) {
 
         BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
         User loggedInUser = authenticationService.getLoggedInUser();
         
-        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, fromBankAccount);
+        transactionPolicy.enforceTransactionWithdrawPolicy(loggedInUser, amount, fromBankAccount);
         bankAccountService.updateBalanceByIban(fromIban, fromBankAccount.getBalance().subtract(amount));
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
-        withdrawTransaction.setInitiatingUser(loggedInUser);
-        withdrawTransaction.setAmount(amount);
-        withdrawTransaction.setMessage(message);
+        fillCommonTransactionProperties(withdrawTransaction, loggedInUser, amount, message);
         withdrawTransaction.setFromBankAccount(fromBankAccount);
 
         transactionRepository.save(withdrawTransaction);

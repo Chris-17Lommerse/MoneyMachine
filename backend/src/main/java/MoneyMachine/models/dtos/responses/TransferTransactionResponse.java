@@ -1,22 +1,26 @@
 package MoneyMachine.models.dtos.responses;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawTransactionResponse {
+@NoArgsConstructor
+public class TransferTransactionResponse implements Serializable {
 
     private Long transactionId;
     private Long initiatingUserId;
+    private String toAccountIban;
     private String fromAccountIban;
     private String message;
     private BigDecimal amount;
     private LocalDateTime dateTime;
     private Boolean isActive;
 }
+
+   
