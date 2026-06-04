@@ -15,11 +15,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import MoneyMachine.models.User;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 public class UserControllerTest extends BaseControllerTest {
+
+
+   private User user;
 
     @BeforeEach
     void setUp() {
@@ -79,5 +83,22 @@ public class UserControllerTest extends BaseControllerTest {
                 .header("Authorization", "Bearer " + atmEmployeeAuthToken))
             .andExpect(status().is(200))
             .andExpect(jsonPath("$.items").exists());
+    }
+
+    @Test
+    void getAllBankAccounts_whenAuthorized_getAllBankAccounts() throws Exception {
+        mockMvc.perform(get(String.format("/users"))
+        .header("Authorization", "Bearer" + websiteEmployeeAuthToken))
+    .andExpect(status().is(200))
+    .andExpect(jsonPath("$.items").exists())
+    .andExpect(jsonPath("$.userId").value(user.getId()))
+    .andExpect(jsonPath("$.furstName").value(user.getFirstName()))
+    .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+    .andExpect(jsonPath("$.email").value(user.getEmail()))
+    .andExpect(jsonPath("$.bsn").value(user.getBsn()))
+    .andExpect(jsonPath("$.phoneNumber").value(user.getPhoneNumber()))
+    .andExpect(jsonPath("$.role").value(user.getRole()))
+    .andExpect(jsonPath("$.isActive").value(user.getIsActive()))
+    .andExpect(jsonPath("$.isApproved").value(user.getIsApproved()));
     }
 }
