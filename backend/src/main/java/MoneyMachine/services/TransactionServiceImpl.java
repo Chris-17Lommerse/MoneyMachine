@@ -124,4 +124,56 @@ public class TransactionServiceImpl implements TransactionService {
 
         return transactionMapper.toWithdrawTransactionResponse(withdrawTransaction);
     }
+
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public TransactionResponse processTransaction(String fromIban, String toIban, BigDecimal amount, String message, TransactionType type) {
+    
+    //     User loggedInUser = authenticationService.getLoggedInUser();
+        
+    //     BankAccount fromBankAccount = fromIban != null ? bankAccountService.getBankAccountEntityByIban(fromIban) : null;
+    //     BankAccount toBankAccount = toIban != null ? bankAccountService.getBankAccountEntityByIban(toIban) : null;
+
+    //     switch (type) {
+    //         case TRANSFER -> transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount);
+    //         case DEPOSIT  -> transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, toBankAccount);
+    //         case WITHDRAW -> transactionPolicy.enforceTransactionWithdrawPolicy(loggedInUser, amount, fromBankAccount);
+    //     }
+
+    //     if (fromIban != null) {
+    //         bankAccountRepository.decrementBalanceByIban(fromIban, amount);
+    //     }
+            
+    //     if (toIban != null) {
+    //         bankAccountRepository.incrementBalanceByIban(toIban, amount);
+    //     }
+               
+    //     Transaction transaction = switch (type) {
+    //         case TRANSFER -> {
+    //             TransferTransaction transferTransaction = new TransferTransaction();
+    //             transferTransaction.setFromBankAccount(fromBankAccount);
+    //             transferTransaction.setToBankAccount(toBankAccount);
+    //             yield transferTransaction;
+    //         }
+    //         case DEPOSIT -> {
+    //             DepositTransaction depositTransaction = new DepositTransaction();
+    //             depositTransaction.setToBankAccount(toBankAccount);
+    //             yield depositTransaction;
+    //         }
+    //         case WITHDRAW -> {
+    //             WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
+    //             withdrawTransaction.setFromBankAccount(fromBankAccount);
+    //             yield withdrawTransaction;
+    //         }
+    //     };
+
+    //     fillCommonTransactionProperties(transaction, loggedInUser, amount, message);
+    //     transactionRepository.save(transaction);
+
+    //     return switch (type) {
+    //         case TRANSFER -> transactionMapper.toTransferTransactionResponse((TransferTransaction) transaction);
+    //         case DEPOSIT  -> transactionMapper.toDepositTransactionResponse((DepositTransaction) transaction);
+    //         case WITHDRAW -> transactionMapper.toWithdrawTransactionResponse((WithdrawTransaction) transaction);
+    //     };
+    // }
 }
