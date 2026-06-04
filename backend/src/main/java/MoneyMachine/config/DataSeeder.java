@@ -93,7 +93,7 @@ public class DataSeeder implements ApplicationRunner {
         depositTransaction.setIsActive(true);
         depositTransaction.setToBankAccount(checkingBankAccount);
 
-        depositTransaction = transactionRepository.save(depositTransaction);
+        transactionRepository.save(depositTransaction);
 
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(user);
@@ -102,7 +102,7 @@ public class DataSeeder implements ApplicationRunner {
         withdrawTransaction.setIsActive(true);
         withdrawTransaction.setFromBankAccount(checkingBankAccount);
 
-        withdrawTransaction = transactionRepository.save(withdrawTransaction);
+        transactionRepository.save(withdrawTransaction);
 
         TransferTransaction transferTransaction = new TransferTransaction();
         transferTransaction.setInitiatingUser(user);

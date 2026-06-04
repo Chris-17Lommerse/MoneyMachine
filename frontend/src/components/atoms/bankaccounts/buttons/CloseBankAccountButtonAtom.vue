@@ -1,6 +1,12 @@
 <script setup>
+const props = defineProps({
+    bankAccount: {
+        type: Object,
+        required: true
+    }
+})
 </script>
 
 <template>
-     <a href="" class="btn btn-danger">Close bank account</a>
+     <RouterLink :to="{path: `/bank-accounts/${bankAccount.iban}/close`}" class="btn btn-danger">Close bank account</RouterLink>
 </template>

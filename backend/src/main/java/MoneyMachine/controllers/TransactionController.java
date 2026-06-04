@@ -38,7 +38,9 @@ public class TransactionController {
     @PostMapping("transfer")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) {
+        
         User loggedInUser = authenticationService.getLoggedInUser();
+        
         if(loggedInUser.getRole()==MoneyMachine.models.enums.Role.EMPLOYEE)
         {
             return ResponseEntity.ok(transactionService.createTransferAsEmployee(transaction,loggedInUser));

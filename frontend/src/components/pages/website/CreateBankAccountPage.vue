@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import axios from '@/utils/axios';
-import router from '../../../router/router';
+import router from "@/router/router";
 const loading = ref(true);
 const error = ref(null);
 const bankAccounts = ref([]);

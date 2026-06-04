@@ -27,7 +27,7 @@
     <BaseFormField v-model="transaction.toAccount" labelName="To Account" type="text" id="toAccount" name="toAccount"/>
     <BaseFormField v-model="transaction.amount" labelName="Amount" type="number" id="amount" name="amount"/>
     <BaseFormField v-model="transaction.message" labelName="Message" type="text" id="message" name="message"/>
-    <button type="submit" class="btn btn-primary">create</button>
+    <button type="submit" class="btn btn-primary">Create</button>
 
   </form>
 </template>

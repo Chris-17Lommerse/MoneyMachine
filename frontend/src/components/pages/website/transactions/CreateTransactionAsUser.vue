@@ -28,7 +28,8 @@ const createTransaction = async (transaction) => {
 </script>
                 
 <template>
-  <router-link to="/bank-accounts/temporary" class="btn btn-primary mb-3">terug</router-link>
+  <router-link to="/bank-accounts/temporary" class="btn btn-primary mb-3">Return</router-link>
+  <h1>User transfer</h1>
   <transferForm  @createTransaction="createTransaction"/>  
  
 </template>

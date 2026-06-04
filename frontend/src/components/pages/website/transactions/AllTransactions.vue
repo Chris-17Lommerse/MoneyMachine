@@ -12,6 +12,7 @@ onMounted(async () => {
         if (response.status === 200) {
 
             transactions.value = response.data
+            console.log(transactions)
 
 
         }

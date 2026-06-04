@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <a href="" class="btn btn-primary">Update transfer limits</a>
+    <RouterLink :to="''" class="btn btn-primary">Update transfer limits</RouterLink>
 </template>
