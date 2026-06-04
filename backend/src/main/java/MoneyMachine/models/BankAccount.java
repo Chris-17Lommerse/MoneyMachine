@@ -1,9 +1,6 @@
 package MoneyMachine.models;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
 
 import MoneyMachine.models.enums.BankAccountType;
 import jakarta.persistence.Column;
@@ -15,15 +12,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "bank_accounts")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BankAccount {
 
     @Id
@@ -60,6 +57,15 @@ public class BankAccount {
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+
+    public BankAccount(String iban, User user, BigDecimal balance, BigDecimal absoluteLimit, BigDecimal singleTransferLimit, BigDecimal dailyTransferLimit, BankAccountType bankAccountType, Boolean isActive) {
+        this.iban = iban;
+        this.user = user;
+        this.balance = balance;
+        this.absoluteLimit = absoluteLimit;
+        this.singleTransferLimit = singleTransferLimit;
+        this.dailyTransferLimit = dailyTransferLimit;
+        this.bankAccountType = bankAccountType;
+        this.isActive = isActive;
+    }
 }

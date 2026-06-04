@@ -1,3 +1,7 @@
+<script setup>
+import HelloWorld from './components/HelloWorld.vue'
+</script>
+
 <template>
-    <RouterView :key="$route.fullPath"></RouterView>
+  <HelloWorld />
 </template>
