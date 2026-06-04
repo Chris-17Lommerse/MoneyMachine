@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import AllTransactions from '@/components/pages/website/transactions/allTransactions.vue'
+import AllTransactions from '@/components/pages/website/transactions/AllTransactions.vue'
+import UserTransactions from '@/components/pages/website/transactions/UserTransactions.vue'
+import AccountTransactions from '@/components/pages/website/transactions/AccountTransactions.vue'
 import CreateTransactionAsUser from '@/components/pages/website/transactions/CreateTransactionAsUser.vue'
 import CreateTransactionAsEmployee from '@/components/pages/website/transactions/CreateTransactionAsEmployee.vue'
 
@@ -99,12 +101,30 @@ const routes = [
                     roles: ['EMPLOYEE']
                 }
             },
+            
+            {
+                path: 'user/:id',
+                component: UserTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'User Transactions',
+                }
+            },
+            {
+                path: 'bank-account/:iban',
+                component: AccountTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Account Transactions',
+                }
+            },
             {
                 path: 'create/user',
                 component: CreateTransactionAsUser,
                 meta: {
                     isWebsiteAuthenticated: true,
                     title: 'Create Transaction',
+                    roles: ['USER']
                 }
             },
             {
@@ -113,6 +133,7 @@ const routes = [
                 meta: {
                     isWebsiteAuthenticated: true,
                     title: 'Create Transaction',
+                    roles: ['EMPLOYEE']
                 }
             },
         ]

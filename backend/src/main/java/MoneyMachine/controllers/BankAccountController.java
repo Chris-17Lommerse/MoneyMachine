@@ -14,11 +14,15 @@ import MoneyMachine.models.enums.Role;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import MoneyMachine.services.interfaces.TransactionService;
+
 
 @RestController
 @RequestMapping("/bank-accounts")
@@ -27,11 +31,13 @@ public class BankAccountController {
     private BankAccountService bankAccountService;
     private BankAccountMapper bankAccountMapper;
     private AuthenticationService authenticationService;
+    private TransactionService transactionService;
 
-    public BankAccountController(BankAccountService bankAccountService, BankAccountMapper bankAccountMapper, AuthenticationService authenticationService) {
+    public BankAccountController(BankAccountService bankAccountService, BankAccountMapper bankAccountMapper, AuthenticationService authenticationService, TransactionService transactionService) {
         this.bankAccountService = bankAccountService;
         this.bankAccountMapper = bankAccountMapper;
         this.authenticationService = authenticationService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping("{iban}")
@@ -65,4 +71,10 @@ public class BankAccountController {
         BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         return ResponseEntity.ok(bankAccounts);
     }
+    @GetMapping("/{iban}/transactions")
+    @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<?> getTransactionsByIban(@RequestParam String iban,@PageableDefault(page = 0, size = 20) Pageable pageable) {
+        return ResponseEntity.ok(transactionService.getTransactionsByIban(iban, pageable));
+    }
+    
 }

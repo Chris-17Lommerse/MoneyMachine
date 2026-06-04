@@ -17,8 +17,8 @@ public class TransactionMapper {
         response.setTransactionId(t.getTransactionId());
         response.setAmount(t.getAmount());
         response.setMessage(t.getMessage());
-        response.setDateTime(t.getDateTime());
-        response.setInitiatingUserId(t.getInitiatingUser().getId());
+        response.setTime(t.getDateTime());
+        response.setInitiatedBy(String.valueOf(t.getInitiatingUser().getId()));
         return response;
     }
 

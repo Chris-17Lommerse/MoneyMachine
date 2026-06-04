@@ -1,5 +1,7 @@
 package MoneyMachine.controllers;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.requests.DepositRequest;
 import MoneyMachine.models.dtos.requests.TransferRequest;
@@ -30,28 +31,23 @@ public class TransactionController {
     }
 
     @GetMapping("")
-     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> getTransactions() {
-        return ResponseEntity.ok(transactionService.getAllTransactions());  
+    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<?> getTransactions(@PageableDefault(page = 0, size = 20)Pageable pageable) {
+        return ResponseEntity.ok(transactionService.getAllTransactions(pageable));  
     }
-
     @PostMapping("transfer")
-     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) {
         User loggedInUser = authenticationService.getLoggedInUser();
         if(loggedInUser.getRole()==MoneyMachine.models.enums.Role.EMPLOYEE)
         {
             return ResponseEntity.ok(transactionService.createTransferAsEmployee(transaction,loggedInUser));
         }
-       else if (loggedInUser.getRole()==MoneyMachine.models.enums.Role.USER)
+        else if (loggedInUser.getRole()==MoneyMachine.models.enums.Role.USER)
         {
             return ResponseEntity.ok(transactionService.createTransferAsUser(transaction,loggedInUser));
         }
-         
-            
-      
 
-       
        return ResponseEntity.status(500).body("unknown role");
     }
 

@@ -5,7 +5,7 @@ const transactions = ref([])
 onMounted(async () => {
     try {
 
-        const response = await apiClient.get("/transactions")
+        const response = await apiClient.get(`/user/${route.params.id}/transactions`)
 
          console.log("RESPONSE:", response)
 
@@ -36,7 +36,7 @@ onMounted(async () => {
 
 <template>
     <div class="text-center">
-        <h1 class="display-4">All transactions</h1>
+        <h1 class="display-4">User transactions</h1>
         <router-link to="/transactions/create/employee" class="btn btn-primary mb-3">add transaction</router-link>
         <TransactionsTable :transactions="transactions" />
     </div>

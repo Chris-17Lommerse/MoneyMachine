@@ -1,15 +1,16 @@
 package MoneyMachine.controllers;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
 import org.springframework.web.client.HttpServerErrorException.InternalServerError;
-
 import MoneyMachine.models.dtos.requests.LoginRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
+import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.dtos.responses.ErrorResponse;
 import MoneyMachine.models.dtos.responses.LoginResponse;
+import MoneyMachine.models.dtos.responses.TransactionResponse;
+import MoneyMachine.models.dtos.responses.TransactionoverviewResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +29,13 @@ public class UserController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
     private final BankAccountService bankAccountService;
+    private final TransactionService transactionService;
 
-    public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService) {
+    public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService, TransactionService transactionService) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.bankAccountService = bankAccountService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping("login")
@@ -90,5 +93,39 @@ public class UserController {
                     "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
             return ResponseEntity.status(500).body(errorResponse);
         }
+    }
+    public ResponseEntity<?> getAllUsersWithoutAnAccountTest() {
+        try {
+            List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+            UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
+            userOverviewResponse.setUsers(users);
+            return ResponseEntity.ok(userOverviewResponse);
+        } catch (Unauthorized exUnauthorized) {
+            ErrorResponse errorResponse = new ErrorResponse(401, MoneyMachine.models.enums.ErrorType.UNAUTHORIZED,
+                    "Unauthorized - Authentication required", exUnauthorized.getMessage());
+            return ResponseEntity.status(401).body(errorResponse);
+        } catch (InternalServerError exInternalServerError) {
+            ErrorResponse errorResponse = new ErrorResponse(500,
+                    MoneyMachine.models.enums.ErrorType.INTERNAL_SERVER_ERROR,
+                    "Internal Server Error - An unexpected error occurred", exInternalServerError.getMessage());
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+    @GetMapping("/{id}/transactions")
+    @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
+    public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
+        BankAccountOverviewResponse bankAccountOverviewResponse = bankAccountService.getAllBankAccountsByUserId(id, pageable);
+        List<BankAccountResponse> bankAccounts = bankAccountOverviewResponse.getItems();
+       TransactionoverviewResponse transactions = new TransactionoverviewResponse();
+        for(BankAccountResponse bankAccount:bankAccounts)
+        {
+            String iban = bankAccount.getIban();
+            TransactionoverviewResponse overview=transactionService.getTransactionsByIban(iban,pageable);
+            for(TransactionResponse transactionResponse:overview.getTransactions())
+            {
+                transactions.getTransactions().add(transactionResponse);
+            }
+        }
+        return ResponseEntity.status(200).body(transactions);
     }
 }

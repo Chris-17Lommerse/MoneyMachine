@@ -2,10 +2,10 @@ package MoneyMachine.services;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import MoneyMachine.mappers.TransactionMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -14,6 +14,7 @@ import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransactionoverviewResponse;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 import MoneyMachine.models.dtos.requests.TransferRequest;
@@ -41,14 +42,25 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionMapper = transactionMapper;
     }
 
-    public List<TransactionResponse> getAllTransactions()
+    public TransactionoverviewResponse getAllTransactions(Pageable pageable)
     {
-        return mapper.getAllTransactions(transactionRepository.findAll());
+        Page<Transaction> page = transactionRepository.findAll(pageable);
+        List<Transaction> transferTransactions = page.getContent();
+        List<TransactionResponse> items = mapper.getAllTransactions(transferTransactions);
+        TransactionoverviewResponse response = new TransactionoverviewResponse(items,page.getNumber(),page.getSize());
+        return response;
     }
-    public List<TransactionResponse> getAllTransactionsByAccountId(String iban)
+    public TransactionoverviewResponse getTransactionsByIban(String iban,Pageable pageable)
     {
-       List<Transaction> transactions = transactionRepository.findAllByToOrFromIban(iban);
-        return mapper.getAllTransactions(transactions);
+        if(!(authenticationService.getLoggedInUser().getRole() == MoneyMachine.models.enums.Role.EMPLOYEE||authenticationService.getLoggedInUser().getId()==bankAccountService.getBankAccountByIban(iban).getUser().getId()))
+        {
+            throw new IllegalArgumentException("You are not authorized to view transactions of this bank account");  
+        }
+        Page<Transaction> page = transactionRepository.findAllByToOrFromIban(iban,pageable);
+        List<Transaction> transferTransactions = page.getContent();
+        List<TransactionResponse> items = mapper.getAllTransactions(transferTransactions);
+        TransactionoverviewResponse response = new TransactionoverviewResponse(items,page.getNumber(),page.getSize());
+        return response;
     }
     public TransactionResponse getTransactionByid(long id)
     {
