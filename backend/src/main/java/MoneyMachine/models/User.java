@@ -1,5 +1,13 @@
 package MoneyMachine.models;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
 import MoneyMachine.models.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,17 +15,22 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = "bankAccounts")
 public class User {
 
     @Id
@@ -50,6 +63,13 @@ public class User {
     @NotNull
     private Role role;
 
+    @OneToMany(mappedBy = "user")
+    private Set<BankAccount> bankAccounts = new HashSet<BankAccount>(0);
+
+    @Column(nullable = false)
+    @NotNull
+    private String password;
+
     @Column(nullable = false)
     @NotNull
     private Boolean isActive;
@@ -58,15 +78,7 @@ public class User {
     @NotNull
     private Boolean isApproved;
 
-    public User(String firstName, String lastName, String email, String bsn, String phoneNumber, Role role, Boolean isActive, Boolean isApproved)
-    {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.bsn = bsn;
-        this.phoneNumber = phoneNumber;
-        this.role = role;
-        this.isActive = isActive;
-        this.isApproved = isApproved;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 }

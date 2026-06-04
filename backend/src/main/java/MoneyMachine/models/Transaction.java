@@ -1,6 +1,9 @@
 package MoneyMachine.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +26,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
@@ -46,10 +51,7 @@ public class Transaction {
     @NotNull
     private Boolean isActive;
 
-    public Transaction(User initiatingUser, BigDecimal amount, String message, Boolean isActive) {
-        this.initiatingUser = initiatingUser;
-        this.amount = amount;
-        this.message = message;
-        this.isActive = isActive;
-    }
+    @Column(nullable = false)
+    @CreationTimestamp
+    private LocalDateTime dateTime;
 }
