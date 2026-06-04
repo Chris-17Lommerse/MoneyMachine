@@ -2,5 +2,7 @@
 </script>
 
 <template>
-    <h4>Last name</h4>
+    <th>
+        <h4>Last name</h4>
+    </th>
 </template>

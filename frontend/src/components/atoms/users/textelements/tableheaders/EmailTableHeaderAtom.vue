@@ -2,5 +2,7 @@
 </script>
 
 <template>
-    <h4>Email address</h4>
+    <th>
+        <h4>Email address</h4>
+    </th>
 </template>
