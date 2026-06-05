@@ -89,7 +89,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount, String message) {
+    public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
         
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
@@ -98,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
         bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
         DepositTransaction depositTransaction = new DepositTransaction();
-        fillCommonTransactionProperties(depositTransaction, loggedInUser, amount, message);
+        fillCommonTransactionProperties(depositTransaction, loggedInUser, amount, "ATM deposit");
         depositTransaction.setToBankAccount(toBankAccount);
 
         transactionRepository.save(depositTransaction);
@@ -108,7 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount, String message) {
+    public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
 
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
@@ -117,7 +117,7 @@ public class TransactionServiceImpl implements TransactionService {
         bankAccountRepository.decrementBalanceByIban(fromIban, amount);
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
-        fillCommonTransactionProperties(withdrawTransaction, loggedInUser, amount, message);
+        fillCommonTransactionProperties(withdrawTransaction, loggedInUser, amount, "ATM withdraw");
         withdrawTransaction.setFromBankAccount(fromBankAccount);
 
         transactionRepository.save(withdrawTransaction);

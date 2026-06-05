@@ -13,5 +13,4 @@ public class DepositRequest {
 
     private BigDecimal amount;
     private String toBankAcountIban;
-    private String message;
 }

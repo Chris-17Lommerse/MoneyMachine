@@ -27,7 +27,6 @@
             const response = await axios.post('/transactions/deposit', {
                 'toBankAcountIban': routeIban,
                 'amount': vModel.value.amount,
-                'message': 'Deposit to ATM'
             })
 
             errorHandlingStore.successMessage = 'Successfully deposited '+ getPriceFormatted(response.data.amount) +' to your balance.'

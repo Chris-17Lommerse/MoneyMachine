@@ -12,8 +12,8 @@ import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 @Service
 public interface TransactionService {
     TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message);
-    DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount, String message);
-    WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount, String message);
+    DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount);
+    WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount);
     List<TransferTransactionResponse> getAllTransactions();
     List<TransferTransactionResponse> getAllTransactionsByAccountId(String iban);
     TransferTransactionResponse getTransactionByid(long id);

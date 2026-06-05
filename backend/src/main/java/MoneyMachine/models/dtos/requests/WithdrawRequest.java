@@ -13,5 +13,4 @@ public class WithdrawRequest {
 
     private BigDecimal amount;
     private String fromBankAcountIban;
-    private String message;
 }
