@@ -5,7 +5,7 @@ import AllTransactions from '@/components/pages/website/transactions/allTransact
 import CreateTransactionAsUser from '@/components/pages/website/transactions/CreateTransactionAsUser.vue'
 import CreateTransactionAsEmployee from '@/components/pages/website/transactions/CreateTransactionAsEmployee.vue'
 
-import ATMLayout from '@/components/layout/ATMLayout.vue'
+import AtmLayout from '@/components/layout/ATMLayout.vue'
 import WebsiteLayout from '@/components/layout/WebsiteLayout.vue'
 
 import temporaryAccountPage from"@/components/pages/website/bankAccounts/bankAccount.vue"
