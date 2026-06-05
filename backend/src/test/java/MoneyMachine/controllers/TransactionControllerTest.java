@@ -1,7 +1,6 @@
 package MoneyMachine.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,8 +64,10 @@ public class TransactionControllerTest extends BaseControllerTest {
     @Test
     void deposit_whenAuthorized_depositAmount() throws Exception {
 
+        int amount = 10;
+
         Map<String, Object> request = new HashMap<>();
-        request.put("amount", 10);
+        request.put("amount", amount);
         request.put("toBankAcountIban", userBankAccount.getIban());
         request.put("message", "ATM deposit");
 
@@ -75,32 +76,39 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer " + atmUserAuthToken))
             .andExpect(status().is(201))
-            .andExpect(jsonPath("$.amount").value(10))
+            .andExpect(jsonPath("$.amount").value(amount))
             .andExpect(jsonPath("$.toAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(user.getId()));
 
-        entityManager.flush();
         entityManager.clear();
 
         BankAccount updatedBankAccount = bankAccountService.getBankAccountEntityByIban(userBankAccount.getIban());
-        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().add(new BigDecimal("10")));
+        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().add(new BigDecimal(String.valueOf(amount))));
     }
 
     @Test
     void depositOnOtherUser_whenAuthorized_depositAmount() throws Exception {
 
+        int amount = 10;
+
         Map<String, Object> request = new HashMap<>();
-        request.put("amount", 10);
+        request.put("amount", amount);
         request.put("toBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM deposit");
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer " + atmEmployeeAuthToken))
             .andExpect(status().is(201))
-            .andExpect(jsonPath("$.amount").value(10))
+            .andExpect(jsonPath("$.amount").value(amount))
             .andExpect(jsonPath("$.toAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(employee.getId()));
+
+        entityManager.clear();
+
+        BankAccount updatedBankAccount = bankAccountService.getBankAccountEntityByIban(userBankAccount.getIban());
+        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().add(new BigDecimal(String.valueOf(amount))));
     }
 
     @Test
@@ -109,6 +117,7 @@ public class TransactionControllerTest extends BaseControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 999999999);
         request.put("toBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM deposit");
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,6 +132,7 @@ public class TransactionControllerTest extends BaseControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 100);
         request.put("toBankAcountIban", employeeBankAccount.getIban());
+        request.put("message", "ATM deposit");
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,35 +144,51 @@ public class TransactionControllerTest extends BaseControllerTest {
     @Test
     void withdraw_whenAuthorized_withdrawAmount() throws Exception {
 
+        int amount = 10;
+
         Map<String, Object> request = new HashMap<>();
-        request.put("amount", 10);
+        request.put("amount", amount);
         request.put("fromBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM withdraw");
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer " + atmUserAuthToken))
             .andExpect(status().is(201))
-            .andExpect(jsonPath("$.amount").value(10))
+            .andExpect(jsonPath("$.amount").value(amount))
             .andExpect(jsonPath("$.fromAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(user.getId()));
+
+        entityManager.clear();
+
+        BankAccount updatedBankAccount = bankAccountService.getBankAccountEntityByIban(userBankAccount.getIban());
+        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().subtract(new BigDecimal(String.valueOf(amount))));
     }
 
     @Test
     void withdrawFromOtherUser_whenAuthorized_withdrawAmount() throws Exception {
 
+        int amount = 10;
+
         Map<String, Object> request = new HashMap<>();
-        request.put("amount", 10);
+        request.put("amount", amount);
         request.put("fromBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM withdraw");
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer " + atmEmployeeAuthToken))
             .andExpect(status().is(201))
-            .andExpect(jsonPath("$.amount").value(10))
+            .andExpect(jsonPath("$.amount").value(amount))
             .andExpect(jsonPath("$.fromAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(employee.getId()));
+
+        entityManager.clear();
+
+        BankAccount updatedBankAccount = bankAccountService.getBankAccountEntityByIban(userBankAccount.getIban());
+        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().subtract(new BigDecimal(String.valueOf(amount))));
     }
 
     @Test
@@ -171,6 +197,7 @@ public class TransactionControllerTest extends BaseControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 99999);
         request.put("fromBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM withdraw");
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -182,12 +209,13 @@ public class TransactionControllerTest extends BaseControllerTest {
     @Test
     void failWithdrawAbsoluteLimit_whenWithdrawUnderAbsoluteLimit_displayError() throws Exception {
 
-        employeeBankAccount.setBalance(new BigDecimal("-1000"));
+        employeeBankAccount.setBalance(new BigDecimal(-1000));
         bankAccountRepository.save(employeeBankAccount);
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 100);
         request.put("fromBankAcountIban", employeeBankAccount.getIban());
+        request.put("message", "ATM withdraw");
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -199,9 +227,10 @@ public class TransactionControllerTest extends BaseControllerTest {
     @Test
     void failWithdrawAuthorize_whenWithdrawOtherUserNotOtherized_displayError() throws Exception {
 
-         Map<String, Object> request = new HashMap<>();
+        Map<String, Object> request = new HashMap<>();
         request.put("amount", 100);
         request.put("fromBankAcountIban", employeeBankAccount.getIban());
+        request.put("message", "ATM withdraw");
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
