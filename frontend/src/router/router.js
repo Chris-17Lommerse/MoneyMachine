@@ -117,7 +117,7 @@ const routes = [
     {
         path: '/',
         component: WebsiteLayout,
-        redirect: 'login',
+        redirect: '/login',
         children: [
             {
                 path: 'users',
