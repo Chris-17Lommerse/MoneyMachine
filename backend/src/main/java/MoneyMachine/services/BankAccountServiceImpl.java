@@ -59,8 +59,36 @@ public class BankAccountServiceImpl implements BankAccountService {
         Page<BankAccount> page = bankAccountRepository.findAllByUserId(id, pageable);
         List<BankAccount> bankAccounts = page.getContent();
 
-        return new BankAccountOverviewResponse(bankAccountMapper.toResponseList(bankAccounts), page.getNumber(),
-                page.getSize());
+        return new BankAccountOverviewResponse(bankAccountMapper.toResponseList(bankAccounts), page.getNumber(), page.getSize());
+    }
+
+    @Override
+    public BankAccountResponse getBankAccountByIban(String iban) {
+
+        Optional<BankAccount> bankAccount = bankAccountRepository.findById(iban);
+            
+        if (bankAccount.isPresent()) {
+            return bankAccountMapper.toResponse(bankAccount.get()); 
+        }
+
+        throw new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban));
+    }
+
+    @Override
+    public BankAccountResponse getBankAccountByIbanAndUserId(String iban, Long id) {
+        
+        Optional<BankAccount> bankAccount = bankAccountRepository.findByIbanAndUserId(iban, id);
+            
+        if (bankAccount.isPresent()) {
+            return bankAccountMapper.toResponse(bankAccount.get()); 
+        }
+
+        throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
+    }
+
+    @Override
+    public BankAccount findBankAccountEntityByIban(String iban) {
+        return bankAccountRepository.findById(iban).orElseThrow(null);
     }
 
     @Override
@@ -110,6 +138,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountOverviewResponse;
     }
 
+    @Override
     public BankAccountResponse closeBankAccount(PatchRequest patchRequest, String iban) {
         Optional<BankAccount> optionalBankAccount = bankAccountRepository.findById(iban);
         BankAccount bankAccount = optionalBankAccount.get();
@@ -127,34 +156,5 @@ public class BankAccountServiceImpl implements BankAccountService {
             generatedIban = ibanGenerator.generateIban();
         }
         return generatedIban;
-    }
-
-    @Override
-    public BankAccountResponse getBankAccountByIban(String iban) {
-
-        Optional<BankAccount> bankAccount = bankAccountRepository.findById(iban);
-            
-        if (bankAccount.isPresent()) {
-            return bankAccountMapper.toResponse(bankAccount.get()); 
-        }
-
-        throw new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban));
-    }
-
-    @Override
-    public BankAccountResponse getBankAccountByIbanAndUserId(String iban, Long id) {
-        
-        Optional<BankAccount> bankAccount = bankAccountRepository.findByIbanAndUserId(iban, id);
-            
-        if (bankAccount.isPresent()) {
-            return bankAccountMapper.toResponse(bankAccount.get()); 
-        }
-
-        throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
-    }
-
-    @Override
-    public BankAccount findBankAccountEntityByIban(String iban) {
-        return bankAccountRepository.findById(iban).orElseThrow(null);
     }
 }

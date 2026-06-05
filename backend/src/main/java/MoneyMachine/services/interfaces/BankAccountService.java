@@ -20,9 +20,9 @@ public interface BankAccountService {
     BankAccountResponse createBankAccountFromRequest(BankAccountCreationRequest bankAccountCreationRequest);
     BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user);
     BankAccountOverviewResponse getAllBankAccounts(Pageable pageable);
-    BankAccountResponse getBankAccountByIban(String iban);
     BankAccountResponse closeBankAccount(PatchRequest patchRequest, String iban);
     BankAccountOverviewResponse getAllBankAccountsByUserId(Long id, Pageable pageable);
+    BankAccountResponse getBankAccountByIban(String iban);
     BankAccountResponse getBankAccountByIbanAndUserId(String iban, Long id);
     BankAccount findBankAccountEntityByIban(String iban);
     void setBankAccountBalance(String iban, BigDecimal newBalance);
