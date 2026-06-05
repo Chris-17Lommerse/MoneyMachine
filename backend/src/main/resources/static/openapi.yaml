@@ -33,52 +33,49 @@ servers:
 security:
   - bearerAuth: []
 tags:
+  - name: Auth
+    description: Operations about authentication
   - name: Users
-    description: Operations about user management and authentication
+    description: Operations about user management
   - name: Transactions
     description: Operations about recording transactions within the application
   - name: BankAccounts
     description: Operations for managing bankaccounts
 paths:
-  /users:
-    get:
+  /auth/login:
+    post:
       tags:
-        - Users
-      summary: Get all registered users
-      description: Returns a list of registered users. Can be filtered by approval status. Access | Employee
-      operationId: getUsers
-      parameters:
-        - name: isApproved
-          in: query
-          description: Filter users by their approval status
-          required: false   
-          schema:
-            type: boolean
-        - name: page
-          in: query
-          required: false
-          description: Page number for paginated results. Defaults to 1 if not provided.
-          schema:
-            type: number
-            format: int
-            example: 2
-        - name: pageSize
-          in: query
-          required: false
-          description: Number of results to return per page. Defaults to 20 if not provided.
-          schema:
-            type: integer
-            format: int
-            example: 20
+        - Auth
+      summary: Log in to the system
+      description: Verifies the provided email and password and returns a JWT bearer token along with a user summary on success. Access | Public to everyone
+      security: []
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/LoginRequest'
       responses:
-        '200':
-          description: Successful operation
+        '201':
+          description: Successful operation - Returns access token and user summary
+          headers:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserOverviewResponse'
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Bad Request - Invalid username or password supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "The provided input does not meet the required validation rules."
         '401':
-          description: Unauthorized - Authentication required
+          description: Unauthorized - Invalid credentials
           content:
             application/json:
               schema:
@@ -97,9 +94,10 @@ paths:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
                 message: "Please try again later or contact support if the problem persists."
+  /auth/register:
     post:
       tags:
-        - Users
+        - Auth
       summary: Register a new user account
       description: Creates a new user account. Access | Public to everyone
       security: []
@@ -147,40 +145,89 @@ paths:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
                 message: "Please try again later or contact support if the problem persists."
-  /users/login:
-    post:
+  /auth/me:
+    get:
       tags:
-        - Users
-      summary: Log in to the system
-      description: Verifies the provided email and password and returns a JWT bearer token along with a user summary on success. Access | Public to everyone
-      security: []
-      operationId: loginUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/LoginRequest'
+        - Auth
+      summary: Get the authenticated user's profile
+      description: Returns the full profile details of the currently logged in user. Access | User and Employee
+      operationId: getMyAccount
       responses:
-        '201':
-          description: Successful operation - Returns access token and user summary
-          headers:
+        '200':
+          description: Successful operation - User profile retrieved
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponse'
-        '400':
-          description: Bad Request - Invalid username or password supplied
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
               example:
-                code: 400
-                type: BAD_REQUEST
-                message: "The provided input does not meet the required validation rules."
+                code: 401
+                type: UNAUTHORIZED
+                message: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Please try again later or contact support if the problem persists."
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all registered users
+      description: Returns a list of registered users. Can be filtered by approval status. Access | Employee
+      operationId: getUsers
+      parameters:
+        - name: isApproved
+          in: query
+          description: Filter users by their approval status
+          required: false   
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          required: false
+          description: Page number for paginated results. Defaults to 1 if not provided.
+          schema:
+            type: number
+            format: int
+            example: 2
+        - name: pageSize
+          in: query
+          required: false
+          description: Number of results to return per page. Defaults to 20 if not provided.
+          schema:
+            type: integer
+            format: int
+            example: 20
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOverviewResponse'
         '401':
-          description: Unauthorized - Invalid credentials
+          description: Unauthorized - Authentication required
           content:
             application/json:
               schema:
@@ -400,50 +447,6 @@ paths:
                 code: 404
                 type: NOT_FOUND
                 message: "The requested user could not be found."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Please try again later or contact support if the problem persists."
-  /users/me:
-    get:
-      tags:
-        - Users
-      summary: Get the authenticated user's profile
-      description: Returns the full profile details of the currently logged in user. Access | User and Employee
-      operationId: getMyAccount
-      responses:
-        '200':
-          description: Successful operation - User profile retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
-          description: Unauthorized - Authentication required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 401
-                type: UNAUTHORIZED
-                message: "Please provide valid authentication credentials."
-        '404':
-          description: Not Found - Authenticated user not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 404
-                type: NOT_FOUND
-                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -1323,11 +1326,11 @@ components:
           example: "123456789"
         phoneNumber:
           type: string
-          example: +31612345678
+          example: "+31612345678"
         role:
           type: string
-          enum: [customer, employee]
-          example: customer
+          enum: [CUSTOMER, EMPLOYEE]
+          example: CUSTOMER
         isActive:
           type: boolean
           example: true
@@ -1344,6 +1347,10 @@ components:
         password:
           type: string
           example: "secret123"
+        loginType:
+          type: string
+          enum: [ATM, WEBSITE]
+          example: "ATM"
 
     RegisterRequest:
       type: object
@@ -1358,11 +1365,11 @@ components:
           type: string
           example: john.doe@example.com
         bsn:
-          type: integer
-          example: 123456789
+          type: string
+          example: "123456789"
         phoneNumber:
           type: string
-          example: +31612345678
+          example: "+31612345678"
 
     DepositRequest:
       type: object
@@ -1415,38 +1422,13 @@ components:
         message:
           type: string
           example: "Bad Request - Invalid input parameters"
+
     LoginResponse:
       type: object
       properties:
-        accessToken:
+        authToken:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        tokenType:
-          type: string
-          example: Bearer
-        expiresIn:
-          type: integer
-          example: 3600
-        user: 
-          $ref: '#/components/schemas/UserSummaryResponse'
-        
-
-    UserSummaryResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        firstName:
-          type: string
-          example: "john"
-        lastName:
-          type: string
-          example: "doe"
-        email:
-          type: string
-          example: "user@example.com"
-        
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...        
 
     TransactionResponse:
       type: object
@@ -1467,7 +1449,7 @@ components:
         message:
           type: string
           example: "Bought a car"
-          description: Displays why the transaction was done
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
@@ -1476,9 +1458,6 @@ components:
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
 
     WithdrawTransactionResponse:
       type: object
@@ -1495,7 +1474,7 @@ components:
         message:
           type: string
           example: "ATM withdrawal"
-          description: Displays why the transaction was done
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
@@ -1504,9 +1483,6 @@ components:
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
     
     DepositTransactionResponse:
       type: object
@@ -1524,7 +1500,7 @@ components:
         message:
           type: string
           example: "ATM deposit"
-          description: Displays why the transaction was done
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
@@ -1533,9 +1509,6 @@ components:
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
 
     BankAccountResponse:
       type: object
