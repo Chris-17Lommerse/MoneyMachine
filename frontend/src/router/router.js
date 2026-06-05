@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import AllTransactions from '@/components/pages/website/transactions/allTransactions.vue'
+import AllTransactions from '../components/pages/website/transactions/AllTransactions.vue'
 import CreateTransactionAsUser from '@/components/pages/website/transactions/CreateTransactionAsUser.vue'
 import CreateTransactionAsEmployee from '@/components/pages/website/transactions/CreateTransactionAsEmployee.vue'
 
-import AtmLayout from '@/components/layout/ATMLayout.vue'
+import AtmLayout from '../components/layout/AtmLayout.vue'
 import WebsiteLayout from '@/components/layout/WebsiteLayout.vue'
 
 import temporaryAccountPage from"@/components/pages/website/bankAccounts/bankAccount.vue"
