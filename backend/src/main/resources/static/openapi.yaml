@@ -47,7 +47,7 @@ paths:
       tags:
         - Auth
       summary: Log in to the system
-      description: Verifies the provided email and password and returns a JWT bearer token along with a user summary on success. Access | Public to everyone
+      description: Verifies the provided email and password and returns a JWT bearer token on success. Access | Public to everyone
       security: []
       operationId: loginUser
       requestBody:
@@ -58,7 +58,7 @@ paths:
                 $ref: '#/components/schemas/LoginRequest'
       responses:
         '201':
-          description: Successful operation - Returns access token and user summary
+          description: Successful operation - Returns authToken
           headers:
           content:
             application/json:
@@ -110,11 +110,11 @@ paths:
               $ref: '#/components/schemas/RegisterRequest'
       responses:
         '201':
-          description: User created successfully
+          description: User registered successfully while returning authToken
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/RegisterResponse'
         '400':
           description: Bad Request - Invalid input parameters
           content:
@@ -411,7 +411,7 @@ paths:
             schema:
               $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
-        '200':
+        '204':
           description: Successful operation - User updated; returns the updated user
           content:
             application/json:
@@ -1117,7 +1117,7 @@ paths:
             schema:
               $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
-        '200':
+        '204':
           description: Successful operation - Bank account status updated; returns the updated bank account
           content:
             application/json:
@@ -1716,6 +1716,15 @@ components:
         pageSize:
           type: integer
           example: 20
+
+    RegisterResponse:
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/UserResponse'
+        authToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
   securitySchemes:
     bearerAuth:            
