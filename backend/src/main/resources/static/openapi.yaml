@@ -1168,7 +1168,7 @@ paths:
       tags:
         - Transactions
       summary: Withdraw money from a bank account
-      description: Withdraws a specified amount from a bank account. The source IBAN is provided in the request body via fromIban. Access | User and Employee
+      description: Withdraws a specified amount from a bank account. The source IBAN is provided in the request body by fromIban. Access | User and Employee
       operationId: Withdraw
       requestBody:
         required: true
@@ -1238,7 +1238,7 @@ paths:
       tags:
         - Transactions
       summary: Deposit money into a bank account
-      description: Deposits a specified amount into a bank account. The destination IBAN is provided in the request body via toIban. Access | User and Employee
+      description: Deposits a specified amount into a bank account. The destination IBAN is provided in the request body by toIban. Access | User and Employee
       operationId: Deposit
       requestBody:
         required: true
@@ -1381,9 +1381,6 @@ components:
         toIban:
           type: string
           example: NL91ABNA0417164300
-        message:
-          type: string
-          example: ATM deposit
 
     WithdrawRequest:
       type: object
@@ -1395,9 +1392,6 @@ components:
         fromIban:
           type: string
           example: NL91ABNA0417164300
-        message:
-          type: string
-          example: ATM withdraw
     
     TransferRequest:
       type: object
