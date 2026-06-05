@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
     public UserOverviewResponse getAllUsersWithoutBankAccounts(Pageable pageable) {
 
-        Page<User> page = userRepository.findByBankAccountsIsEmpty();
+        Page<User> page = userRepository.findByBankAccountsIsEmpty(pageable);
         List<User> users = page.getContent();
         List<UserResponse> items = userMapper.toResponseList(users);
         UserOverviewResponse userOverviewResponse = new UserOverviewResponse(items, page.getNumber(), page.getSize());

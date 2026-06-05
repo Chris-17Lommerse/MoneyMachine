@@ -60,7 +60,7 @@ public class UserServiceImplTest {
     public void getAllUsersWithoutBankAccounts_whenUsersWithoutBankAccountsFound_returnAllUsers(Pageable pageable)
     {
         List<User> users = page.getContent();
-        when(userRepository.findByBankAccountsIsEmpty()).thenReturn(page);
+        when(userRepository.findByBankAccountsIsEmpty(pageable)).thenReturn(page);
 
         List<UserResponse> items = userMapper.toResponseList(users);
         UserOverviewResponse userOverviewResponse = new UserOverviewResponse(items, page.getNumber(), page.getSize());
@@ -68,7 +68,7 @@ public class UserServiceImplTest {
 
         assertEquals(users, userOverviewResponse);
 
-        verify(userRepository.findByBankAccountsIsEmpty());
+        verify(userRepository.findByBankAccountsIsEmpty(pageable));
     }
 
     public void testApproveUserAndCreateAccounts()
