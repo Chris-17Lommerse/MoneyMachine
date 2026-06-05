@@ -1,5 +1,7 @@
 package MoneyMachine.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,18 +18,36 @@ import org.springframework.http.MediaType;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.enums.BankAccountType;
 import MoneyMachine.repositories.BankAccountRepository;
+import MoneyMachine.services.interfaces.BankAccountService;
+import jakarta.persistence.EntityManager;
 
 public class TransactionControllerTest extends BaseControllerTest {
 
     @Autowired
     private BankAccountRepository bankAccountRepository;
+    @Autowired
+    private BankAccountService bankAccountService;
+    @Autowired
+    private EntityManager entityManager;
 
-    private final String userBankAccountIban = "NL91ABNA0417164300";
     private BankAccount employeeBankAccount;
+    private BankAccount userBankAccount;
 
     @BeforeEach
     void setUp() {
         super.setUpMockAuth();
+
+        userBankAccount = new BankAccount();
+        userBankAccount.setIban("NL93ABNA0004900781");
+        userBankAccount.setUser(user);
+        userBankAccount.setBalance(new BigDecimal("500.00"));
+        userBankAccount.setAbsoluteLimit(new BigDecimal("-100"));
+        userBankAccount.setSingleTransferLimit(new BigDecimal("100"));
+        userBankAccount.setDailyTransferLimit(new BigDecimal("100"));
+        userBankAccount.setBankAccountType(BankAccountType.CHECKING);
+        userBankAccount.setIsActive(true);
+
+        bankAccountRepository.save(userBankAccount);
 
         employeeBankAccount = new BankAccount();
         employeeBankAccount.setIban("NL47ABNA0428395174");
@@ -47,7 +67,8 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 10);
-        request.put("toBankAcountIban", userBankAccountIban);
+        request.put("toBankAcountIban", userBankAccount.getIban());
+        request.put("message", "ATM deposit");
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,8 +76,14 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .header("Authorization", "Bearer " + atmUserAuthToken))
             .andExpect(status().is(201))
             .andExpect(jsonPath("$.amount").value(10))
-            .andExpect(jsonPath("$.toAccountIban").value(userBankAccountIban))
+            .andExpect(jsonPath("$.toAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(user.getId()));
+
+        entityManager.flush();
+        entityManager.clear();
+
+        BankAccount updatedBankAccount = bankAccountService.getBankAccountEntityByIban(userBankAccount.getIban());
+        assertEquals(updatedBankAccount.getBalance(), userBankAccount.getBalance().add(new BigDecimal("10")));
     }
 
     @Test
@@ -64,7 +91,7 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 10);
-        request.put("toBankAcountIban", userBankAccountIban);
+        request.put("toBankAcountIban", userBankAccount.getIban());
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +99,7 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .header("Authorization", "Bearer " + atmEmployeeAuthToken))
             .andExpect(status().is(201))
             .andExpect(jsonPath("$.amount").value(10))
-            .andExpect(jsonPath("$.toAccountIban").value(userBankAccountIban))
+            .andExpect(jsonPath("$.toAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(employee.getId()));
     }
 
@@ -81,7 +108,7 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 999999999);
-        request.put("toBankAcountIban", userBankAccountIban);
+        request.put("toBankAcountIban", userBankAccount.getIban());
 
         mockMvc.perform(post("/transactions/deposit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +136,7 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 10);
-        request.put("fromBankAcountIban", userBankAccountIban);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,7 +144,7 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .header("Authorization", "Bearer " + atmUserAuthToken))
             .andExpect(status().is(201))
             .andExpect(jsonPath("$.amount").value(10))
-            .andExpect(jsonPath("$.fromAccountIban").value(userBankAccountIban))
+            .andExpect(jsonPath("$.fromAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(user.getId()));
     }
 
@@ -126,7 +153,7 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 10);
-        request.put("fromBankAcountIban", userBankAccountIban);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +161,7 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .header("Authorization", "Bearer " + atmEmployeeAuthToken))
             .andExpect(status().is(201))
             .andExpect(jsonPath("$.amount").value(10))
-            .andExpect(jsonPath("$.fromAccountIban").value(userBankAccountIban))
+            .andExpect(jsonPath("$.fromAccountIban").value(userBankAccount.getIban()))
             .andExpect(jsonPath("$.initiatingUserId").value(employee.getId()));
     }
 
@@ -143,7 +170,7 @@ public class TransactionControllerTest extends BaseControllerTest {
 
         Map<String, Object> request = new HashMap<>();
         request.put("amount", 99999);
-        request.put("fromBankAcountIban", userBankAccountIban);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
 
         mockMvc.perform(post("/transactions/withdraw")
                 .contentType(MediaType.APPLICATION_JSON)
