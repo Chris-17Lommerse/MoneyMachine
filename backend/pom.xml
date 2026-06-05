@@ -162,16 +162,6 @@
 							</annotationProcessorPaths>
 						</configuration>
 					</execution>
-					<execution>
-						<configuration>
-							<annotationProcessorPaths>
-								<path>
-									<groupId>org.projectlombok</groupId>
-									<artifactId>lombok</artifactId>
-								</path>
-							</annotationProcessorPaths>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 		</plugins>
