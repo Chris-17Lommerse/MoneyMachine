@@ -1381,6 +1381,9 @@ components:
         toIban:
           type: string
           example: NL91ABNA0417164300
+        message:
+          type: string
+          example: ATM deposit
 
     WithdrawRequest:
       type: object
@@ -1392,6 +1395,9 @@ components:
         fromIban:
           type: string
           example: NL91ABNA0417164300
+        message:
+          type: string
+          example: ATM withdraw
     
     TransferRequest:
       type: object
@@ -1406,6 +1412,9 @@ components:
         fromIban:
           type: string
           example: NL91ABNA0417164300
+        message:
+          type: string
+          example: Transfer request message
 
     ErrorResponse:
       type: object
@@ -1453,7 +1462,7 @@ components:
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
@@ -1473,12 +1482,12 @@ components:
           example: "NL91ABNA0417164300"
         message:
           type: string
-          example: "ATM withdrawal"
+          example: "ATM withdraw"
           description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
@@ -1504,7 +1513,7 @@ components:
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
