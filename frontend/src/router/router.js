@@ -191,8 +191,8 @@ const routes = [
 ]
 
 const router = createRouter({
-    "history": createWebHashHistory(),
-    routes,
+    history: createWebHistory('/MoneyMachine/'),
+    routes
 })
 
 router.beforeEach((to) => {
