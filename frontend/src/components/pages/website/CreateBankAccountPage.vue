@@ -20,6 +20,9 @@ const approveAndCreateAccounts = async () => {
     loading.value = true;
     error.value = null;
     try {
+        if (!accountApprovalStore.selectedUserId) {
+            throw new Error("No selected user")
+        }
         await axios.post("/bank-accounts", accountApprovalStore.pendingBankAccounts.checking);
         await axios.post("/bank-accounts", accountApprovalStore.pendingBankAccounts.savings);
 
@@ -62,7 +65,7 @@ const cancel = () => {
         <section v-else-if="error" class="min-h-screen flex items-center justify-center">
             <section class="text-red-600 text-5xl mb-4">⚠️</section>
             <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                Error Loading a bankaccount
+                Error creating a checkings and savings bankaccount
             </h2>
             <p class="text-gray-600 mb-4">{{ error }}</p>
             <button @click="approveAndCreateAccounts"
@@ -74,6 +77,8 @@ const cancel = () => {
                 Cancel
             </button>
         </section>
-        <ApproveCustomerOrganism @createBankAccount="approveAndCreateAccounts" v-else :bankAccount="accountApprovalStore.pendingBankAccounts.checking" + :bankaccount="accountApprovalStore.pendingBankAccounts.savings"  />
+        <ApproveCustomerOrganism @createBankAccount="approveAndCreateAccounts" v-else
+            :bankAccount="accountApprovalStore.pendingBankAccounts.checking" +
+            :bankaccount="accountApprovalStore.pendingBankAccounts.savings" />
     </section>
 </template>

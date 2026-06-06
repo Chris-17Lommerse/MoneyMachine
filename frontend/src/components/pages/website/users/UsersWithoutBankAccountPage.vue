@@ -58,6 +58,6 @@ import { useAccountApprovalStore } from '../../../../stores/accountApprovalStore
                 Try Again
             </button>
         </section>
-        <UsersTableGridTemplate @approveCustomer="accountApprovalStore.initApproval()" v-else :items="usersWithoutBankAccounts" />
+        <UsersTableGridTemplate @approveCustomer="accountApprovalStore.initApproval($event)" v-else :items="usersWithoutBankAccounts" />
     </section>
 </template>
