@@ -18,7 +18,7 @@ import MoneyMachine.models.User;
 @Service
 public interface BankAccountService {
     BankAccountResponse createBankAccountFromRequest(BankAccountCreationRequest bankAccountCreationRequest);
-    BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user);
+    void createBankAccountForUser(BankAccountType bankAccountType, User user);
     BankAccountOverviewResponse getAllBankAccounts(Pageable pageable);
     BankAccountResponse closeBankAccount(PatchRequest patchRequest, String iban);
     BankAccountOverviewResponse getAllBankAccountsByUserId(Long id, Pageable pageable);

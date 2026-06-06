@@ -42,8 +42,6 @@ public class BankAccountServiceImpl implements BankAccountService {
     private static final BigDecimal absoluteLimit = BigDecimal.valueOf(0);
     private static final BigDecimal dailyTransferLimit = BigDecimal.valueOf(20000);
     private static final BigDecimal singleTransferLimit = BigDecimal.valueOf(5000);
-    private static final boolean isActive = false;
-    private final LocalDateTime createdAt = LocalDateTime.now();
 
     public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository,
             BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator,
@@ -99,14 +97,10 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse createBankAccountForUser(BankAccountType bankAccountType, User user) {
+    public void createBankAccountForUser(BankAccountType bankAccountType, User user) {
         String iban = generateIban();
-        BankAccount bankAccount = new BankAccount(iban, user, balance, absoluteLimit, dailyTransferLimit, singleTransferLimit, bankAccountType, isActive, createdAt);
-        BankAccountTypeStrategy strategy = bankAccountTypeFactory.getStrategy(bankAccountType);
-        strategy.applyBankAccountRules(bankAccount);
-        bankAccountRepository.save(bankAccount);
-        BankAccountResponse bankAccountRespnse = bankAccountMapper.toResponse(bankAccount);
-        return bankAccountRespnse;
+        BankAccountCreationRequest bankAccountCreationRequest = new BankAccountCreationRequest(iban, user.getId(), bankAccountType, balance, singleTransferLimit, dailyTransferLimit, absoluteLimit);
+        createBankAccountFromRequest(bankAccountCreationRequest);
     }
 
     @Override
@@ -114,8 +108,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         Optional<User> optionalUser = userRepository.findById(bankAccountCreationRequest.getUserId());
         User user = optionalUser.get();
 
-        String iban = generateIban();
-        BankAccount bankAccount = new BankAccount(iban, user, bankAccountCreationRequest.getBalance(),
+        BankAccount bankAccount = new BankAccount(bankAccountCreationRequest.getIban(), user, bankAccountCreationRequest.getBalance(),
                 bankAccountCreationRequest.getAbsoluteLimit(), bankAccountCreationRequest.getSingleTransferLimit(),
                 bankAccountCreationRequest.getDailyTransferLimit(), bankAccountCreationRequest.getBankAccountType(),
                 true, LocalDateTime.now());
