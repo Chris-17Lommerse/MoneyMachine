@@ -29,6 +29,6 @@ const props = defineProps({
     <BaseTableDataFieldAtom :text="user.email" />
     <BaseTableDataFieldAtom :text="user.bsn" />
     <BaseTableDataFieldAtom :text="user.phoneNumber" />
-    <ApproveCustomerButtonAtom :user-id="user.userId"/>
+    <ApproveCustomerButtonAtom :user="user"/>
     </tr>  
 </template>

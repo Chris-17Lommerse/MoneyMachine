@@ -1,6 +1,4 @@
 <script setup>
-import CloseAccountTitle from "@/atoms/bankaccounts/textelements/CloseBankAccountTitle.vue";
-import ButtonSetMolecule from "@/molecules/bankaccounts/buttons/ButtonSetMolecule.vue";
 import AbsoluteLimitItemMolecule from "@/molecules/bankaccounts/items/AbsoluteLimitItemMolecule.vue";
 import BalanceItemMolecule from "@/molecules/bankaccounts/items/BalanceItemMolecule.vue";
 import DailyTransferLimitItemMolecule from "@/molecules/bankaccounts/items/DailyTransferLimitItemMolecule.vue";
@@ -8,6 +6,7 @@ import IBANNumberItemMolecule from "@/molecules/bankaccounts/items/IBANNumberIte
 import IsActiveItemMolecule from "@/molecules/bankaccounts/items/IsActiveItemMolecule.vue";
 import SingleTransferLimitItemMolecule from "@/molecules/bankaccounts/items/SingleTransferLimitItemMolecule.vue";
 import BaseListDataFieldAtomForHeadings from "@/atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForHeadings.vue";
+import BankAccountCreationTitle from "../../atoms/bankaccounts/textelements/BankAccountCreationTitle.vue";
 
 const props = defineProps({
     bankAccount: {
@@ -25,12 +24,13 @@ const props = defineProps({
         }
     }
 })
-const emits = defineEmits(['closeAccount'])
+
+const emits = defineEmits(['createBankAccount'])
 </script>
 
 <template>
     <section class="flex flex-col">
-        <CloseAccountTitle />
+        <BankAccountCreationTitle />
         <BaseListDataFieldAtomForHeadings :text="bankAccount.bankAccountType" />
         <IBANNumberItemMolecule :bankAccount="bankAccount" />
         <BalanceItemMolecule :bankAccount="bankAccount" />
@@ -38,6 +38,5 @@ const emits = defineEmits(['closeAccount'])
         <DailyTransferLimitItemMolecule :bankAccount="bankAccount" />
         <IsActiveItemMolecule :bankAccount="bankAccount" />
         <SingleTransferLimitItemMolecule :bankAccount="bankAccount" />
-        <ButtonSetMolecule @closeAccount="$emit('closeAccount', bankAccount.iban)" :bankAccount="bankAccount" />
     </section>
 </template>
