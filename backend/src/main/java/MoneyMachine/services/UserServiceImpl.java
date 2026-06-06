@@ -17,6 +17,7 @@ import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import MoneyMachine.exception.NotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {

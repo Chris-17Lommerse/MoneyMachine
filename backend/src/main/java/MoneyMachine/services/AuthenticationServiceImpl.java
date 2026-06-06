@@ -33,16 +33,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private User getUserByEmailAndPassword(String email, String password) {
         
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        // Optional<User> optionalUser = userRepository.findByEmail(email);
         
-        if (optionalUser.isPresent()) {
+        // if (optionalUser.isPresent()) {
             
-            User user = optionalUser.get();
+        //     User user = optionalUser.get();
             
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return user;
-            }
-        }
+        //     if (passwordEncoder.matches(password, user.getPassword())) {
+        //         return user;
+        //     }
+        // }
 
         throw new InvalidCredentialsException("Password or email is not correct.");
     }
