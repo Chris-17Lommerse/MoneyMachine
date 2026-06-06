@@ -138,6 +138,83 @@ public class TransactionControllerTest extends BaseControllerTest {
     }
 
     @Test
+    void failDeposit_whenMissingAmount_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("toBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failDeposit_whenMissingIban_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 10);
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failDeposit_whenEmptyBody_returnBadRequest() throws Exception {
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}")
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failDeposit_whenAmountIsZero_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 0);
+        request.put("toBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failDeposit_whenAmountIsNegative_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", -10);
+        request.put("toBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failDeposit_whenNotAuthenticated_returnUnauthorized() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 10);
+        request.put("toBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/deposit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().is(401));
+    }
+
+    @Test
     void withdraw_whenAuthorized_withdrawAmount() throws Exception {
 
         int amount = 10;
@@ -227,6 +304,83 @@ public class TransactionControllerTest extends BaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(401));
+    }
+
+    @Test
+    void failWithdraw_whenMissingAmount_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("fromBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failWithdraw_whenMissingIban_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 10);
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failWithdraw_whenEmptyBody_returnBadRequest() throws Exception {
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}")
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failWithdraw_whenAmountIsZero_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 0);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failWithdraw_whenAmountIsNegative_returnBadRequest() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", -10);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(400));
+    }
+
+    @Test
+    void failWithdraw_whenNotAuthenticated_returnUnauthorized() throws Exception {
+
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", 10);
+        request.put("fromBankAcountIban", userBankAccount.getIban());
+
+        mockMvc.perform(post("/transactions/withdraw")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().is(401));
     }
 }
