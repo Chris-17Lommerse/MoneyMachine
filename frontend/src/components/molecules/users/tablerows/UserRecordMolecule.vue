@@ -30,6 +30,6 @@ const emits = defineEmits(['approveCustomer']);
     <BaseTableDataFieldAtom :text="user.email" />
     <BaseTableDataFieldAtom :text="user.bsn" />
     <BaseTableDataFieldAtom :text="user.phoneNumber" />
-    <ApproveCustomerButtonAtom @approveCustomer="$emit('approveCustomer', user.userId)" :user="user"/>
+    <ApproveCustomerButtonAtom @approveCustomer="$emit('approveCustomer')" :user="user"/>
     </tr>  
 </template>

@@ -48,6 +48,11 @@ export const useAccountApprovalStore = defineStore('accountApproval', () => {
        }
     }
 
+    function generateFixedRandom(length)
+    {
+        return Math.random().toString().slice(2, 2 + length);
+    }
+
     return {
         selectedUserId,
         pendingBankAccounts,

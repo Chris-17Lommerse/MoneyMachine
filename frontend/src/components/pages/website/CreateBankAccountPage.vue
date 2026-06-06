@@ -74,6 +74,6 @@ const cancel = () => {
                 Cancel
             </button>
         </section>
-        <ApproveCustomerOrganism @createBankAccount="approveAndCreateAccounts" v-else :bankAccount="bankAccount" />
+        <ApproveCustomerOrganism @createBankAccount="approveAndCreateAccounts" v-else :bankAccount="accountApprovalStore.pendingBankAccounts.checking" + :bankaccount="accountApprovalStore.pendingBankAccounts.savings"  />
     </section>
 </template>

@@ -16,12 +16,7 @@ const props = defineProps({
         validator: (value) => {
             return typeof value.iban === 'string' &&
                 typeof value.userId === 'number' &&
-                typeof value.balance === 'number' &&
-                typeof value.absoluteLimit === 'number' &&
-                typeof value.singleTransferLimit === 'number' &&
-                typeof value.dailyTransferLimit === 'number' &&
-                typeof value.bankAccountType === 'string' &&
-                typeof value.isActive == 'boolean'
+                typeof value.bankAccountType === 'string'
         }
     }
 })
