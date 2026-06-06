@@ -7,9 +7,9 @@ import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
-import org.springframework.data.domain.Pageable;
 import MoneyMachine.services.interfaces.*;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;

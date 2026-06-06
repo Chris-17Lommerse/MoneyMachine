@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.repositories.BankAccountRepository;
-import MoneyMachine.services.interfaces.BankAccountService;
-
 import MoneyMachine.mappers.BankAccountMapper;
 
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import MoneyMachine.models.enums.BankAccountType;
 import MoneyMachine.repositories.UserRepository;
-
+import MoneyMachine.services.interfaces.BankAccountService;
 import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import MoneyMachine.factories.BankAccountTypeFactory;
 import MoneyMachine.factories.IbanGenerator;
