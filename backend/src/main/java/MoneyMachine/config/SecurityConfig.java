@@ -1,6 +1,7 @@
 package MoneyMachine.config;
 
 import MoneyMachine.filter.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -69,6 +70,11 @@ public class SecurityConfig {
                     "/openapi.yaml"
                 ).permitAll()
                 .anyRequest().authenticated()
+            )
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((request, response, authException) ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                )
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -2,6 +2,7 @@ package MoneyMachine.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleAllException(Exception ex) {
         
         String locationInfo = getLocationOfException(ex);
         ErrorResponse errorResponse = new ErrorResponse(500, ErrorType.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -50,44 +51,51 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotAuthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleNotAuthorizedExceptions(NotAuthorizedException ex) {
+    public ResponseEntity<ErrorResponse> handleNotAuthorizedException(NotAuthorizedException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.UNAUTHORIZED, ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedExceptions(AccessDeniedException ex) {
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(403, ErrorType.FORBIDDEN, ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<ErrorResponse> handleJwtExceptions(JwtException ex) {
+    public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.INVALID_AUTH_TOKEN, ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<ErrorResponse> handleExpiredJwtExceptions(ExpiredJwtException ex) {
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(401, ErrorType.INVALID_AUTH_TOKEN, "Your authentication token has expired.");
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentExceptions(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(400, ErrorType.ILLEGAL_ARGUMENTS, ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundExceptions(NotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex) {
         
         ErrorResponse errorResponse = new ErrorResponse(404, ErrorType.ILLEGAL_ARGUMENTS, ex.getMessage());
         return ResponseEntity.status(errorResponse.getCode()).body(errorResponse); 
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
+
+        ErrorResponse errorResponse = new ErrorResponse(400, ErrorType.ILLEGAL_ARGUMENTS, "Bad request: missing or invalid fields.");
+        return ResponseEntity.status(errorResponse.getCode()).body(errorResponse);
     }
 }
