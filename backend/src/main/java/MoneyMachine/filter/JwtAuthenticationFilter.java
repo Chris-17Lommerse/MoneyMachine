@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+
 import java.util.Optional;
 
 @Component
@@ -32,8 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
-        
+
         try {
+            if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             String authorizationHeader = request.getHeader("Authorization");
 
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
@@ -48,24 +53,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String authToken = headerParts[1];
-            
+
             Claims decodedAuthToken = jwtUtil.getDecodedAuthToken(authToken);
             jwtUtil.validateDecodedAuthToken(decodedAuthToken);
             Optional<User> userOptional = userRepository.findById(Long.parseLong(decodedAuthToken.getSubject()));
-            
+
             if (!userOptional.isPresent()) {
                 throw new JwtException("User in auth token does not exist.");
             }
 
             User user = userOptional.get();
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
+                    user.getAuthorities());
             authentication.setDetails(decodedAuthToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            
+
             filterChain.doFilter(request, response);
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }

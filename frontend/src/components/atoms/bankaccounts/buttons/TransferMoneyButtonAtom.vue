@@ -2,5 +2,5 @@
 </script>
 
 <template>
-    <a href="" class="btn btn-primary">Transfer money</a>
+    <RouterLink :to="''" class="btn btn-primary">Transfer money</RouterLink>
 </template>
