@@ -20,7 +20,7 @@ export const useBankAccountStore = defineStore('bankAccount', () => {
         }
         catch (ex){
             if (ex.response){
-                errorHandlingStore.errorMessage = ex.response.data.details
+                errorHandlingStore.errorMessage = ex.response.data.message
             }
             else {
                 errorHandlingStore.errorMessage = ex.message

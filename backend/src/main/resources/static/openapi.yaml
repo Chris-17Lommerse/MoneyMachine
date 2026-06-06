@@ -14,7 +14,7 @@ info:
     For internal development support, contact the Project 2.4 Dev Team
     - [Wessel Beun (729848)](mailto:729848@student.inholland.nl)
     - [Chris Lommerse (728158)](mailto:728158@student.inholland.nl)
-    - [Adam Nasser (717582)](mailto:717582@student.inholland.nl)
+    - [Adam Nasser (717582)](mailto:717582@student.inholland.nl.)
     - [Menno de Wever (728950)](mailto:728950@student.inholland.nl)
 
     View our Github Repository: [The MoneyMachine repository](https://github.com/Chris-17Lommerse/MoneyMachine)
@@ -33,13 +33,162 @@ servers:
 security:
   - bearerAuth: []
 tags:
+  - name: Auth
+    description: Operations about authentication
   - name: Users
-    description: Operations about user management and authentication
+    description: Operations about user management
   - name: Transactions
     description: Operations about recording transactions within the application
   - name: BankAccounts
     description: Operations for managing bankaccounts
 paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Log in to the system
+      description: Verifies the provided email and password and returns a JWT bearer token on success. Access | Public to everyone
+      security: []
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '201':
+          description: Successful operation - Returns authToken
+          headers:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Bad Request - Invalid username or password supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Please try again later or contact support if the problem persists."
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register a new user account
+      description: Creates a new user account. Access | Public to everyone
+      security: []
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully while returning authToken
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Bad Request - Invalid input parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                type: BAD_REQUEST
+                message: "The provided input does not meet the required validation rules."
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Please provide valid authentication credentials."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Please try again later or contact support if the problem persists."
+  /auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get the authenticated user's profile
+      description: Returns the full profile details of the currently logged in user. Access | User and Employee
+      operationId: getMyAccount
+      responses:
+        '200':
+          description: Successful operation - User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 401
+                type: UNAUTHORIZED
+                message: "Please provide valid authentication credentials."
+        '404':
+          description: Not Found - Authenticated user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 404
+                type: NOT_FOUND
+                message: "The requested resource could not be found."
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 500
+                type: INTERNAL_SERVER_ERROR
+                message: "Please try again later or contact support if the problem persists."
   /users:
     get:
       tags:
@@ -86,8 +235,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '500':
           description: Internal Server Error
           content:
@@ -97,117 +245,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-  
-    post:
-      tags:
-        - Users
-      summary: Register a new user account
-      description: Creates a new user account. Access | Public to everyone
-      security: []
-      operationId: registerUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterRequest'
-      responses:
-        '201':
-          description: User created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '400':
-          description: Bad Request - Invalid input parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 400
-                type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
-        '401':
-          description: Unauthorized - Authentication required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 401
-                type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-  /users/login:
-    post:
-      tags:
-        - Users
-      summary: Log in to the system
-      description: Verifies the provided email and password and returns a JWT bearer token along with a user summary on success. Access | Public to everyone
-      security: []
-      operationId: loginUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/LoginRequest'
-      responses:
-        '200':
-          description: Successful operation - Returns access token and user summary
-          headers:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginResponse'
-        '400':
-          description: Bad Request - Invalid username or password supplied
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 400
-                type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
-        '401':
-          description: Unauthorized - Invalid credentials
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 401
-                type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
   /transactions/transfer:
     post:
       tags:
@@ -222,7 +260,7 @@ paths:
             schema:
               $ref: '#/components/schemas/TransferRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Transfer completed
           content:
             application/json:
@@ -237,8 +275,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -248,8 +285,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - One or both bank accounts not found
           content:
@@ -259,8 +295,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '422':
           description: Unprocessable Entity - Insufficient funds or transfer limit exceeded
           content:
@@ -270,8 +305,7 @@ paths:
               example:
                 code: 422
                 type: UNPROCESSABLE_ENTITY
-                message: "Unprocessable Entity - Invalid data or business rule violation"
-                details: "The provided data violates business rules or constraints."
+                message: "The provided data violates business rules or constraints."
         '500':
           description: Internal Server Error
           content:
@@ -281,9 +315,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /users/{user_id}/bank-accounts:
     get:
       tags:
@@ -332,8 +364,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - User not found or no bank accounts found for this user
           content:
@@ -343,8 +374,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -354,8 +384,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
   /users/{user_id}:
     patch:
       tags:
@@ -380,9 +409,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchRequest'
+              $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
-        '200':
+        '204':
           description: Successful operation - User updated; returns the updated user
           content:
             application/json:
@@ -397,8 +426,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -408,8 +436,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No user found with the given ID
           content:
@@ -419,8 +446,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested user could not be found."
+                message: "The requested user could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -430,56 +456,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-  /users/me:
-    get:
-      tags:
-        - Users
-      summary: Get the authenticated user's profile
-      description: Returns the full profile details of the currently logged in user. Access | User and Employee
-      operationId: getMyAccount
-      responses:
-        '200':
-          description: Successful operation - User profile retrieved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
-        '401':
-          description: Unauthorized - Authentication required
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 401
-                type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
-        '404':
-          description: Not Found - Authenticated user not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 404
-                type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              example:
-                code: 500
-                type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /users/{user_id}/transactions:
     get:
       tags:
@@ -582,8 +559,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No transactions found
           content:
@@ -593,8 +569,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -604,8 +579,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
   /transactions:
     get:
       tags:
@@ -700,8 +674,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No transactions found
           content:
@@ -711,8 +684,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -722,9 +694,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /bank-accounts/{iban}/transactions:
     get:
       tags:
@@ -826,8 +796,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -837,8 +806,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - Bank account not found or no transactions found for this account
           content:
@@ -848,8 +816,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -859,8 +826,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
   /bank-accounts/iban-lookup:
     get:
       tags:
@@ -917,8 +883,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "Both firstName and lastName must be provided."
+                message: "Both firstName and lastName must be provided."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -928,8 +893,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No matching customers or IBANs found
           content:
@@ -939,8 +903,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - No matching IBAN found"
-                details: "No customer with the provided name was found."
+                message: "No customer with the provided name was found."
         '500':
           description: Internal Server Error
           content:
@@ -950,9 +913,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /bank-accounts:
     get:
       tags:
@@ -993,8 +954,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '403':
           description: Forbidden - Employee rights required
           content:
@@ -1004,8 +964,7 @@ paths:
               example:
                 code: 403
                 type: FORBIDDEN
-                message: "Forbidden - Insufficient permissions"
-                details: "You do not have the required permissions to access this resource."
+                message: "You do not have the required permissions to access this resource."
         '500':
           description: Internal Server Error
           content:
@@ -1015,8 +974,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
     post:
       tags:
         - BankAccounts
@@ -1045,8 +1003,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1056,8 +1013,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - The specified user was not found
           content:
@@ -1067,8 +1023,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -1078,8 +1033,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
   /bank-accounts/{iban}:
     get:
       tags:
@@ -1111,8 +1065,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1122,8 +1075,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No bank account found with the given IBAN
           content:
@@ -1133,8 +1085,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -1144,8 +1095,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
+                message: "Please try again later or contact support if the problem persists."
     patch:
       tags:
         - BankAccounts
@@ -1165,9 +1115,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchRequest'
+              $ref: '#/components/schemas/BankAccountPatchRequest'
       responses:
-        '200':
+        '204':
           description: Successful operation - Bank account status updated; returns the updated bank account
           content:
             application/json:
@@ -1182,8 +1132,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1193,8 +1142,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - No bank account found with the given IBAN
           content:
@@ -1204,8 +1152,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '500':
           description: Internal Server Error
           content:
@@ -1215,15 +1162,13 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /transactions/withdraw:
     post:
       tags:
         - Transactions
       summary: Withdraw money from a bank account
-      description: Withdraws a specified amount from a bank account. The source IBAN is provided in the request body via fromIban. Access | User and Employee
+      description: Withdraws a specified amount from a bank account. The source IBAN is provided in the request body by fromIban. Access | User and Employee
       operationId: Withdraw
       requestBody:
         required: true
@@ -1232,7 +1177,7 @@ paths:
             schema:
               $ref: '#/components/schemas/WithdrawRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Amount withdrawn
           content:
             application/json:
@@ -1247,8 +1192,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1258,8 +1202,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - Bank account not found for the provided IBAN
           content:
@@ -1269,8 +1212,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '422':
           description: Unprocessable Entity - Insufficient funds, absolute limit would be breached, or daily/single transfer limit exceeded
           content:
@@ -1280,8 +1222,7 @@ paths:
               example:
                 code: 422
                 type: UNPROCESSABLE_ENTITY
-                message: "Unprocessable Entity - Invalid data or business rule violation"
-                details: "The provided data violates business rules or constraints."
+                message: "The provided data violates business rules or constraints."
         '500':
           description: Internal Server Error
           content:
@@ -1291,15 +1232,13 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
   /transactions/deposit:
     post:
       tags:
         - Transactions
       summary: Deposit money into a bank account
-      description: Deposits a specified amount into a bank account. The destination IBAN is provided in the request body via toIban. Access | User and Employee
+      description: Deposits a specified amount into a bank account. The destination IBAN is provided in the request body by toIban. Access | User and Employee
       operationId: Deposit
       requestBody:
         required: true
@@ -1308,7 +1247,7 @@ paths:
             schema:
               $ref: '#/components/schemas/DepositRequest'
       responses:
-        '200':
+        '201':
           description: Successful operation - Amount deposited
           content:
             application/json:
@@ -1323,8 +1262,7 @@ paths:
               example:
                 code: 400
                 type: BAD_REQUEST
-                message: "Bad Request - Invalid input parameters"
-                details: "The provided input does not meet the required validation rules."
+                message: "The provided input does not meet the required validation rules."
         '401':
           description: Unauthorized - Authentication required
           content:
@@ -1334,8 +1272,7 @@ paths:
               example:
                 code: 401
                 type: UNAUTHORIZED
-                message: "Unauthorized - Authentication required"
-                details: "Please provide valid authentication credentials."
+                message: "Please provide valid authentication credentials."
         '404':
           description: Not Found - Bank account not found for the provided IBAN
           content:
@@ -1345,8 +1282,7 @@ paths:
               example:
                 code: 404
                 type: NOT_FOUND
-                message: "Not Found - Requested resource does not exist"
-                details: "The requested resource could not be found."
+                message: "The requested resource could not be found."
         '422':
           description: Unprocessable Entity - Invalid deposit amount (e.g. zero or negative)
           content:
@@ -1356,8 +1292,7 @@ paths:
               example:
                 code: 422
                 type: UNPROCESSABLE_ENTITY
-                message: "Unprocessable Entity - Invalid data or business rule violation"
-                details: "The provided data violates business rules or constraints."
+                message: "The provided data violates business rules or constraints."
         '500':
           description: Internal Server Error
           content:
@@ -1367,9 +1302,7 @@ paths:
               example:
                 code: 500
                 type: INTERNAL_SERVER_ERROR
-                message: "Internal Server Error - An unexpected error occurred"
-                details: "Please try again later or contact support if the problem persists."
-
+                message: "Please try again later or contact support if the problem persists."
 components:
   schemas:
     UserResponse:
@@ -1393,11 +1326,11 @@ components:
           example: "123456789"
         phoneNumber:
           type: string
-          example: +31612345678
+          example: "+31612345678"
         role:
           type: string
-          enum: [customer, employee]
-          example: customer
+          enum: [CUSTOMER, EMPLOYEE]
+          example: CUSTOMER
         isActive:
           type: boolean
           example: true
@@ -1414,6 +1347,10 @@ components:
         password:
           type: string
           example: "secret123"
+        loginType:
+          type: string
+          enum: [ATM, WEBSITE]
+          example: "ATM"
 
     RegisterRequest:
       type: object
@@ -1428,11 +1365,11 @@ components:
           type: string
           example: john.doe@example.com
         bsn:
-          type: integer
-          example: 123456789
+          type: string
+          example: "123456789"
         phoneNumber:
           type: string
-          example: +31612345678
+          example: "+31612345678"
 
     DepositRequest:
       type: object
@@ -1469,6 +1406,9 @@ components:
         fromIban:
           type: string
           example: NL91ABNA0417164300
+        message:
+          type: string
+          example: Transfer request message
 
     ErrorResponse:
       type: object
@@ -1485,42 +1425,13 @@ components:
         message:
           type: string
           example: "Bad Request - Invalid input parameters"
-        details:
-          type: string
-          example: "The provided input does not meet the required validation rules."
 
     LoginResponse:
       type: object
       properties:
-        accessToken:
+        authToken:
           type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-        tokenType:
-          type: string
-          example: Bearer
-        expiresIn:
-          type: integer
-          example: 3600
-        user: 
-          $ref: '#/components/schemas/UserSummaryResponse'
-        
-
-    UserSummaryResponse:
-      type: object
-      properties:
-        id:
-          type: integer
-          example: 1
-        firstName:
-          type: string
-          example: "john"
-        lastName:
-          type: string
-          example: "doe"
-        email:
-          type: string
-          example: "user@example.com"
-        
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...        
 
     TransactionResponse:
       type: object
@@ -1541,18 +1452,15 @@ components:
         message:
           type: string
           example: "Bought a car"
-          description: Displays why the transaction was done
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
 
     WithdrawTransactionResponse:
       type: object
@@ -1568,19 +1476,16 @@ components:
           example: "NL91ABNA0417164300"
         message:
           type: string
-          example: "ATM withdrawal"
-          description: Displays why the transaction was done
+          example: "ATM withdraw"
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
     
     DepositTransactionResponse:
       type: object
@@ -1598,18 +1503,15 @@ components:
         message:
           type: string
           example: "ATM deposit"
-          description: Displays why the transaction was done
+          description: Displays why the transaction was made
         amount: 
           type: number
           format: decimal
-          example: 21.4
+          example: 50
         dateTime: 
           type: string
           format: date-time
           example: "2026-11-24T14:45:12Z"
-        isActive: 
-          type: boolean
-          example: true
 
     BankAccountResponse:
       type: object
@@ -1726,12 +1628,27 @@ components:
           format: date-time
           example: "2024-04-28T10:30:00Z"
 
-    PatchRequest:
+    BankAccountPatchRequest:
       type: object
       properties:
         isActive:
           type: boolean
           example: false
+        singleTransferLimit:
+          type: number
+          format: decimal
+          example: 5000.00
+          description: Maximum amount allowed for a single transfer
+        dailyTransferLimit:
+          type: number
+          format: decimal
+          example: 10000.00
+          description: Maximum total amount that can be transferred in a single day
+        absoluteLimit:
+          type: number
+          format: decimal
+          example: -1000.00
+          description: The minimum allowed balance (overdraft limit) for the account
     
     IbanLookupResponse:
       type: object
@@ -1802,6 +1719,15 @@ components:
         pageSize:
           type: integer
           example: 20
+
+    RegisterResponse:
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/UserResponse'
+        authToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
   securitySchemes:
     bearerAuth:            

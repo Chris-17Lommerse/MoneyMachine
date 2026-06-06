@@ -1,6 +1,5 @@
 package MoneyMachine.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.repositories.BankAccountRepository;
-import MoneyMachine.services.interfaces.BankAccountService;
-
 import MoneyMachine.mappers.BankAccountMapper;
 
 import org.springframework.data.domain.Page;
@@ -18,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import MoneyMachine.models.enums.BankAccountType;
 import MoneyMachine.repositories.UserRepository;
-
+import MoneyMachine.services.interfaces.BankAccountService;
 import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 import MoneyMachine.factories.BankAccountTypeFactory;
 import MoneyMachine.factories.IbanGenerator;
@@ -43,9 +40,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     private static final BigDecimal dailyTransferLimit = BigDecimal.valueOf(20000);
     private static final BigDecimal singleTransferLimit = BigDecimal.valueOf(5000);
 
-    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository,
-            BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator,
-            BankAccountTypeFactory bankAccountTypeFactory) {
+    public BankAccountServiceImpl(BankAccountRepository bankAccountRepository, UserRepository userRepository, BankAccountMapper bankAccountMapper, IbanGenerator ibanGenerator, BankAccountTypeFactory bankAccountTypeFactory) {
         this.bankAccountRepository = bankAccountRepository;
         this.bankAccountMapper = bankAccountMapper;
         this.ibanGenerator = ibanGenerator;
@@ -83,17 +78,15 @@ public class BankAccountServiceImpl implements BankAccountService {
             return bankAccountMapper.toResponse(bankAccount.get()); 
         }
 
-        throw new NotFoundException(String.format("Bank account with IBAN %s owned by %s does not exist.", iban, id));
+        throw new NotFoundException(String.format("Bank account with IBAN %s owned by user ID %s does not exist.", iban, id));
     }
 
     @Override
-    public BankAccount findBankAccountEntityByIban(String iban) {
-        return bankAccountRepository.findById(iban).orElseThrow(null);
-    }
-
-    @Override
-    public void setBankAccountBalance(String iban, BigDecimal newBalance) {
-        this.bankAccountRepository.setBalanceByIban(iban, newBalance);
+    public BankAccount getBankAccountEntityByIban(String iban) {
+        
+        return bankAccountRepository.findById(iban).orElseThrow(() 
+            -> new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban))
+        );
     }
 
     @Override

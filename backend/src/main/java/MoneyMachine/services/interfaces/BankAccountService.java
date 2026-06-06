@@ -1,7 +1,5 @@
 package MoneyMachine.services.interfaces;
 
-import java.math.BigDecimal;
-
 import org.springframework.stereotype.Service;
 
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
@@ -24,6 +22,5 @@ public interface BankAccountService {
     BankAccountOverviewResponse getAllBankAccountsByUserId(Long id, Pageable pageable);
     BankAccountResponse getBankAccountByIban(String iban);
     BankAccountResponse getBankAccountByIbanAndUserId(String iban, Long id);
-    BankAccount findBankAccountEntityByIban(String iban);
-    void setBankAccountBalance(String iban, BigDecimal newBalance);
+    BankAccount getBankAccountEntityByIban(String iban);
 }

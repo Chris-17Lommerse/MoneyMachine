@@ -46,7 +46,7 @@ apiClient.interceptors.response.use(
         if (error.response && error.response.status === 401 && error.response.data && error.response.data.errorType == "INVALID_AUTH_TOKEN") {
             
             const currentPath = router.currentRoute.value.path
-            errorHandlingStore.errorMessage = 'You must login again for the following reason: ' + error.response.data.details
+            errorHandlingStore.errorMessage = 'You must login again for the following reason: ' + error.response.data.message
 
             if (currentPath.startsWith('/atm')) {
                 authStore.setAtmAuthToken(null)

@@ -1,5 +1,7 @@
 package MoneyMachine.services;
 
+import java.util.Optional;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,10 +33,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private User getUserByEmailAndPassword(String email, String password) {
         
-        User user = userRepository.findByEmail(email);
-
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user;
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        
+        if (optionalUser.isPresent()) {
+            
+            User user = optionalUser.get();
+            
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
+            }
         }
 
         throw new InvalidCredentialsException("Password or email is not correct.");
@@ -56,7 +63,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = getUserByEmailAndPassword(email, password);
         String authToken = jwtUtil.generateAuthTokenFromUser(user, loginType);
 
-        return new LoginResponse(authToken, "Bearer", jwtUtil.getAuthTokenExpirationTime(), userMapper.toSummaryResponse(user));
+        return new LoginResponse(authToken);
     }
 
     @Override
