@@ -13,7 +13,7 @@
         error.value = null;
         try {
             const result = await axios.get("/users");
-            usersWithoutBankAccounts.value = result.data.users;
+            usersWithoutBankAccounts.value = result.data.items;
             console.log(result.data);
         }
         catch (err) {
@@ -56,6 +56,6 @@
                 Try Again
             </button>
         </section>
-        <UsersTableGridTemplate v-else :users="usersWithoutBankAccounts" />
+        <UsersTableGridTemplate v-else :items="usersWithoutBankAccounts" />
     </section>
 </template>

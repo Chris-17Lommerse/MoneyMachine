@@ -3,7 +3,7 @@
     import UserTableHeader from '@/components/molecules/users/tablerows/UserTableHeader.vue';
 
     const props = defineProps({
-        users: {
+        items: {
             type: Array,
             required: true,
             validator: (value) => {
@@ -29,7 +29,7 @@
             <UserTableHeader />
         </thead>
         <tbody>
-            <UserRecordMolecule v-for="user in users" :key="user.userId" :user="user" />
+            <UserRecordMolecule v-for="user in items" :key="user.userId" :user="user" />
         </tbody>
     </table>
 </template>
