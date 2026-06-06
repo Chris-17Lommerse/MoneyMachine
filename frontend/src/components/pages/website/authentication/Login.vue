@@ -19,19 +19,19 @@
         try {
             e.preventDefault()
 
-            const response = await axios.post('/auth/login', {
+            const response = await axios.post('/users/login', {
                 'email': vModel.value.email,
                 'password': vModel.value.password,
                 'loginType': 'WEBSITE'
             })
 
-            authStore.setWebsiteAuthToken(response.data.authToken)
+            authStore.setWebsiteAuthToken(response.data.accessToken)
             errorHandlingStore.successMessage = 'Successfully logged in.'
             router.push('/user-test')
         }
         catch (ex) {
             if (ex.response){
-                errorAlertRef.value.displayErrorMessage(ex.response.data.message)
+                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
             }
             else{
                 errorAlertRef.value.displayErrorMessage(ex.message)

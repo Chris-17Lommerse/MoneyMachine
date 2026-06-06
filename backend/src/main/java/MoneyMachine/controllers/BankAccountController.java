@@ -11,7 +11,6 @@ import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;

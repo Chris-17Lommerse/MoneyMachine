@@ -12,7 +12,7 @@ import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.dtos.requests.TransferRequest;
-import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
 
@@ -30,30 +30,34 @@ public class TransactionMapperService {
         this.bankAccountRepository = bankAccountRepository;
        
     }
-    public List<TransferTransactionResponse> getAllTransactions(List<Transaction> transactions) {
+    public List<TransactionResponse> getAllTransactions( List<Transaction> transactions) {
         return transactions
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    public TransferTransactionResponse toResponse(Transaction t) {
-        TransferTransactionResponse response = mapper.toResponse(t);
+    public TransactionResponse toResponse(Transaction t) {
+        TransactionResponse response = mapper.toResponse(t);
 
-        switch (t) 
+       switch (t) 
         {
+
             case TransferTransaction transfer -> 
             {
-                response.setFromAccountIban(transfer.getFromBankAccount().getIban());
-                response.setToAccountIban(transfer.getToBankAccount().getIban());
+                response.setFromAccount(transfer.getFromBankAccount().getIban());
+                response.setToAccount(transfer.getToBankAccount().getIban());
+                response.setType("TRANSFER");
             }
 
             case WithdrawTransaction withdraw -> {
-                response.setFromAccountIban(withdraw.getFromBankAccount().getIban());
+                response.setFromAccount(withdraw.getFromBankAccount().getIban());
+                response.setType("WITHDRAW");
             }
 
             case DepositTransaction deposit -> {
-                response.setToAccountIban(deposit.getToBankAccount().getIban());
+                response.setToAccount(deposit.getToBankAccount().getIban());
+                response.setType("DEPOSIT");
             }
 
             default -> throw new IllegalArgumentException(
@@ -63,11 +67,11 @@ public class TransactionMapperService {
 
         return response;
     }
-
     public TransferTransaction toTransferEntity( TransferRequest transfer,User user) {
        
         TransferTransaction t= mapper.toTransferEntity(transfer);
         t.setInitiatingUser(user);
+        t.setIsActive(true);
         return t;
     }
 }

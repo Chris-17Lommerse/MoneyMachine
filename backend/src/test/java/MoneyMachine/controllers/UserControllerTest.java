@@ -1,17 +1,27 @@
 package MoneyMachine.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import org.springframework.http.MediaType;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import MoneyMachine.models.User;
 import MoneyMachine.services.AuthenticationServiceImpl;
 import MoneyMachine.models.enums.Role;
-import java.util.Map;
-import java.util.HashMap;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 public class UserControllerTest extends BaseControllerTest {
 
     private User user;

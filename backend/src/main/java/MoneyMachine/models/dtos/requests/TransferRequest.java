@@ -12,12 +12,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferRequest  {
+    @NotNull 
+    private String fromAccount;
+    @NotNull
+    private String toAccount;
+   @NotNull
+    private Long transactionId;
     @NotNull
     private BigDecimal amount;
     @NotNull
-    private String fromBankAcountIban;
-    @NotNull
-    private String toBankAcountIban;
+    private String type;
     @NotNull
     private String message;
+    
+
+    
 }

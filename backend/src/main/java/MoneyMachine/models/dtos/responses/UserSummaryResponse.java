@@ -1,8 +1,5 @@
 package MoneyMachine.models.dtos.responses;
 
-import java.io.Serializable;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionListResponse implements Serializable {
-    private List<TransactionResponse> transactions;
+public class UserSummaryResponse {
     
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
 }

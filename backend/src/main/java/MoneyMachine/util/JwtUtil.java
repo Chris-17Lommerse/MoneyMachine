@@ -18,6 +18,7 @@ public class JwtUtil {
     private final SecretKey authTokenSecretKeyEncoded;
     private final int AUTH_TOKEN_EXPIRATION_HOURS = 1;
     private final int HOUR_IN_MILLISECONDS = 3600000;
+    private final String[] requiredClaims = {"role", "email", "firstName", "lastName", "loginType"};
 
     public JwtUtil(@Value("${AUTH_TOKEN_SECRET_KEY}") String authTokenSecretKey) {
         this.authTokenSecretKeyEncoded = Keys.hmacShaKeyFor(authTokenSecretKey.getBytes(StandardCharsets.UTF_8));
@@ -35,6 +36,36 @@ public class JwtUtil {
             .expiration(getAuthTokenExpirationTime())
             .signWith(authTokenSecretKeyEncoded)
             .compact();
+    }
+
+    public void validateDecodedAuthToken(Claims decodedAuthToken) {
+
+        if (decodedAuthToken.getSubject() == null) {
+            throw new JwtException("Token is missing subject.");
+        }
+
+        if (decodedAuthToken.getExpiration() == null) {
+            throw new JwtException("Token is missing expiration.");
+        }
+
+        for (String requiredClaim : requiredClaims) {
+            if (isClaimNullOrEmpty(decodedAuthToken.get(requiredClaim))) {
+                throw new JwtException(String.format("Token is missing %s claim.", requiredClaim));
+            }
+        }
+    }
+
+    private boolean isClaimNullOrEmpty(Object claim) {
+
+        if (claim == null) {
+            return true;
+        }
+
+        if (claim instanceof String str) {
+            return str.isBlank();
+        }
+
+        return false;
     }
 
     public Claims getDecodedAuthToken(String authToken) {

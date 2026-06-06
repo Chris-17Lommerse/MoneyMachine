@@ -5,16 +5,20 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
-import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 
 @Service
 public interface TransactionService {
-    TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message);
     DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount);
     WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount);
-    List<TransferTransactionResponse> getAllTransactions();
-    List<TransferTransactionResponse> getAllTransactionsByAccountId(String iban);
-    TransferTransactionResponse getTransactionByid(long id);
+    public List<TransactionResponse> getAllTransactions();
+    public List<TransactionResponse> getAllTransactionsByAccountId(String iban);
+    public TransactionResponse getTransactionByid(long id);
+    public TransactionResponse createTransferAsUser(TransferRequest transaction,User user);
+    public TransactionResponse createTransferAsEmployee(TransferRequest transaction,User user);
+    
 }

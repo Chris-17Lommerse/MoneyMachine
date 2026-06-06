@@ -89,7 +89,8 @@ public class DataSeeder implements ApplicationRunner {
         DepositTransaction depositTransaction = new DepositTransaction();
         depositTransaction.setInitiatingUser(user);
         depositTransaction.setAmount(new BigDecimal("10"));
-        depositTransaction.setMessage("Deposit to ATM");
+        depositTransaction.setMessage("Hello deposit!");
+        depositTransaction.setIsActive(true);
         depositTransaction.setToBankAccount(checkingBankAccount);
 
         transactionRepository.save(depositTransaction);
@@ -97,7 +98,8 @@ public class DataSeeder implements ApplicationRunner {
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
         withdrawTransaction.setInitiatingUser(user);
         withdrawTransaction.setAmount(new BigDecimal("10"));
-        withdrawTransaction.setMessage("Withdraw from ATM");
+        withdrawTransaction.setMessage("Hello withdraw!");
+        withdrawTransaction.setIsActive(true);
         withdrawTransaction.setFromBankAccount(checkingBankAccount);
 
         transactionRepository.save(withdrawTransaction);
@@ -106,6 +108,7 @@ public class DataSeeder implements ApplicationRunner {
         transferTransaction.setInitiatingUser(user);
         transferTransaction.setAmount(new BigDecimal("10"));
         transferTransaction.setMessage("Hello transfer!");
+        transferTransaction.setIsActive(true);
         transferTransaction.setFromBankAccount(checkingBankAccount);
         transferTransaction.setToBankAccount(checkingBankAccount);
 
