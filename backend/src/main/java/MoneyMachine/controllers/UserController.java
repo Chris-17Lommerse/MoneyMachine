@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
+import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.services.interfaces.*;
 
 import org.springframework.data.domain.Pageable;
