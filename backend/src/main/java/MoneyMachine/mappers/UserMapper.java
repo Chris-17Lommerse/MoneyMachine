@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import MoneyMachine.models.*;
 import MoneyMachine.models.dtos.responses.UserResponse;
+import MoneyMachine.models.dtos.responses.UserSummaryResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,17 @@ public class UserMapper {
         user.setIsApproved(response.isApproved());
 
         return user;
+    }
+
+    public UserSummaryResponse toSummaryResponse(User user) {
+
+        UserSummaryResponse userSummaryResponse = new UserSummaryResponse();
+        userSummaryResponse.setId(user.getId());
+        userSummaryResponse.setFirstName(user.getFirstName());
+        userSummaryResponse.setLastName(user.getLastName());
+        userSummaryResponse.setEmail(user.getEmail());
+
+        return userSummaryResponse;
     }
 
     public List<UserResponse> toResponseList(List<User> userList) {

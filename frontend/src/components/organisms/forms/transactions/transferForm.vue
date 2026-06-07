@@ -10,8 +10,8 @@
     import ErrorAlert from '@/components/atoms/errorHandling/ErrorAlert.vue'
     
     const transaction = ref({
-        fromBankAcountIban: "",
-        toBankAcountIban: "",
+        fromAccount: "",
+        toAccount: "",
         amount: "",
         message: "",
         initiatedBy: ""
@@ -23,8 +23,8 @@
   <form @submit.prevent="emit('createTransaction',transaction)">
     <ErrorAlert/>
     <SuccessAlert/>
-    <BaseFormField v-model="transaction.fromBankAcountIban" labelName="From Account" type="text" id="fromAccount" name="fromAccount"/>
-    <BaseFormField v-model="transaction.toBankAcountIban" labelName="To Account" type="text" id="toAccount" name="toAccount"/>
+    <BaseFormField v-model="transaction.fromAccount" labelName="From Account" type="text" id="fromAccount" name="fromAccount"/>
+    <BaseFormField v-model="transaction.toAccount" labelName="To Account" type="text" id="toAccount" name="toAccount"/>
     <BaseFormField v-model="transaction.amount" labelName="Amount" type="number" id="amount" name="amount"/>
     <BaseFormField v-model="transaction.message" labelName="Message" type="text" id="message" name="message"/>
     <button type="submit" class="btn btn-primary">Create</button>

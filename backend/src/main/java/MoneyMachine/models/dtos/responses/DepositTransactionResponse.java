@@ -1,6 +1,5 @@
 package MoneyMachine.models.dtos.responses;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ public class DepositTransactionResponse {
     private Long initiatingUserId;
     private String toAccountIban;
     private String message;
-    private BigDecimal amount;
+    private Double amount;
     private LocalDateTime dateTime;
     private Boolean isActive;
 }

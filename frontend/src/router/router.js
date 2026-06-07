@@ -1,11 +1,11 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import AllTransactions from '../components/pages/website/transactions/AllTransactions.vue'
+import AllTransactions from '@/components/pages/website/transactions/allTransactions.vue'
 import CreateTransactionAsUser from '@/components/pages/website/transactions/CreateTransactionAsUser.vue'
 import CreateTransactionAsEmployee from '@/components/pages/website/transactions/CreateTransactionAsEmployee.vue'
 
-import AtmLayout from '../components/layout/AtmLayout.vue'
+import ATMLayout from '@/components/layout/ATMLayout.vue'
 import WebsiteLayout from '@/components/layout/WebsiteLayout.vue'
 
 import temporaryAccountPage from"@/components/pages/website/bankAccounts/bankAccount.vue"
@@ -31,8 +31,12 @@ import CloseBankAccountPage from "@/components/pages/website/CloseBankAccountPag
 
 const routes = [
     {
+        path: '/',
+        redirect: '/login'
+    },
+    {
         path: '/atm',
-        component: AtmLayout,
+        component: ATMLayout,
         children: [
             {
                 path: 'login',
@@ -115,15 +119,14 @@ const routes = [
         ]
     },
     {
+        path: '/users', 
+        component: UsersWithoutBankAccountPage,
+
         path: '/',
         component: WebsiteLayout,
         children: [
             {
-                path: '',
-                redirect: '/login'
-            },
-            {
-                path: 'users',
+                path: '/users',
                 component: UsersWithoutBankAccountPage,
                 meta: {
                     title: 'Users',
@@ -132,14 +135,14 @@ const routes = [
                 }
             },
             {
-                path: 'login',
+                path: '/login',
                 component: Login,
                 meta: {
                     title: 'Users',
                 }
             },
             {
-                path: 'user-test', 
+                path: '/user-test', 
                 component: UserAuthorizationTest,
                 meta: {
                     title: 'User test',
@@ -148,7 +151,7 @@ const routes = [
 
             },
             {
-                path: 'employee-test',
+                path: '/employee-test',
                 component: EmployeeAuthorizationTest,
                 meta: {
                     title: 'Employee test',
@@ -157,7 +160,7 @@ const routes = [
                 }
             },
             {
-                path: 'bank-accounts',
+                path: '/bank-accounts',
                 component: UsersWithBankAccuntsPage,
                 meta: {
                     title: 'bank-accounts',
@@ -166,7 +169,7 @@ const routes = [
                 }
             },
             {
-                path: 'bank-accounts/:iban/close',
+                path: '/bank-accounts/:iban/close',
                 component: CloseBankAccountPage,
                 meta: {
                     title: "close-bank-accounts-preview",
@@ -175,7 +178,7 @@ const routes = [
                 }
             },
             {
-                path: ':pathMatch(.*)*',
+                path: '/:pathMatch(.*)*',
                 component: NotFound
             }
         ]
@@ -191,8 +194,8 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/MoneyMachine/'),
-    routes
+    "history": createWebHistory(),
+    routes,
 })
 
 router.beforeEach((to) => {

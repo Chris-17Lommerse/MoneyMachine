@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ArrayList;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.responses.UserResponse;
+import MoneyMachine.models.dtos.responses.UserSummaryResponse;
 import MoneyMachine.models.enums.Role;
 
 public class UserMapperTest {
@@ -14,12 +15,13 @@ public class UserMapperTest {
     private User user;
     private UserResponse userResponse;
     private UserMapper userMapper;
+    private UserSummaryResponse userSummaryResponse;
 
     @BeforeEach
     void setUp() {
         users = new ArrayList<User>();
         userMapper = new UserMapper();
-
+        userSummaryResponse = new UserSummaryResponse();
         userResponse = new UserResponse();
         user = new User();
         user.setId(Long.valueOf(1));
@@ -40,6 +42,10 @@ public class UserMapperTest {
         userResponse.setRole(Role.EMPLOYEE);
         userResponse.setApproved(false);
         userResponse.setActive(false);
+        userSummaryResponse.setId(1l);
+        userSummaryResponse.setFirstName("employeeFirstName");
+        userSummaryResponse.setLastName("employeeLastName");
+        userSummaryResponse.setEmail("employee@employee.employee");
     }
 
     @Test
@@ -68,6 +74,15 @@ public class UserMapperTest {
         assertEquals(userResponse.getRole(), user.getRole());
         assertEquals(userResponse.isApproved(), user.getIsApproved());
         assertEquals(userResponse.isActive(), user.getIsActive());
+    }
+
+    @Test
+    void toSummaryResponseShuldNotBeNull() {
+        userSummaryResponse = userMapper.toSummaryResponse(user);
+        assertEquals(user.getId(), userSummaryResponse.getId());
+        assertEquals(user.getFirstName(), userSummaryResponse.getFirstName());
+        assertEquals(user.getLastName(), userSummaryResponse.getLastName());
+        assertEquals(user.getEmail(), userSummaryResponse.getEmail());
     }
 
     @Test

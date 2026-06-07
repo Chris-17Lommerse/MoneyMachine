@@ -8,7 +8,7 @@
 
     onMounted(async () => {
         try {
-            response.value = await axios.get('/auth/employee-test')
+            response.value = await axios.get('/users/employee-test')
         }
         catch (ex){
             if (ex.response){

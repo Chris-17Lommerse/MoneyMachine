@@ -48,6 +48,10 @@ public class Transaction {
     private String message;
 
     @Column(nullable = false)
+    @NotNull
+    private Boolean isActive;
+
+    @Column(nullable = false)
     @CreationTimestamp
     private LocalDateTime dateTime;
 }
