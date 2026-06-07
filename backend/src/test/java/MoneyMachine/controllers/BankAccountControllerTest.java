@@ -101,7 +101,6 @@ public class BankAccountControllerTest extends BaseControllerTest {
         .andExpect(jsonPath("$.code").value(errorResponse.getCode()))
         .andExpect(jsonPath("$.type").value(errorResponse.getErrorType()))
         .andExpect(jsonPath("$.message").value(errorResponse.getMessage()));
-        // .andExpect(jsonPath("$.details").value(errorResponse.getDetails()));
     }
 
     @Test

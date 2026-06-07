@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import MoneyMachine.models.User;
@@ -41,14 +42,14 @@ public class UserControllerTest extends BaseControllerTest {
         request.put("password", "password");
         request.put("loginType", "ATM");
 
-        // mockMvc.perform(post("/users/login")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(request)))
-        //         .andExpect(status().is(201))
-        //         .andExpect(jsonPath("$.accessToken").exists())
-        //         .andExpect(jsonPath("$.expiresIn").exists())
-        //         .andExpect(jsonPath("$.userSummaryResponse").exists())
-        //         .andExpect(jsonPath("$.userSummaryResponse.id").value(1));
+        mockMvc.perform(post("/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().is(201))
+                .andExpect(jsonPath("$.accessToken").exists())
+                .andExpect(jsonPath("$.expiresIn").exists())
+                .andExpect(jsonPath("$.userSummaryResponse").exists())
+                .andExpect(jsonPath("$.userSummaryResponse.id").value(1));
     }
 
     @Test
@@ -59,10 +60,10 @@ public class UserControllerTest extends BaseControllerTest {
         request.put("password", "invalidPassword");
         request.put("loginType", "ATM");
 
-        // mockMvc.perform(post("/users/login")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(objectMapper.writeValueAsString(request)))
-        //         .andExpect(status().is(401));
+        mockMvc.perform(post("/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().is(401));
     }
 
     @Test
