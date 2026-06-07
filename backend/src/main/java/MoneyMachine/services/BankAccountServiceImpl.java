@@ -24,6 +24,7 @@ import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.requests.PatchRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
+import java.math.BigDecimal;
 
 import java.time.LocalDateTime;
 
