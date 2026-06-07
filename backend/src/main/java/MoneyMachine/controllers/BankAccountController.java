@@ -11,6 +11,7 @@ import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import MoneyMachine.services.interfaces.TransactionService;
 
 import org.springframework.web.bind.annotation.PatchMapping;
+
 
 @RestController
 @RequestMapping("/bank-accounts")
@@ -82,4 +84,6 @@ public class BankAccountController {
         BankAccountResponse bankAccountResponse = bankAccountService.closeBankAccount(patchRequest, iban);
         return ResponseEntity.ok(bankAccountResponse);
     }
+    
+    
 }

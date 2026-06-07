@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/authStore.js'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import TransferForm from '@/components/organisms/forms/transactions/transferForm.vue'
+import ErrorAlert from '@/components/atoms/errorHandling/ErrorAlert.vue'
 const router = useRouter()
 const authStore = useAuthStore()
 const websiteDecodedAuthToken = computed(() => authStore.websiteDecodedAuthToken ?? null)

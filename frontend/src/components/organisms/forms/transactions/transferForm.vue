@@ -3,6 +3,7 @@
     import axios from '@/utils/axios.js'
     import { useAuthStore } from '@/stores/authStore.js'
     import { useErrorHandlingStore } from '@/stores/errorHandlingStore.js'
+    import IbanFields from '@/components/molecules/transactions/IbanFields.vue'
 
     import AuthsubmitBtn from '@/components/atoms/buttons/AuthSubmitBtn.vue'
     import BaseFormField from '@/components/molecules/forms/BaseFormField.vue'
@@ -22,8 +23,7 @@
   <form @submit.prevent="emit('createTransaction',transaction)">
     <ErrorAlert/>
     <SuccessAlert/>
-    <BaseFormField v-model="transaction.fromAccount" labelName="From Account" type="text" id="fromAccount" name="fromAccount"/>
-    <BaseFormField v-model="transaction.toAccount" labelName="To Account" type="text" id="toAccount" name="toAccount"/>
+    <IbanFields/>
     <BaseFormField v-model="transaction.amount" labelName="Amount" type="number" id="amount" name="amount"/>
     <BaseFormField v-model="transaction.message" labelName="Message" type="text" id="message" name="message"/>
     <button type="submit" class="btn btn-primary">Create</button>
