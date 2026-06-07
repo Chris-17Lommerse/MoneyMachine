@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionListResponse implements Serializable {
-    private List<TransactionResponse> transactions;
+    private List<TransferTransactionResponse> transactions;
     
 }

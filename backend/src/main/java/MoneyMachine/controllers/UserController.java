@@ -14,14 +14,16 @@ import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.responses.LoginResponse;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
 import MoneyMachine.models.dtos.responses.TransactionoverviewResponse;
+import MoneyMachine.exception.NotFoundException;
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
-import org.springframework.data.domain.Pageable;
 import MoneyMachine.services.interfaces.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.bind.annotation.*;
@@ -31,31 +33,13 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationService authenticationService;
     private final BankAccountService bankAccountService;
     private final TransactionService transactionService;
 
     public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService, TransactionService transactionService) {
         this.userService = userService;
-        this.authenticationService = authenticationService;
         this.bankAccountService = bankAccountService;
         this.transactionService = transactionService;
-    }
-
-    @PostMapping("login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) throws Exception {
-
-        LoginResponse loginResponse = authenticationService.login(loginRequest.getEmail(), loginRequest.getPassword(), loginRequest.getLoginType());
-
-        return ResponseEntity.status(201).body(loginResponse);
-    }
-
-    @GetMapping("me")
-    public ResponseEntity<?> getLoggedInUser(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-        UserResponse userResponse = authenticationService.getLoggedInUserResponse();
-
-        return ResponseEntity.status(200).body(userResponse);
     }
 
     @GetMapping("{id}/bank-accounts")
@@ -82,14 +66,17 @@ public class UserController {
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getAllUsersWithoutAnAccount() {
-            List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
-            if(users == null)
-            {
-                throw new NotFoundException("There are no users found in the database");
-            }
-            UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
-            userOverviewResponse.setUsers(users);
-            return ResponseEntity.ok(userOverviewResponse);
+        
+        List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
+
+        if(users == null) {
+            throw new NotFoundException("There are no users found in the database");
+        }
+
+        UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
+        userOverviewResponse.setUsers(users);
+
+        return ResponseEntity.ok(userOverviewResponse);
     }
     public ResponseEntity<?> getAllUsersWithoutAnAccountTest() {
         try {

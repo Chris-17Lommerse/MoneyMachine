@@ -26,7 +26,7 @@
 
             const response = await axios.post('/transactions/deposit', {
                 'toBankAcountIban': routeIban,
-                'amount': vModel.value.amount
+                'amount': vModel.value.amount,
             })
 
             errorHandlingStore.successMessage = 'Successfully deposited '+ getPriceFormatted(response.data.amount) +' to your balance.'
@@ -34,7 +34,7 @@
         }
         catch (ex) {
             if (ex.response){
-                errorAlertRef.value.displayErrorMessage(ex.response.data.details)
+                errorAlertRef.value.displayErrorMessage(ex.response.data.message)
                 bankAccount.value = await bankAccountStore.getBankAccountByIbanFromDatabase(router.currentRoute.value.params.iban, '/atm/select-bank-account')
             }
             else{

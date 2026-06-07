@@ -9,10 +9,14 @@ import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
 import MoneyMachine.models.dtos.responses.TransactionoverviewResponse;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
+
+import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 
 @Service
 public interface TransactionService {
+    TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message);
     DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount);
     WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount);
     public TransactionoverviewResponse getAllTransactions(Pageable pageable);

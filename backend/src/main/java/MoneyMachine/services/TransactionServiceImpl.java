@@ -8,6 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.exception.NotAuthorizedException;
+
+import MoneyMachine.policies.TransactionPolicy;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import MoneyMachine.mappers.TransactionMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.DepositTransaction;
@@ -18,8 +24,8 @@ import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
 import MoneyMachine.models.dtos.responses.TransactionoverviewResponse;
 import MoneyMachine.models.dtos.responses.TransactionResponse;
+import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
-import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.services.interfaces.AuthenticationService;
@@ -29,20 +35,22 @@ import MoneyMachine.services.interfaces.TransactionService;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     
-    private BankAccountRepository bankAccountRepository;
-    private TransactionMapperService mapper;
+    private final TransactionPolicy transactionPolicy;
+    private final TransactionMapperService mapper;
     private final BankAccountService bankAccountService;
     private final AuthenticationService authenticationService;
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
+    private final BankAccountRepository bankAccountRepository;
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper, BankAccountService bankAccountService, AuthenticationService authenticationService, TransactionMapper transactionMapper) {
-        this.bankAccountRepository = bankAccountRepository;
+    public TransactionServiceImpl(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper, BankAccountService bankAccountService, AuthenticationService authenticationService, TransactionMapper transactionMapper, TransactionPolicy transactionPolicy) {
         this.mapper = mapper;
+        this.bankAccountRepository = bankAccountRepository;
         this.transactionRepository = transactionRepository;
         this.bankAccountService = bankAccountService;
         this.authenticationService = authenticationService;
         this.transactionMapper = transactionMapper;
+        this.transactionPolicy = transactionPolicy;
     }
 
     public TransactionoverviewResponse getAllTransactions(Pageable pageable)
@@ -75,55 +83,47 @@ public class TransactionServiceImpl implements TransactionService {
        return mapper.toResponse(transactionRepository.findById(id).orElseThrow());
     }
 
+    private void fillCommonTransactionProperties(Transaction transaction, User initiatingUser, BigDecimal amount, String message) {
+        
+        transaction.setInitiatingUser(initiatingUser);
+        transaction.setAmount(amount);
+        transaction.setMessage(message);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
-    public TransactionResponse createTransferAsUser(TransferRequest transaction,User user)
-    { 
-        BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
-        BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
-        validateTransferForUser(transaction, fromAccount,toAccount,user);
+    public TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message) { 
+        
+        User loggedInUser = authenticationService.getLoggedInUser();
+        BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
+        BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
+        
+        transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount);
+        bankAccountRepository.decrementBalanceByIban(fromIban, amount);
+        bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
-        fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
-        toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
+        TransferTransaction transferTransaction = new TransferTransaction();
+        fillCommonTransactionProperties(transferTransaction, loggedInUser, amount, message);
+        transferTransaction.setFromBankAccount(fromBankAccount);
+        transferTransaction.setToBankAccount(toBankAccount);
 
-        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
-        transferTransaction.setFromBankAccount(fromAccount);
-        transferTransaction.setToBankAccount(toAccount);
-        TransferTransaction saved = transactionRepository.save(transferTransaction);
-        return mapper.toResponse(saved);
-    }  
+        transactionRepository.save(transferTransaction);
 
-    @Transactional(rollbackFor = Exception.class)
-    public TransactionResponse createTransferAsEmployee(TransferRequest transaction,User user)
-    { 
-        BankAccount fromAccount = bankAccountRepository.findByIdForUpdate(transaction.getFromAccount()).orElseThrow(() -> new RuntimeException("From bank account not found"));
-        BankAccount toAccount = bankAccountRepository.findByIdForUpdate(transaction.getToAccount()).orElseThrow(() -> new RuntimeException("To bank account not found"));
-        validateTransferForEmployee(transaction, fromAccount,toAccount);
-
-        fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getAmount()));
-        toAccount.setBalance(toAccount.getBalance().add(transaction.getAmount()));
-
-        TransferTransaction transferTransaction = mapper.toTransferEntity(transaction,user);
-        transferTransaction.setFromBankAccount(fromAccount);
-        transferTransaction.setToBankAccount(toAccount);
-        TransferTransaction saved = transactionRepository.save(transferTransaction);
-        return mapper.toResponse(saved);
+        return transactionMapper.toTransferTransactionResponse(transferTransaction);
     }  
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount) {
-
-        BankAccount toBankAccount = bankAccountService.findBankAccountEntityByIban(toIban);
+        
         User loggedInUser = authenticationService.getLoggedInUser();
-        throwIfUserCannotInteractWithBankAccount(loggedInUser, toBankAccount);
-        throwIfMoneyAmountIsNotValid(amount, toBankAccount);
+        BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
 
-        this.bankAccountService.setBankAccountBalance(toIban, toBankAccount.getBalance().add(amount));
+        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, toBankAccount);
+        bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
         DepositTransaction depositTransaction = new DepositTransaction();
-        depositTransaction.setInitiatingUser(loggedInUser);
-        depositTransaction.setAmount(amount);
-        depositTransaction.setMessage(String.format("Deposited € %s into bank account: %s.", amount, toIban));
-        depositTransaction.setIsActive(true);
+        fillCommonTransactionProperties(depositTransaction, loggedInUser, amount, "ATM deposit");
         depositTransaction.setToBankAccount(toBankAccount);
 
         transactionRepository.save(depositTransaction);
@@ -132,97 +132,21 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount) {
 
-        BankAccount fromBankAccount = bankAccountService.findBankAccountEntityByIban(fromIban);
         User loggedInUser = authenticationService.getLoggedInUser();
-        throwIfUserCannotInteractWithBankAccount(loggedInUser, fromBankAccount);
-        throwIfMoneyAmountIsNotValid(amount, fromBankAccount);
-        throwIfWithdrawAmountIsNotValid(amount, fromBankAccount);
-
-        this.bankAccountService.setBankAccountBalance(fromIban, fromBankAccount.getBalance().subtract(amount));
+        BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
+        
+        transactionPolicy.enforceTransactionWithdrawPolicy(loggedInUser, amount, fromBankAccount);
+        bankAccountRepository.decrementBalanceByIban(fromIban, amount);
         
         WithdrawTransaction withdrawTransaction = new WithdrawTransaction();
-        withdrawTransaction.setInitiatingUser(loggedInUser);
-        withdrawTransaction.setAmount(amount);
-        withdrawTransaction.setMessage(String.format("Withdrawn € %s from bank account: %s.", amount, fromIban));
-        withdrawTransaction.setIsActive(true);
+        fillCommonTransactionProperties(withdrawTransaction, loggedInUser, amount, "ATM withdraw");
         withdrawTransaction.setFromBankAccount(fromBankAccount);
 
         transactionRepository.save(withdrawTransaction);
 
         return transactionMapper.toWithdrawTransactionResponse(withdrawTransaction);
-    }
-
-    private void validateTransferForEmployee(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount) {
-        baseValidateTransfer(transaction, fromAccount, toAccount);
-    }
-
-    private void validateTransferForUser(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount, User user) {
-        baseValidateTransfer(transaction, fromAccount, toAccount);
-        validateUserOwnsFromAccount(fromAccount, user);
-    }
-
-    private void baseValidateTransfer(TransferRequest transaction, BankAccount fromAccount, BankAccount toAccount) {
-        validateSufficientBalance(fromAccount, transaction.getAmount());
-        validateWithinSingleTransferLimit(fromAccount, transaction.getAmount());
-        validateNotSameAccountTransfer(fromAccount, toAccount);
-        validatePositiveAmount(transaction.getAmount());
-        validateNotDiffrentUserSavingsTransfer(fromAccount, toAccount);
-    }
-
-    private void validateUserOwnsFromAccount(BankAccount fromAccount, User user) {
-        if (fromAccount.getUser().getId() != user.getId()) {
-            throw new IllegalArgumentException("Users can only transfer from their own accounts");
-        }
-    }
-
-    private void validateSufficientBalance(BankAccount fromAccount, BigDecimal amount) {
-        if (fromAccount.getBalance().subtract(amount).compareTo(fromAccount.getAbsoluteLimit()) < 0) {
-            throw new IllegalArgumentException("Insufficient funds");
-        }
-    }
-
-    private void validateWithinSingleTransferLimit(BankAccount fromAccount, BigDecimal amount) {
-        if (fromAccount.getSingleTransferLimit().compareTo(amount) < 0) {
-            throw new IllegalArgumentException("Transfer amount exceeds single transfer limit");
-        }
-    }
-
-    private void validateNotSameAccountTransfer(BankAccount fromAccount, BankAccount toAccount){
-        if (fromAccount.getIban().equals(toAccount.getIban())) {
-            throw new IllegalArgumentException("transfer to the same account is not allowed");
-        }
-    }
-
-    private void validatePositiveAmount(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than 0");
-        }
-    }
-
-    private void validateNotDiffrentUserSavingsTransfer(BankAccount fromAccount, BankAccount toAccount)
-    {
-        if (fromAccount.getUser().getId() != toAccount.getUser().getId() && ( fromAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS || toAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS)) {
-            throw new IllegalArgumentException("transfer between different users' savings accounts is not allowed");
-        }
-    }
-    
-    private void throwIfMoneyAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
-    
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount cannot be less or equal to 0.");
-        }
-
-        if (amount.compareTo(bankAccount.getSingleTransferLimit()) > 0) {
-            throw new IllegalArgumentException(String.format("Amount cannot be more than the single transfer limit %s.", bankAccount.getSingleTransferLimit()));
-        }
-    }
-
-    private void throwIfWithdrawAmountIsNotValid(BigDecimal amount, BankAccount bankAccount) {
-
-        if (bankAccount.getBalance().subtract(amount).compareTo(bankAccount.getAbsoluteLimit()) < 0) {
-            throw new IllegalArgumentException("Total amount cannot be less the absolute limit.");
-        }
     }
 }

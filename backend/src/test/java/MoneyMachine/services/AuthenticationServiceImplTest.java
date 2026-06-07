@@ -1,6 +1,6 @@
 package MoneyMachine.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import MoneyMachine.mappers.UserMapper;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.responses.LoginResponse;
-import MoneyMachine.models.dtos.responses.UserSummaryResponse;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.UserRepository;
@@ -25,7 +24,7 @@ import MoneyMachine.exception.InvalidCredentialsException;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceImplTest {
@@ -42,7 +41,6 @@ public class AuthenticationServiceImplTest {
     private AuthenticationServiceImpl authenticationService;
     
     private User user;
-    private UserSummaryResponse userSummary;
 
     @BeforeEach
     void setUp() {
@@ -57,26 +55,18 @@ public class AuthenticationServiceImplTest {
         user.setPassword("mockPassword");
         user.setIsActive(true);
         user.setIsApproved(true);
-
-        userSummary = new UserSummaryResponse();
-        userSummary.setId(user.getId());
-        userSummary.setFirstName(user.getFirstName());
-        userSummary.setLastName(user.getLastName());
-        userSummary.setEmail(user.getEmail());
     }
 
     @Test
     void login_whenLoginAsUser_getAuthenticationResponse() {
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoderMock.matches("password", user.getPassword())).thenReturn(true);
         when(jwtUtil.generateAuthTokenFromUser(user, LoginType.ATM)).thenReturn("Example JWT");
-        when(jwtUtil.getAuthTokenExpirationTime()).thenReturn(new Date());
-        when(userMapper.toSummaryResponse(user)).thenReturn(userSummary);
         
         LoginResponse loginResponse = authenticationService.login(user.getEmail(), "password", LoginType.ATM);
 
-        assertEquals(loginResponse.getUserSummaryResponse().getEmail(), user.getEmail());
+        assertNotNull(loginResponse.getAuthToken());
 
         verify(userRepository).findByEmail(user.getEmail());
         verify(jwtUtil).generateAuthTokenFromUser(user, LoginType.ATM);
@@ -85,7 +75,7 @@ public class AuthenticationServiceImplTest {
     @Test
     void login_whenInvalidLogin_throwInvalidCredentialsException() {
 
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(user);
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(passwordEncoderMock.matches("invalidPassword", user.getPassword())).thenReturn(false);
         
         assertThrows(InvalidCredentialsException.class, () ->

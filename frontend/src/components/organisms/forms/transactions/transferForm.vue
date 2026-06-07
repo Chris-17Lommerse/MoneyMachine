@@ -11,8 +11,8 @@
     import ErrorAlert from '@/components/atoms/errorHandling/ErrorAlert.vue'
     
     const transaction = ref({
-        fromAccount: "",
-        toAccount: "",
+        fromBankAcountIban: "",
+        toBankAcountIban: "",
         amount: "",
         message: "",
     })
