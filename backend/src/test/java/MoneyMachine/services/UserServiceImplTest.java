@@ -17,6 +17,7 @@ import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.models.enums.Role;
+import MoneyMachine.policies.ApprovingPolicy;
 import MoneyMachine.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Page;
@@ -67,10 +68,5 @@ public class UserServiceImplTest {
         assertEquals(users, userOverviewResponse);
 
         verify(userRepository.findByBankAccountsIsEmpty(pageable));
-    }
-
-    public void testApproveUserAndCreateAccounts()
-    {
-        
     }
 }
