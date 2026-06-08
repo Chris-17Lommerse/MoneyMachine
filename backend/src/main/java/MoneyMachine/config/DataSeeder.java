@@ -97,7 +97,7 @@ public class DataSeeder implements ApplicationRunner {
         user4.setPassword(authenticationService.getHashedPassword("password"));
         user4.setIsActive(true);
         user4.setIsApproved(true);
-        userRepository.save(user3);
+        userRepository.save(user4);
 
         BankAccount checkingBankAccount = new BankAccount();
         checkingBankAccount.setIban("NL91ABNA0417164300");
