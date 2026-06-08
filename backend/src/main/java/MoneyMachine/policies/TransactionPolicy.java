@@ -30,6 +30,7 @@ public class TransactionPolicy {
         
         if (user.getRole() == Role.USER) {
             enforceUserIsApproved(user);
+            enforceUserIsActive(user);
             enforceUserOwnsBankAccountAccount(user, bankAccount);
         }
 
@@ -47,7 +48,14 @@ public class TransactionPolicy {
     private void enforceUserIsApproved(User user) {
 
         if (user.getIsApproved() == false) {
-            throw new NotAuthorizedException("Only approved users can make transactions");
+            throw new NotAuthorizedException("Only approved users can make transactions.");
+        }
+    }
+
+    private void enforceUserIsActive(User user) {
+
+        if (user.getIsActive() == false) {
+            throw new NotAuthorizedException("Only active users can make transactions.");
         }
     }
 
