@@ -1,6 +1,7 @@
 package MoneyMachine.services;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import MoneyMachine.factories.IbanGenerator;
 import MoneyMachine.mappers.BankAccountMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.requests.PatchRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
@@ -19,6 +21,7 @@ import MoneyMachine.models.enums.BankAccountType;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
+import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,12 +49,20 @@ public class BankAccountServiceImplTest {
     @InjectMocks
     private BankAccountServiceImpl bankAccountService;
 
+    @Mock
+    private UserServiceImpl userService;
+
+    @Mock
+    private BankAccountTypeStrategy bankAccountTypeStrategy;
+
     private User user;
     private BankAccount bankAccount;
     private BankAccount savingsBankAccount;
     private BankAccountResponse bankAccountResponse;
     private List<BankAccount> bankAccounts;
     private PatchRequest patchRequest;
+
+    private BankAccountCreationRequest bankAccountCreationRequest;
 
     @Mock
     private Page<BankAccount> page;
@@ -93,6 +104,10 @@ public class BankAccountServiceImplTest {
         savingsBankAccount.setDailyTransferLimit(new BigDecimal("2000"));
         savingsBankAccount.setBankAccountType(BankAccountType.SAVINGS);
         savingsBankAccount.setIsActive(true);
+
+        bankAccountCreationRequest = new BankAccountCreationRequest();
+        bankAccountCreationRequest.setUserId(user.getId());
+        bankAccountCreationRequest.setBankAccountType(BankAccountType.CHECKING);
 
         bankAccountResponse = new BankAccountResponse();
         bankAccountResponse.setIban(bankAccount.getIban());
@@ -152,7 +167,7 @@ public class BankAccountServiceImplTest {
         verifyNoInteractions(bankAccountMapper);
     }
 
- @Test
+    @Test
     public void closeBankAccount_whenBankAccountIsClosed_setIsActiveFalseAndReturnUpdatedBankAccount() {
         String iban = bankAccount.getIban();
         when(bankAccountRepository.findById(iban)).thenReturn(Optional.of(bankAccount));
@@ -165,10 +180,19 @@ public class BankAccountServiceImplTest {
                 iban);
 
         assertNotNull(expectedResponse);
-        
+
         verify(bankAccountRepository).findById(iban);
         verify(bankAccountRepository).save(bankAccount);
         verify(bankAccountMapper).toResponse(bankAccount);
+    }
+
+    @Test
+    void closeBankAccount_WhenIBANDoesNotExist_throwNotFoundException() {
+        when(bankAccountRepository.findById(bankAccount.getIban())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> bankAccountService.closeBankAccount(patchRequest, bankAccount.getIban()));
+
+        verify(bankAccountRepository).findById(bankAccount.getIban());
+        verifyNoInteractions(bankAccountMapper);
     }
 
     @Test
@@ -192,5 +216,40 @@ public class BankAccountServiceImplTest {
         assertNotNull(bankAccountOverviewResponse);
         verify(bankAccountRepository).findAll(pageable);
         verify(bankAccountMapper).toResponseList(bankAccounts);
+    }
+
+    @Test
+    void createBankAccountFromRequest_whenBankAccountIsCreated_ReturnBankAccountResponse() {
+        when(userRepository.findById(bankAccountCreationRequest.getUserId())).thenReturn(Optional.of(user));
+        String iban = bankAccount.getIban();
+
+        when(ibanGenerator.generateIban()).thenReturn(iban);
+
+        when(bankAccountTypeFactory.getStrategy(bankAccountCreationRequest.getBankAccountType())).thenReturn(bankAccountTypeStrategy);
+
+        doNothing().when(bankAccountTypeStrategy).applyBankAccountRules(any(BankAccount.class));
+
+        when(bankAccountMapper.toResponse(any(BankAccount.class))).thenReturn(bankAccountResponse);
+        BankAccountResponse expectedBankAccountResponse = new BankAccountResponse(bankAccount.getIban(), bankAccount.getUser().getId(), bankAccount.getBankAccountType(), bankAccount.getBalance(), bankAccount.getSingleTransferLimit(), bankAccount.getDailyTransferLimit(), bankAccount.getAbsoluteLimit(), bankAccount.getIsActive());
+
+        expectedBankAccountResponse = bankAccountService.createBankAccountFromRequest(bankAccountCreationRequest);
+
+        assertNotNull(expectedBankAccountResponse);
+
+        verify(userRepository).findById(bankAccountCreationRequest.getUserId());
+        verify(ibanGenerator).generateIban();
+        verify(bankAccountTypeFactory).getStrategy(BankAccountType.CHECKING);
+        verify(bankAccountTypeStrategy).applyBankAccountRules(any(BankAccount.class));
+        verify(bankAccountRepository).save(any(BankAccount.class));
+        verify(bankAccountMapper).toResponse(any(BankAccount.class));
+    }
+
+    @Test
+    void createBankAccountFromRequest_whenUserDoesNotExists_ThrowNotFoundException() {
+        when(userRepository.findById(bankAccountCreationRequest.getUserId())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> bankAccountService.createBankAccountFromRequest(bankAccountCreationRequest));
+
+        verify(userRepository).findById(bankAccountCreationRequest.getUserId());
+        verifyNoInteractions(bankAccountMapper);
     }
 }
