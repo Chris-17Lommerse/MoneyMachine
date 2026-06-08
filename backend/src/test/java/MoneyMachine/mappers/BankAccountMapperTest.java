@@ -12,7 +12,9 @@ import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.enums.BankAccountType;
+
 public class BankAccountMapperTest {
+    
     private List<BankAccount> bankAccounts;
     private BankAccount bankAccount;
     private User user;

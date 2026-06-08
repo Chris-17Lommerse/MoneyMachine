@@ -52,7 +52,7 @@ public class BaseControllerTest {
     
         atmUserAuthToken = jwtUtil.generateAuthTokenFromUser(user, LoginType.ATM);
         atmEmployeeAuthToken = jwtUtil.generateAuthTokenFromUser(employee, LoginType.ATM);
-        websiteUserAuthToken = jwtUtil.generateAuthTokenFromUser(user, LoginType.ATM);
-        websiteEmployeeAuthToken = jwtUtil.generateAuthTokenFromUser(employee, LoginType.ATM);
+        websiteUserAuthToken = jwtUtil.generateAuthTokenFromUser(user, LoginType.WEBSITE);
+        websiteEmployeeAuthToken = jwtUtil.generateAuthTokenFromUser(employee, LoginType.WEBSITE);
     }
 }

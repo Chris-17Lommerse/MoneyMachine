@@ -13,8 +13,10 @@ import MoneyMachine.models.dtos.requests.DepositRequest;
 import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.requests.WithdrawRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
+import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 import MoneyMachine.services.interfaces.TransactionService;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -34,13 +36,16 @@ public class TransactionController {
     }
     @PostMapping("transfer")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> createTransfer(@RequestBody TransferRequest transaction) { 
-        return ResponseEntity.ok(transactionService.transferAmountBetweenBankAccounts(transaction.getFromBankAcountIban(), transaction.getToBankAcountIban(), transaction.getAmount(), transaction.getMessage()));
+    public ResponseEntity<?> createTransfer(@RequestBody @Valid TransferRequest transferRequest) {
+        
+        TransferTransactionResponse transferTransactionResponse = transactionService.transferAmountBetweenBankAccounts(transferRequest.getFromBankAcountIban(), transferRequest.getToBankAcountIban(), transferRequest.getAmount(), transferRequest.getMessage());
+         
+        return ResponseEntity.status(201).body(transferTransactionResponse);
     }
 
     @PostMapping("deposit")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('ATM')")
-    public ResponseEntity<DepositTransactionResponse> deposit(@RequestBody DepositRequest depositRequest) {
+    public ResponseEntity<DepositTransactionResponse> deposit(@RequestBody @Valid DepositRequest depositRequest) {
         
         DepositTransactionResponse depositTransactionResponse = transactionService.depositAmountIntoBankAccount(depositRequest.getToBankAcountIban(), depositRequest.getAmount());
 
@@ -49,7 +54,7 @@ public class TransactionController {
 
     @PostMapping("withdraw")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('ATM')")
-    public ResponseEntity<WithdrawTransactionResponse> withdraw(@RequestBody WithdrawRequest withdrawRequest) {
+    public ResponseEntity<WithdrawTransactionResponse> withdraw(@RequestBody @Valid WithdrawRequest withdrawRequest) {
         
         WithdrawTransactionResponse withdrawTransactionResponse = transactionService.withdrawAmountIntoBankAccount(withdrawRequest.getFromBankAcountIban(), withdrawRequest.getAmount());
 

@@ -10,6 +10,7 @@ import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.models.enums.Role;
 
 public class UserMapperTest {
+    
     private List<User> users;
     private User user;
     private UserResponse userResponse;
