@@ -137,12 +137,13 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     private String generateIban() {
+        
         String generatedIban = ibanGenerator.generateIban();
+        
         while (bankAccountRepository.existsById(generatedIban)) {
             generatedIban = ibanGenerator.generateIban();
         }
-        return generatedIban;
 
-        
+        return generatedIban;
     }
 }

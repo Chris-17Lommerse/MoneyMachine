@@ -1,7 +1,6 @@
 package MoneyMachine.controllers;
 
 import MoneyMachine.services.interfaces.TransactionService;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.exception.NotFoundException;
@@ -50,12 +49,15 @@ public class UserController {
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<UserOverviewResponse> getAllUsersWithoutAnAccount(Pageable pageable) {
-            UserOverviewResponse users = userService.getAllUsersWithoutBankAccounts(pageable);
-            if(users == null)
-            {
-                throw new NotFoundException("There are no users found in the database");
-            }
-            return ResponseEntity.ok(users);
+        
+        UserOverviewResponse users = userService.getAllUsersWithoutBankAccounts(pageable);
+        
+        if(users == null)
+        {
+            throw new NotFoundException("There are no users found in the database");
+        }
+        
+        return ResponseEntity.ok(users);
     }
     
     @GetMapping("/{id}/transactions")
