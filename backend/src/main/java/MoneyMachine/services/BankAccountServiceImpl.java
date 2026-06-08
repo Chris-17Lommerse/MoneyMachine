@@ -78,15 +78,15 @@ public class BankAccountServiceImpl implements BankAccountService {
             return bankAccountMapper.toResponse(bankAccount.get());
         }
 
-        throw new NotFoundException(
-                String.format("Bank account with IBAN %s owned by user ID %s does not exist.", iban, id));
+        throw new NotFoundException(String.format("Bank account with IBAN %s owned by user ID %s does not exist.", iban, id));
     }
 
     @Override
     public BankAccount getBankAccountEntityByIban(String iban) {
 
-        return bankAccountRepository.findById(iban).orElseThrow(
-                () -> new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban)));
+        return bankAccountRepository.findById(iban).orElseThrow(() -> 
+            new NotFoundException(String.format("Bank account with IBAN %s does not exist.", iban))
+        );
     }
 
     @Override
