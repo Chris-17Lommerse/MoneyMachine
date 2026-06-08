@@ -53,7 +53,7 @@ const routes = [
             },
             { 
                 path: 'bank-account/:iban', 
-                component: AccountTransactions, 
+                component: ATMMyBankAccount, 
                 meta: { 
                     title: 'My bank account',
                     isAtmAuthenticated: true
@@ -84,56 +84,6 @@ const routes = [
                 }
             },
         ],
-    },
-    {
-        path: '/transactions',
-        component: WebsiteLayout,
-        children: [
-            {
-                path: '',
-                component: AllTransactions,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'All Transactions',
-                    roles: ['EMPLOYEE']
-                }
-            },
-            
-            {
-                path: 'user/:id',
-                component: UserTransactions,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'User Transactions',
-                }
-            },
-            {
-                path: 'bank-account/:iban',
-                component: AccountTransactions,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'Account Transactions',
-                }
-            },
-            {
-                path: 'create/user',
-                component: CreateTransactionAsUser,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'Create Transaction',
-                    roles: ['USER']
-                }
-            },
-            {
-                path: 'create/employee',
-                component: CreateTransactionAsEmployee,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'Create Transaction',
-                    roles: ['EMPLOYEE']
-                }
-            },
-        ]
     },
     {
         path: '/',
@@ -192,6 +142,50 @@ const routes = [
                 meta: {
                     title: "close-bank-accounts-preview",
                     isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
+                }
+            },
+            {
+                path: 'transactions',
+                component: AllTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'All Transactions',
+                    roles: ['EMPLOYEE']
+                }
+            },
+            
+            {
+                path: 'transactions/user/:id',
+                component: UserTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'User Transactions',
+                }
+            },
+            {
+                path: 'transactions/bank-account/:iban',
+                component: AccountTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Account Transactions',
+                }
+            },
+            {
+                path: 'transactions/create/user',
+                component: CreateTransactionAsUser,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Create Transaction',
+                    roles: ['USER']
+                }
+            },
+            {
+                path: 'transactions/create/employee',
+                component: CreateTransactionAsEmployee,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Create Transaction',
                     roles: ['EMPLOYEE']
                 }
             },
