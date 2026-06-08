@@ -34,12 +34,6 @@ public class UserController {
         return ResponseEntity.status(200).body(bankAccountOverviewResponse);
     }
 
-    @GetMapping("employee-test")
-    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<String> employeeTest() {
-        return ResponseEntity.status(200).body("You have the employee super powers that can power every power in the power universe and are website logged in.");
-    }
-
     @GetMapping("{id}")
     @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
     public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
