@@ -58,7 +58,7 @@ onMounted(() => {
             </h2>
             <p class="text-gray-600 mb-4">{{ error }}</p>
             <button @click="fetchUsersWithAccount"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                class="px-4 py-2 btn btn-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
                 Try Again
             </button>
         </section>

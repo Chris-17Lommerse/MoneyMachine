@@ -1,6 +1,7 @@
 package MoneyMachine.services;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -12,11 +13,15 @@ import MoneyMachine.factories.IbanGenerator;
 import MoneyMachine.mappers.BankAccountMapper;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
+import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
+import MoneyMachine.models.dtos.requests.PatchRequest;
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 import MoneyMachine.models.enums.BankAccountType;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
+import MoneyMachine.strategies.interfaces.BankAccountTypeStrategy;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +29,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class BankAccountServiceImplTest {
@@ -41,9 +49,25 @@ public class BankAccountServiceImplTest {
     @InjectMocks
     private BankAccountServiceImpl bankAccountService;
 
+    @Mock
+    private UserServiceImpl userService;
+
+    @Mock
+    private BankAccountTypeStrategy bankAccountTypeStrategy;
+
     private User user;
     private BankAccount bankAccount;
+    private BankAccount savingsBankAccount;
     private BankAccountResponse bankAccountResponse;
+    private List<BankAccount> bankAccounts;
+    private PatchRequest patchRequest;
+
+    private BankAccountCreationRequest bankAccountCreationRequest;
+
+    @Mock
+    private Page<BankAccount> page;
+    @Mock
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +83,8 @@ public class BankAccountServiceImplTest {
         user.setIsActive(true);
         user.setIsApproved(true);
 
+        patchRequest = new PatchRequest();
+
         bankAccount = new BankAccount();
         bankAccount.setIban("NL01MONE0123456789");
         bankAccount.setUser(user);
@@ -69,13 +95,27 @@ public class BankAccountServiceImplTest {
         bankAccount.setBankAccountType(BankAccountType.CHECKING);
         bankAccount.setIsActive(true);
 
+        savingsBankAccount = new BankAccount();
+        savingsBankAccount.setIban("NL91ABN2417164300");
+        savingsBankAccount.setUser(user);
+        savingsBankAccount.setBalance(new BigDecimal("300"));
+        savingsBankAccount.setAbsoluteLimit(new BigDecimal("0"));
+        savingsBankAccount.setSingleTransferLimit(new BigDecimal("1000"));
+        savingsBankAccount.setDailyTransferLimit(new BigDecimal("2000"));
+        savingsBankAccount.setBankAccountType(BankAccountType.SAVINGS);
+        savingsBankAccount.setIsActive(true);
+
+        bankAccountCreationRequest = new BankAccountCreationRequest();
+        bankAccountCreationRequest.setUserId(user.getId());
+        bankAccountCreationRequest.setBankAccountType(BankAccountType.CHECKING);
+
         bankAccountResponse = new BankAccountResponse();
         bankAccountResponse.setIban(bankAccount.getIban());
     }
 
     @Test
     void getBankAccountByIban_whenIbanExists_returnsBankAccountResponse() {
-        
+
         when(bankAccountRepository.findById(bankAccount.getIban())).thenReturn(Optional.of(bankAccount));
         when(bankAccountMapper.toResponse(bankAccount)).thenReturn(bankAccountResponse);
 
@@ -89,12 +129,10 @@ public class BankAccountServiceImplTest {
 
     @Test
     void getBankAccountByIban_whenIbanDoesNotExist_throwsNotFoundException() {
-        
+
         when(bankAccountRepository.findById(bankAccount.getIban())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> 
-            bankAccountService.getBankAccountByIban(bankAccount.getIban())
-        );
+        assertThrows(NotFoundException.class, () -> bankAccountService.getBankAccountByIban(bankAccount.getIban()));
 
         verify(bankAccountRepository).findById(bankAccount.getIban());
         verifyNoInteractions(bankAccountMapper);
@@ -102,11 +140,13 @@ public class BankAccountServiceImplTest {
 
     @Test
     void getBankAccountByIbanAndUserId_whenIbanAndUserIdMatch_returnsBankAccountResponse() {
-        
-        when(bankAccountRepository.findByIbanAndUserId(bankAccount.getIban(), user.getId())).thenReturn(Optional.of(bankAccount));
+
+        when(bankAccountRepository.findByIbanAndUserId(bankAccount.getIban(), user.getId()))
+                .thenReturn(Optional.of(bankAccount));
         when(bankAccountMapper.toResponse(bankAccount)).thenReturn(bankAccountResponse);
 
-        BankAccountResponse result = bankAccountService.getBankAccountByIbanAndUserId(bankAccount.getIban(), user.getId());
+        BankAccountResponse result = bankAccountService.getBankAccountByIbanAndUserId(bankAccount.getIban(),
+                user.getId());
 
         assertNotNull(result);
         assertEquals(bankAccount.getIban(), result.getIban());
@@ -116,14 +156,100 @@ public class BankAccountServiceImplTest {
 
     @Test
     void getBankAccountByIbanAndUserId_whenIbanDoesNotMatchUserId_throwsNotFoundException() {
-       
-        when(bankAccountRepository.findByIbanAndUserId(bankAccount.getIban(), user.getId())).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () ->
-            bankAccountService.getBankAccountByIbanAndUserId(bankAccount.getIban(), user.getId())
-        );
+        when(bankAccountRepository.findByIbanAndUserId(bankAccount.getIban(), user.getId()))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class,
+                () -> bankAccountService.getBankAccountByIbanAndUserId(bankAccount.getIban(), user.getId()));
 
         verify(bankAccountRepository).findByIbanAndUserId(bankAccount.getIban(), user.getId());
+        verifyNoInteractions(bankAccountMapper);
+    }
+
+    @Test
+    public void closeBankAccount_whenBankAccountIsClosed_setIsActiveFalseAndReturnUpdatedBankAccount() {
+        String iban = bankAccount.getIban();
+        when(bankAccountRepository.findById(iban)).thenReturn(Optional.of(bankAccount));
+
+        BankAccountResponse expectedResponse = new BankAccountResponse();
+        expectedResponse.setActive(false);
+
+        when(bankAccountMapper.toResponse(bankAccount)).thenReturn(expectedResponse);
+        expectedResponse = bankAccountService.closeBankAccount(patchRequest,
+                iban);
+
+        assertNotNull(expectedResponse);
+
+        verify(bankAccountRepository).findById(iban);
+        verify(bankAccountRepository).save(bankAccount);
+        verify(bankAccountMapper).toResponse(bankAccount);
+    }
+
+    @Test
+    void closeBankAccount_WhenIBANDoesNotExist_throwNotFoundException() {
+        when(bankAccountRepository.findById(bankAccount.getIban())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> bankAccountService.closeBankAccount(patchRequest, bankAccount.getIban()));
+
+        verify(bankAccountRepository).findById(bankAccount.getIban());
+        verifyNoInteractions(bankAccountMapper);
+    }
+
+    @Test
+    public void getAllBankAccounts_whenBankAccountsFound_returnsAllBankAccounts() {
+        bankAccounts = List.of(bankAccount, savingsBankAccount);
+        when(bankAccountRepository.findAll(pageable)).thenReturn(page);
+        when(page.getContent()).thenReturn(bankAccounts);
+        when(page.getNumber()).thenReturn(0);
+        when(page.getSize()).thenReturn(2);
+
+        List<BankAccountResponse> expectedBankAccounts = List.of(
+                new BankAccountResponse(),
+                new BankAccountResponse());
+
+        when(bankAccountMapper.toResponseList(bankAccounts)).thenReturn(expectedBankAccounts);
+
+        BankAccountOverviewResponse bankAccountOverviewResponse = bankAccountService.getAllBankAccounts(pageable);
+        assertEquals(2, bankAccountOverviewResponse.getItems().size());
+        assertEquals(0, bankAccountOverviewResponse.getPage());
+        assertEquals(2, bankAccountOverviewResponse.getPageSize());
+        assertNotNull(bankAccountOverviewResponse);
+        verify(bankAccountRepository).findAll(pageable);
+        verify(bankAccountMapper).toResponseList(bankAccounts);
+    }
+
+    @Test
+    void createBankAccountFromRequest_whenBankAccountIsCreated_ReturnBankAccountResponse() {
+        when(userRepository.findById(bankAccountCreationRequest.getUserId())).thenReturn(Optional.of(user));
+        String iban = bankAccount.getIban();
+
+        when(ibanGenerator.generateIban()).thenReturn(iban);
+
+        when(bankAccountTypeFactory.getStrategy(bankAccountCreationRequest.getBankAccountType())).thenReturn(bankAccountTypeStrategy);
+
+        doNothing().when(bankAccountTypeStrategy).applyBankAccountRules(any(BankAccount.class));
+
+        when(bankAccountMapper.toResponse(any(BankAccount.class))).thenReturn(bankAccountResponse);
+        BankAccountResponse expectedBankAccountResponse = new BankAccountResponse(bankAccount.getIban(), bankAccount.getUser().getId(), bankAccount.getBankAccountType(), bankAccount.getBalance(), bankAccount.getSingleTransferLimit(), bankAccount.getDailyTransferLimit(), bankAccount.getAbsoluteLimit(), bankAccount.getIsActive());
+
+        expectedBankAccountResponse = bankAccountService.createBankAccountFromRequest(bankAccountCreationRequest);
+
+        assertNotNull(expectedBankAccountResponse);
+
+        verify(userRepository).findById(bankAccountCreationRequest.getUserId());
+        verify(ibanGenerator).generateIban();
+        verify(bankAccountTypeFactory).getStrategy(BankAccountType.CHECKING);
+        verify(bankAccountTypeStrategy).applyBankAccountRules(any(BankAccount.class));
+        verify(bankAccountRepository).save(any(BankAccount.class));
+        verify(bankAccountMapper).toResponse(any(BankAccount.class));
+    }
+
+    @Test
+    void createBankAccountFromRequest_whenUserDoesNotExists_ThrowNotFoundException() {
+        when(userRepository.findById(bankAccountCreationRequest.getUserId())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> bankAccountService.createBankAccountFromRequest(bankAccountCreationRequest));
+
+        verify(userRepository).findById(bankAccountCreationRequest.getUserId());
         verifyNoInteractions(bankAccountMapper);
     }
 }

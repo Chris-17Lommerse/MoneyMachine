@@ -3,17 +3,19 @@
     import { onMounted, ref } from 'vue';
     import axios from '@/utils/axios';
     import TabMolecule from '@/components/molecules/tabs/TabMolecule.vue';
+import { useAccountApprovalStore } from '../../../../stores/accountApprovalStore';
 
     const loading = ref(true);
     const error = ref(null);
     const usersWithoutBankAccounts = ref([])
+    const accountApprovalStore = useAccountApprovalStore()
 
     const fetchUsersWithoutAccount = async () => {
         loading.value = true;
         error.value = null;
         try {
             const result = await axios.get("/users");
-            usersWithoutBankAccounts.value = result.data.users;
+            usersWithoutBankAccounts.value = result.data.items;
             console.log(result.data);
         }
         catch (err) {
@@ -56,6 +58,6 @@
                 Try Again
             </button>
         </section>
-        <UsersTableGridTemplate v-else :users="usersWithoutBankAccounts" />
+        <UsersTableGridTemplate @approveCustomer="accountApprovalStore.initApproval($event)" v-else :items="usersWithoutBankAccounts" />
     </section>
 </template>

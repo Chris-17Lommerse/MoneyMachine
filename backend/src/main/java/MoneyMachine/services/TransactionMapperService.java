@@ -12,6 +12,7 @@ import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.User;
 import MoneyMachine.models.WithdrawTransaction;
 import MoneyMachine.models.dtos.requests.TransferRequest;
+import MoneyMachine.models.dtos.responses.ITransactionResponse;
 import MoneyMachine.models.dtos.responses.TransferTransactionResponse;
 import MoneyMachine.repositories.BankAccountRepository;
 import MoneyMachine.repositories.UserRepository;
@@ -30,14 +31,14 @@ public class TransactionMapperService {
         this.bankAccountRepository = bankAccountRepository;
        
     }
-    public List<TransferTransactionResponse> getAllTransactions(List<Transaction> transactions) {
+    public List<ITransactionResponse> getAllTransactions(List<Transaction> transactions) {
         return transactions
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    public TransferTransactionResponse toResponse(Transaction t) {
+    public ITransactionResponse toResponse(Transaction t) {
         TransferTransactionResponse response = mapper.toResponse(t);
 
         switch (t) 

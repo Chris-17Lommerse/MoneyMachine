@@ -1,7 +1,7 @@
 <script setup>
-
+const emits = defineEmits('createBankAccount');
 </script>
 
 <template>
-    <RouterLink :to="''" class="btn btn-success">Create bank account</RouterLink>
+    <button @click="$emit('createBankAccount')" class="btn btn-success">Create bank account</button>
 </template>

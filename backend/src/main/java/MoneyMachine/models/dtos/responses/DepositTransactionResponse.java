@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DepositTransactionResponse {
+public class DepositTransactionResponse implements ITransactionResponse {
 
     private Long transactionId;
     private Long initiatingUserId;

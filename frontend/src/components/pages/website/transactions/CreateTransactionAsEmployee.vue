@@ -3,7 +3,9 @@ import apiClient from '@/utils/axios.js'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import TransferForm from '@/components/organisms/forms/transactions/transferForm.vue'
+import ErrorAlert from '@/components/atoms/errorHandling/ErrorAlert.vue'
 const router = useRouter()
+const errorAlertRef = ref(null)
 
 const createTransaction = async (transaction) => {
   try {
@@ -16,6 +18,7 @@ const createTransaction = async (transaction) => {
     console.log("DATA:", error.response?.data)
 
     console.log("MESSAGE:", error.response?.data?.message)
+    errorAlertRef.value.displayErrorMessage(error.response?.data?.message)
     console.log("TYPE:", error.response?.data?.errorType)
     console.log("CODE:", error.response?.data?.code)
     console.log("LOCATION:", error.response?.data?.location)
@@ -30,6 +33,7 @@ const createTransaction = async (transaction) => {
 <template>
   <router-link to="/transactions" class="btn btn-primary mb-3">Return</router-link>
   <h1>Employee transfer</h1>
+  <ErrorAlert ref="errorAlertRef" />
   <transferForm  @createTransaction="createTransaction"/>  
  
 </template>

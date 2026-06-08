@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import MoneyMachine.models.enums.*;
 
 @Data
@@ -31,7 +33,9 @@ public class UserResponse implements Serializable {
     @Enumerated(EnumType.STRING)
     private Role role;
     @NotNull
+    @JsonProperty("isActive")
     private boolean isActive;
     @NotNull
+    @JsonProperty("isApproved")
     private boolean isApproved;
 }
