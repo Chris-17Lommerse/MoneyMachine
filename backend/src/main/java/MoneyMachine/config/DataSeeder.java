@@ -71,7 +71,7 @@ public class DataSeeder implements ApplicationRunner {
         user2.setRole(Role.USER);
         user2.setPassword(authenticationService.getHashedPassword("password"));
         user2.setIsActive(true);
-        user2.setIsApproved(false);
+        user2.setIsApproved(true);
         userRepository.save(user2);
         
         BankAccount checkingBankAccount = new BankAccount();
