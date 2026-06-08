@@ -75,7 +75,7 @@ public class DataSeeder implements ApplicationRunner {
         userRepository.save(user2);
         
         BankAccount checkingBankAccount = new BankAccount();
-        checkingBankAccount.setIban("NL91INHO0417164300");
+        checkingBankAccount.setIban("NL91ABNA0417164300");
         checkingBankAccount.setUser(user);
         checkingBankAccount.setBalance(new BigDecimal("100"));
         checkingBankAccount.setAbsoluteLimit(new BigDecimal("-100"));

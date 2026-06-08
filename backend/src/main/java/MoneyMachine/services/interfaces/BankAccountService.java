@@ -1,7 +1,5 @@
 package MoneyMachine.services.interfaces;
 
-import org.springframework.stereotype.Service;
-
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
 import MoneyMachine.models.dtos.requests.PatchRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
@@ -11,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 
 import MoneyMachine.models.BankAccount;
 
-@Service
 public interface BankAccountService {
     BankAccountResponse createBankAccountFromRequest(BankAccountCreationRequest bankAccountCreationRequest);
     BankAccountOverviewResponse getAllBankAccounts(Pageable pageable);

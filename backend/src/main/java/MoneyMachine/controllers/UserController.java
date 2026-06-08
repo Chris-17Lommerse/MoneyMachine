@@ -1,5 +1,6 @@
 package MoneyMachine.controllers;
 
+import MoneyMachine.services.interfaces.TransactionService;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UserController {
 
+    private final TransactionService transactionService;
     private final UserService userService;
     private final BankAccountService bankAccountService;
 
-    public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService) {
+    public UserController(UserService userService, TransactionService transactionService, AuthenticationService authenticationService, BankAccountService bankAccountService) {
         this.userService = userService;
+        this.transactionService = transactionService;
         this.bankAccountService = bankAccountService;
     }
 
@@ -54,10 +57,13 @@ public class UserController {
             }
             return ResponseEntity.ok(users);
     }
+    
     @GetMapping("/{id}/transactions")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
-        TransactionOverviewResponse transactions = userService.getTransactionsByUserId(id, pageable);
+        
+        TransactionOverviewResponse transactions = transactionService.getTransactionsByUserId(id, pageable);
+
         return ResponseEntity.status(200).body(transactions);
     }
 }
