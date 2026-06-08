@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WithdrawTransactionResponse {
+public class WithdrawTransactionResponse implements ITransactionResponse {
 
     private Long transactionId;
     private Long initiatingUserId;

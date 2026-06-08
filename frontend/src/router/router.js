@@ -1,7 +1,9 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import { useAuthStore } from "@/stores/authStore.js"
 import { useErrorHandlingStore } from "@/stores/errorHandlingStore"
-import AllTransactions from '../components/pages/website/transactions/AllTransactions.vue'
+import AllTransactions from '@/components/pages/website/transactions/AllTransactions.vue'
+import UserTransactions from '@/components/pages/website/transactions/UserTransactions.vue'
+import AccountTransactions from '@/components/pages/website/transactions/AccountTransactions.vue'
 import CreateTransactionAsUser from '@/components/pages/website/transactions/CreateTransactionAsUser.vue'
 import CreateTransactionAsEmployee from '@/components/pages/website/transactions/CreateTransactionAsEmployee.vue'
 
@@ -84,37 +86,6 @@ const routes = [
         ],
     },
     {
-        path: '/transactions',
-        component: WebsiteLayout,
-        children: [
-            {
-                path: '',
-                component: AllTransactions,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'All Transactions',
-                    roles: ['EMPLOYEE']
-                }
-            },
-            {
-                path: 'create/user',
-                component: CreateTransactionAsUser,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'Create Transaction',
-                }
-            },
-            {
-                path: 'create/employee',
-                component: CreateTransactionAsEmployee,
-                meta: {
-                    isWebsiteAuthenticated: true,
-                    title: 'Create Transaction',
-                }
-            },
-        ]
-    },
-    {
         path: '/',
         component: WebsiteLayout,
         children: [
@@ -171,6 +142,50 @@ const routes = [
                 meta: {
                     title: "close-bank-accounts-preview",
                     isWebsiteAuthenticated: true,
+                    roles: ['EMPLOYEE']
+                }
+            },
+            {
+                path: 'transactions',
+                component: AllTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'All Transactions',
+                    roles: ['EMPLOYEE']
+                }
+            },
+            
+            {
+                path: 'transactions/user/:id',
+                component: UserTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'User Transactions',
+                }
+            },
+            {
+                path: 'transactions/bank-account/:iban',
+                component: AccountTransactions,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Account Transactions',
+                }
+            },
+            {
+                path: 'transactions/create/user',
+                component: CreateTransactionAsUser,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Create Transaction',
+                    roles: ['USER']
+                }
+            },
+            {
+                path: 'transactions/create/employee',
+                component: CreateTransactionAsEmployee,
+                meta: {
+                    isWebsiteAuthenticated: true,
+                    title: 'Create Transaction',
                     roles: ['EMPLOYEE']
                 }
             },

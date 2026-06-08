@@ -10,12 +10,14 @@
 <template>
     <ul class="navbar-nav mr-auto">
         <template v-if="websiteDecodedAuthToken !== null">
-
-            <!-- USER LINKS -->
-
             <template v-if="websiteDecodedAuthToken.role === 'EMPLOYEE'">
                 <NavLink to="/users" text="Users" />
+                <NavLink to="/transactions" text="Transactions" />
                 <NavLink to="/bank-accounts" text="Bank Accounts" />
+            </template>
+
+            <template v-if="websiteDecodedAuthToken.role === 'USER'">
+                <NavLink :to="`/transactions/user/${websiteDecodedAuthToken.sub}`" text="Your transactions" /> 
             </template>
         </template>
 

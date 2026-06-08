@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransferTransactionResponse implements Serializable {
+public class TransferTransactionResponse implements ITransactionResponse , Serializable  {
 
     private Long transactionId;
     private Long initiatingUserId;
@@ -22,5 +22,6 @@ public class TransferTransactionResponse implements Serializable {
     private LocalDateTime dateTime;
     private Boolean isActive;
 }
+
 
    

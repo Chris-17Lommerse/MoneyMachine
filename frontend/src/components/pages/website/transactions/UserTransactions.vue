@@ -1,19 +1,25 @@
 <script setup>
 import apiClient from '@/utils/axios.js';
 import TransactionsTable from "@/components/organisms/TransactionsTable.vue";
-import { ref, onMounted } from 'vue';
+import { ref,computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore.js'
+
+
+const authStore = useAuthStore()
+const websiteDecodedAuthToken = computed(() => authStore.websiteDecodedAuthToken ?? null)
+const route = useRoute();
 const transactions = ref([])
 onMounted(async () => {
     try {
 
-        const response = await apiClient.get("/transactions")
+        const response = await apiClient.get(`/users/${route.params.id}/transactions`)
 
          console.log("RESPONSE:", response)
 
         if (response.status === 200) {
 
             transactions.value = response.data.transactions
-            console.log(transactions)
 
 
         }
@@ -38,8 +44,9 @@ onMounted(async () => {
 
 <template>
     <div class="text-center">
-        <h1 class="display-4">All transactions</h1>
-        <router-link to="/transactions/create/employee" class="btn btn-primary mb-3">add transaction</router-link>
+        <h1 class="display-4">User transactions</h1>
+        <router-link v-if="websiteDecodedAuthToken.role === 'EMPLOYEE'" to="/transactions/create/employee" class="btn btn-primary mb-3">add transaction</router-link>
+        <router-link v-else to="/transactions/create/user/" class="btn btn-primary mb-3">add transaction</router-link>
         <TransactionsTable :transactions="transactions" />
     </div>
 </template>
