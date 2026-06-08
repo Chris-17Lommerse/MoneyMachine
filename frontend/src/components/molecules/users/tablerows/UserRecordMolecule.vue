@@ -30,6 +30,5 @@ const props = defineProps({
     <BaseTableDataFieldAtom :text="user.bsn" />
     <BaseTableDataFieldAtom :text="user.phoneNumber" />
     <ApproveCustomerButtonAtom :user-id="user.userId"/>
-    <router-link :to="`/transactions/user/${user.userId}`" class="btn btn-primary mb-3">view transactions</router-link>
     </tr>  
 </template>
