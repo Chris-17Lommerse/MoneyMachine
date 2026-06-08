@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     private TransactionService transactionService;
 
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper,
-            BankAccountService bankAccountService, TransactionService transactionService) {
+        BankAccountService bankAccountService, TransactionService transactionService) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.bankAccountService = bankAccountService;

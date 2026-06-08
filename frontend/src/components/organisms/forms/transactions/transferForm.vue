@@ -21,8 +21,8 @@
   <form @submit.prevent="emit('createTransaction',transaction)">
     <ErrorAlert/>
     <SuccessAlert/>
-    <BaseFormField v-model="transaction.fromBankAcountIban" labelName="From IBAN" type="text" id="fromIban" name="fromIban"/>
-    <BaseFormField v-model="transaction.toBankAcountIban" labelName="To IBAN" type="text" id="toIban" name="toIban"/>
+    <BaseFormField v-model="transaction.fromBankAcountIban" labelName="From IBAN" type="text" id="fromIban" name="fromIban" default="NLxxINHO0xxxxxxxxx"/>
+    <BaseFormField v-model="transaction.toBankAcountIban" labelName="To IBAN" type="text" id="toIban" name="toIban" default="NLxxINHO0xxxxxxxxx"/>
     <BaseFormField v-model="transaction.amount" labelName="Amount" type="number" id="amount" name="amount"/>
     <BaseFormField v-model="transaction.message" labelName="Message" type="text" id="message" name="message"/>
     <button type="submit" class="btn btn-primary">Create</button>
