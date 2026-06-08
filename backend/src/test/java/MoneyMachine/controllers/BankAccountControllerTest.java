@@ -119,6 +119,21 @@ public class BankAccountControllerTest extends BaseControllerTest {
     }
 
     @Test
+    void getBankAccountByIban_whenNotAuthenticated_returnUnauthorized() throws Exception {
+
+        mockMvc.perform(get(String.format("/bank-accounts/%s", userBankAccount.getIban())))
+            .andExpect(status().is(401));
+    }
+
+    @Test
+    void getBankAccountByIban_whenNonExistentIban_returnNotFound() throws Exception {
+
+        mockMvc.perform(get("/bank-accounts/NONEXISTENT")
+                .header("Authorization", "Bearer " + atmUserAuthToken))
+            .andExpect(status().is(404));
+    }
+
+    @Test
     void getAllBankAccounts_whenAuthorized_getAllBankAccounts() throws Exception {
         mockMvc.perform(get(String.format("/bank-accounts", pageable))
                 .header("Authorization", "Bearer " + websiteEmployeeAuthToken))
