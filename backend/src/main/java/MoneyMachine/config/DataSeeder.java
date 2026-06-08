@@ -26,7 +26,8 @@ public class DataSeeder implements ApplicationRunner {
     private final TransactionRepository transactionRepository;
     private final AuthenticationService authenticationService;
 
-    public DataSeeder(TransactionRepository transactionRepository, UserRepository userRepository, BankAccountRepository bankAccountRepository, AuthenticationService authenticationService){
+    public DataSeeder(TransactionRepository transactionRepository, UserRepository userRepository,
+            BankAccountRepository bankAccountRepository, AuthenticationService authenticationService) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.bankAccountRepository = bankAccountRepository;
@@ -35,7 +36,7 @@ public class DataSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        
+
         User user = new User();
         user.setFirstName("userFirstName");
         user.setLastName("userLastName");
@@ -73,7 +74,31 @@ public class DataSeeder implements ApplicationRunner {
         user2.setIsActive(true);
         user2.setIsApproved(true);
         userRepository.save(user2);
-        
+
+        User user3 = new User();
+        user3.setFirstName("user3LastName");
+        user3.setLastName("user3LastName");
+        user3.setEmail("user3@user3.user3");
+        user3.setBsn("234567890");
+        user3.setPhoneNumber("+31 6 56 45 32 12");
+        user3.setRole(Role.USER);
+        user3.setPassword(authenticationService.getHashedPassword("password"));
+        user3.setIsActive(true);
+        user3.setIsApproved(true);
+        userRepository.save(user3);
+
+        User user4 = new User();
+        user4.setFirstName("user4LastName");
+        user4.setLastName("user4LastName");
+        user4.setEmail("user4@user4.user4");
+        user4.setBsn("14567890");
+        user4.setPhoneNumber("+31 6 83 44 69 52");
+        user4.setRole(Role.USER);
+        user4.setPassword(authenticationService.getHashedPassword("password"));
+        user4.setIsActive(true);
+        user4.setIsApproved(true);
+        userRepository.save(user3);
+
         BankAccount checkingBankAccount = new BankAccount();
         checkingBankAccount.setIban("NL91ABNA0417164300");
         checkingBankAccount.setUser(user);
