@@ -47,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) {
 
         try {
+            // CAN BE REMOVED IF HOSTING IS CORRECTLY CONFIGURED
             if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 filterChain.doFilter(request, response);
                 return;

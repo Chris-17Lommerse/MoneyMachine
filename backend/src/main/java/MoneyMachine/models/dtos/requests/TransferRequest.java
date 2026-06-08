@@ -2,7 +2,7 @@ package MoneyMachine.models.dtos.requests;
 
 import java.math.BigDecimal;
 
-
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,12 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferRequest  {
+    
     @NotNull
     private BigDecimal amount;
-    @NotNull
+    @NotBlank
     private String fromBankAcountIban;
-    @NotNull
+    @NotBlank
     private String toBankAcountIban;
-    @NotNull
+    @NotBlank
     private String message;
 }
