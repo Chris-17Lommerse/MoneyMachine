@@ -63,7 +63,7 @@ public class DataSeeder implements ApplicationRunner {
         userRepository.save(userWithoutBankAccount);
 
         BankAccount checkingBankAccount = new BankAccount();
-        checkingBankAccount.setIban("NL91ABNA0417164300");
+        checkingBankAccount.setIban("NL91INHO0417164300");
         checkingBankAccount.setUser(user);
         checkingBankAccount.setBalance(new BigDecimal("100"));
         checkingBankAccount.setAbsoluteLimit(new BigDecimal("-100"));
@@ -75,7 +75,7 @@ public class DataSeeder implements ApplicationRunner {
         bankAccountRepository.save(checkingBankAccount);
 
         BankAccount savingsBankAccount = new BankAccount();
-        savingsBankAccount.setIban("NL47ABNA0582937105");
+        savingsBankAccount.setIban("NL47INHO0582937105");
         savingsBankAccount.setUser(user);
         savingsBankAccount.setBalance(new BigDecimal("133767"));
         savingsBankAccount.setAbsoluteLimit(new BigDecimal("-1000"));
