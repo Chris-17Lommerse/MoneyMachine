@@ -16,8 +16,8 @@ public interface TransactionService {
     TransferTransactionResponse transferAmountBetweenBankAccounts(String fromIban, String toIban, BigDecimal amount, String message);
     DepositTransactionResponse depositAmountIntoBankAccount(String toIban, BigDecimal amount);
     WithdrawTransactionResponse withdrawAmountIntoBankAccount(String fromIban, BigDecimal amount);
-    public TransactionOverviewResponse getAllTransactions(Pageable pageable);
-    public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable);
-    public ITransactionResponse getTransactionByid(long id);
-    
+    TransactionOverviewResponse getAllTransactions(Pageable pageable);
+    TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable);
+    ITransactionResponse getTransactionByid(long id);
+    TransactionOverviewResponse getTransactionsByUserId(Long id, Pageable pageable);
 }

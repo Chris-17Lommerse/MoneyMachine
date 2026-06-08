@@ -1,9 +1,12 @@
 package MoneyMachine.services;
 
 import java.math.BigDecimal;
-import java.util.List;
-import org.springframework.data.domain.Page;
+import java.util.Objects;
+
 import org.springframework.data.domain.Pageable;
+import java.util.List;
+import java.util.ArrayList;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import MoneyMachine.models.enums.Role;
@@ -26,6 +29,9 @@ import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
 import MoneyMachine.services.interfaces.TransactionService;
+
+import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
+import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -143,5 +149,39 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.save(withdrawTransaction);
 
         return transactionMapper.toWithdrawTransactionResponse(withdrawTransaction);
+    }
+
+    @Override
+    public TransactionOverviewResponse getTransactionsByUserId(Long id, Pageable pageable){
+
+        BankAccountOverviewResponse bankAccountOverviewResponse = bankAccountService.getAllBankAccountsByUserId(id, pageable);
+        List<BankAccountResponse> bankAccounts = bankAccountOverviewResponse.getItems();
+        TransactionOverviewResponse transactions = new TransactionOverviewResponse(new ArrayList<>(), pageable.getPageNumber(), pageable.getPageSize());
+
+        for(BankAccountResponse bankAccount : bankAccounts){
+
+            String iban = bankAccount.getIban();
+            TransactionOverviewResponse overview = getTransactionsByIban(iban, pageable);
+
+            for (ITransactionResponse transactionResponse : overview.getTransactions()) {
+
+                boolean isNewTransaction = true;
+
+                for (ITransactionResponse existing : transactions.getTransactions()) {
+
+                    if (Objects.equals(existing.getTransactionId(),transactionResponse.getTransactionId())) {
+
+                        isNewTransaction = false;
+                        break;
+                    }
+                }
+
+                if (isNewTransaction) {
+                    transactions.getTransactions().add(transactionResponse);
+                }
+            }
+        }
+        
+        return transactions;
     }
 }
