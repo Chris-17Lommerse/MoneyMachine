@@ -34,12 +34,6 @@ public class UserController {
         return ResponseEntity.status(200).body(bankAccountOverviewResponse);
     }
 
-    @GetMapping("{id}")
-    @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
-    public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
-        return ResponseEntity.status(200).body("This is a test involving authorization based on conditionals put in @PreAuthorize and AuthorizationService.java.");
-    }
-
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<UserOverviewResponse> getAllUsersWithoutAnAccount(Pageable pageable) {
