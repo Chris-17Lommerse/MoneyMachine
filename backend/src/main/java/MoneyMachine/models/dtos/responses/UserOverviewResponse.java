@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserOverviewResponse implements Serializable {
-    private List<UserResponse> users;
+    private List<UserResponse> items;
+    private int page;
+    private int pageSize;
 }

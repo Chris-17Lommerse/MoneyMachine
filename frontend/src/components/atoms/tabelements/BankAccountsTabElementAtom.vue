@@ -3,6 +3,7 @@
 
 <template>
     <li class="nav-item">
-        <a href="/bank-accounts" class="nav-link">Bank Accounts</a>
+        <RouterLink :to="{
+            path: '/bank-accounts' }" class="nav-link">Bank Accounts</RouterLink>
     </li>
 </template>

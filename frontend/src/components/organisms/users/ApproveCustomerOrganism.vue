@@ -1,6 +1,4 @@
 <script setup>
-import CloseAccountTitle from "@/atoms/bankaccounts/textelements/CloseBankAccountTitle.vue";
-import ButtonSetMolecule from "@/molecules/bankaccounts/buttons/ButtonSetMolecule.vue";
 import AbsoluteLimitItemMolecule from "@/molecules/bankaccounts/items/AbsoluteLimitItemMolecule.vue";
 import BalanceItemMolecule from "@/molecules/bankaccounts/items/BalanceItemMolecule.vue";
 import DailyTransferLimitItemMolecule from "@/molecules/bankaccounts/items/DailyTransferLimitItemMolecule.vue";
@@ -8,7 +6,9 @@ import IBANNumberItemMolecule from "@/molecules/bankaccounts/items/IBANNumberIte
 import IsActiveItemMolecule from "@/molecules/bankaccounts/items/IsActiveItemMolecule.vue";
 import SingleTransferLimitItemMolecule from "@/molecules/bankaccounts/items/SingleTransferLimitItemMolecule.vue";
 import BaseListDataFieldAtomForHeadings from "@/atoms/bankaccounts/textelements/listdatafields/BaseListDataFieldAtomForHeadings.vue";
-
+import BankAccountCreationTitle from "@/atoms/bankaccounts/textelements/BankAccountCreationTitle.vue";
+import CancelBankAccountCreationButton from "@/atoms/bankaccounts/buttons/CancelBankAccountCreationButton.vue";
+import CreateBankAccountButtonAtom from "@/atoms/bankaccounts/buttons/CreateBankAccountButtonAtom.vue";
 const props = defineProps({
     bankAccount: {
         type: Object,
@@ -16,21 +16,17 @@ const props = defineProps({
         validator: (value) => {
             return typeof value.iban === 'string' &&
                 typeof value.userId === 'number' &&
-                typeof value.balance === 'number' &&
-                typeof value.absoluteLimit === 'number' &&
-                typeof value.singleTransferLimit === 'number' &&
-                typeof value.dailyTransferLimit === 'number' &&
-                typeof value.bankAccountType === 'string' &&
-                typeof value.isActive == 'boolean'
+                typeof value.bankAccountType === 'string'
         }
     }
 })
-const emits = defineEmits(['closeAccount'])
+
+const emits = defineEmits(['createBankAccount'])
 </script>
 
 <template>
     <section class="flex flex-col">
-        <CloseAccountTitle />
+        <BankAccountCreationTitle />
         <BaseListDataFieldAtomForHeadings :text="bankAccount.bankAccountType" />
         <IBANNumberItemMolecule :bankAccount="bankAccount" />
         <BalanceItemMolecule :bankAccount="bankAccount" />
@@ -38,6 +34,9 @@ const emits = defineEmits(['closeAccount'])
         <DailyTransferLimitItemMolecule :bankAccount="bankAccount" />
         <IsActiveItemMolecule :bankAccount="bankAccount" />
         <SingleTransferLimitItemMolecule :bankAccount="bankAccount" />
-        <ButtonSetMolecule @closeAccount="$emit('closeAccount', bankAccount.iban)" :bankAccount="bankAccount" />
+        <section class="flex flex-row">
+            <CreateBankAccountButtonAtom @createBankAccount="$emit('createBankAccount')" />
+            <CancelBankAccountCreationButton />
+        </section>
     </section>
 </template>

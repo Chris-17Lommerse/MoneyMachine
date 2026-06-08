@@ -20,15 +20,16 @@ const props = defineProps({
     }
 })
 
+const emits = defineEmits(['approveCustomer']);
 </script>
 
 <template>
-  <tr class="table table-dark">
+  <tr class="table table-light">
     <BaseTableDataFieldAtom :text="user.firstName" />
     <BaseTableDataFieldAtom :text="user.lastName" />
     <BaseTableDataFieldAtom :text="user.email" />
     <BaseTableDataFieldAtom :text="user.bsn" />
     <BaseTableDataFieldAtom :text="user.phoneNumber" />
-    <ApproveCustomerButtonAtom :user-id="user.userId"/>
+    <ApproveCustomerButtonAtom v-if="user.role !== 'EMPLOYEE'" @approveCustomer="$emit('approveCustomer')" :user="user"/>
     </tr>  
 </template>

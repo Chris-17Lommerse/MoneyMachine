@@ -23,7 +23,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <tr class="tabe table-dark">
+    <tr class="tabe table-light">
         <BaseTableDataFieldAtom :text="bankAccount.iban" />
         <BaseTableDataFieldAtom :text="bankAccount.bankAccountType" />
         <BaseTableDataFieldAtom :text="bankAccount.balance" />

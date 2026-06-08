@@ -62,8 +62,20 @@ public class DataSeeder implements ApplicationRunner {
 
         userRepository.save(userWithoutBankAccount);
 
+        User user2 = new User();
+        user2.setFirstName("user2LastName");
+        user2.setLastName("user2LastName");
+        user2.setEmail("user2@user2.user2");
+        user2.setBsn("987654321");
+        user2.setPhoneNumber("+31 6 87 65 43 21");
+        user2.setRole(Role.USER);
+        user2.setPassword(authenticationService.getHashedPassword("password"));
+        user2.setIsActive(true);
+        user2.setIsApproved(false);
+        userRepository.save(user2);
+        
         BankAccount checkingBankAccount = new BankAccount();
-        checkingBankAccount.setIban("NL91INHO0417164300");
+        checkingBankAccount.setIban("NL91ABNA0417164300");
         checkingBankAccount.setUser(user);
         checkingBankAccount.setBalance(new BigDecimal("100"));
         checkingBankAccount.setAbsoluteLimit(new BigDecimal("-100"));

@@ -18,7 +18,6 @@ import MoneyMachine.models.dtos.responses.WithdrawTransactionResponse;
 import MoneyMachine.services.interfaces.TransactionService;
 import jakarta.validation.Valid;
 
-
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {

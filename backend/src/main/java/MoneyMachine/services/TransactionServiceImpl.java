@@ -54,33 +54,35 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionPolicy = transactionPolicy;
     }
 
-    public TransactionOverviewResponse getAllTransactions(Pageable pageable)
-    {
+    public TransactionOverviewResponse getAllTransactions(Pageable pageable){
+        
         Page<Transaction> page = transactionRepository.findAll(pageable);
         List<Transaction> transferTransactions = page.getContent();
         List<ITransactionResponse> items = mapper.getAllTransactions(transferTransactions);
         TransactionOverviewResponse response = new TransactionOverviewResponse(items,page.getNumber(),page.getSize());
+        
         return response;
     }
-    public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable)
-    {
+
+    public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable){
+        
         throwIfUserCannotInteractWithBankAccount(authenticationService.getLoggedInUser(), bankAccountService.getBankAccountEntityByIban(iban));
+        
         Page<Transaction> page = transactionRepository.findAllByToOrFromIban(iban,pageable);
         List<Transaction> transferTransactions = page.getContent();
         List<ITransactionResponse> items = mapper.getAllTransactions(transferTransactions);
         TransactionOverviewResponse response = new TransactionOverviewResponse(items,page.getNumber(),page.getSize());
+        
         return response;
     }
 
-    private void throwIfUserCannotInteractWithBankAccount(User user, BankAccount bankAccount) {
-        
+    private void throwIfUserCannotInteractWithBankAccount(User user, BankAccount bankAccount) { 
         if (user.getRole() != Role.EMPLOYEE && bankAccount.getUser().getId() != user.getId()) {
             throw new NotAuthorizedException(String.format("You cannot perform actions on bank account: %s.", bankAccount.getIban()));
         }
     }
 
-    public ITransactionResponse getTransactionByid(long id)
-    {
+    public ITransactionResponse getTransactionByid(long id){
        return mapper.toResponse(transactionRepository.findById(id).orElseThrow());
     }
 
