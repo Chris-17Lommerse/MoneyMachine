@@ -1,12 +1,11 @@
 package MoneyMachine.controllers;
 
-import java.util.List;
+import MoneyMachine.services.interfaces.TransactionService;
 import org.springframework.http.ResponseEntity;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.responses.TransactionOverviewResponse;
 import MoneyMachine.models.dtos.responses.UserOverviewResponse;
-import MoneyMachine.models.dtos.responses.UserResponse;
 import MoneyMachine.services.interfaces.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("users")
 public class UserController {
 
+    private final TransactionService transactionService;
     private final UserService userService;
     private final BankAccountService bankAccountService;
 
-    public UserController(UserService userService, AuthenticationService authenticationService, BankAccountService bankAccountService) {
+    public UserController(UserService userService, TransactionService transactionService, AuthenticationService authenticationService, BankAccountService bankAccountService) {
         this.userService = userService;
+        this.transactionService = transactionService;
         this.bankAccountService = bankAccountService;
     }
 
@@ -33,37 +34,26 @@ public class UserController {
         return ResponseEntity.status(200).body(bankAccountOverviewResponse);
     }
 
-    @GetMapping("employee-test")
-    @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<String> employeeTest() {
-        return ResponseEntity.status(200).body("You have the employee super powers that can power every power in the power universe and are website logged in.");
-    }
-
-    @GetMapping("{id}")
-    @PreAuthorize("@authorizationService.isAllowedToInteractWithUserId(#id)")
-    public ResponseEntity<String> getUserByIdTest(@PathVariable Long id) {
-        return ResponseEntity.status(200).body("This is a test involving authorization based on conditionals put in @PreAuthorize and AuthorizationService.java.");
-    }
-
     @GetMapping()
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> getAllUsersWithoutAnAccount() {
+    public ResponseEntity<UserOverviewResponse> getAllUsersWithoutAnAccount(Pageable pageable) {
         
-        List<UserResponse> users = userService.getAllUsersWithoutBankAccounts();
-
-        if(users == null) {
+        UserOverviewResponse users = userService.getAllUsersWithoutBankAccounts(pageable);
+        
+        if(users == null)
+        {
             throw new NotFoundException("There are no users found in the database");
         }
-
-        UserOverviewResponse userOverviewResponse = new UserOverviewResponse();
-        userOverviewResponse.setUsers(users);
-
-        return ResponseEntity.ok(userOverviewResponse);
+        
+        return ResponseEntity.ok(users);
     }
+    
     @GetMapping("/{id}/transactions")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
-        TransactionOverviewResponse transactions = userService.getTransactionsByUserId(id, pageable);
+        
+        TransactionOverviewResponse transactions = transactionService.getTransactionsByUserId(id, pageable);
+
         return ResponseEntity.status(200).body(transactions);
     }
 }

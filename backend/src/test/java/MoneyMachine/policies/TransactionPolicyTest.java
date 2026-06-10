@@ -133,4 +133,35 @@ public class TransactionPolicyTest {
             transactionPolicy.enforceTransactionWithdrawPolicy(user, new BigDecimal("-100.00"), bankAccount)
         );
     }
+
+    @Test
+    void enforceTransactionPolicy_whenUserIsNotActive_throwsNotAuthorizedException() {
+
+        user.setIsActive(false);
+
+        assertThrows(NotAuthorizedException.class, () ->
+            transactionPolicy.enforceTransactionPolicy(user, new BigDecimal("100.00"), bankAccount)
+        );
+    }
+
+    @Test
+    void enforceTransactionWithdrawPolicy_whenUserIsNotActive_throwsNotAuthorizedException() {
+
+        user.setIsActive(false);
+
+        assertThrows(NotAuthorizedException.class, () ->
+            transactionPolicy.enforceTransactionWithdrawPolicy(user, new BigDecimal("100.00"), bankAccount)
+        );
+    }
+
+    @Test
+    void enforceTransactionPolicy_whenEmployeeIsNotActive_doesNotThrow() {
+
+        user.setRole(Role.EMPLOYEE);
+        user.setIsActive(false);
+
+        assertDoesNotThrow(() ->
+            transactionPolicy.enforceTransactionPolicy(user, new BigDecimal("100.00"), bankAccount)
+        );
+    }
 }

@@ -5,17 +5,19 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import tools.jackson.databind.ObjectMapper;
-
+import MoneyMachine.config.SecurityConfig;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.LoginType;
 import MoneyMachine.models.enums.Role;
 import MoneyMachine.util.JwtUtil;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = true)
+@Import(SecurityConfig.class)
 @Transactional
 public class BaseControllerTest {
     
@@ -36,6 +38,7 @@ public class BaseControllerTest {
     public String websiteEmployeeAuthToken;
 
     void setUpMockAuth() {
+        
         user = new User();
         user.setId(1L);
         user.setFirstName("userFirstName");

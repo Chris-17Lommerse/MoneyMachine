@@ -3,6 +3,7 @@
 
 <template>
     <li class="nav-item">
-        <a href="/users" class="nav-link">Users without an account</a>
+        <RouterLink :to="{
+            path: '/users' }" class="nav-link">Users without bank accounts</RouterLink>
     </li>
 </template>

@@ -24,7 +24,6 @@ import MoneyMachine.services.interfaces.TransactionService;
 
 import org.springframework.web.bind.annotation.PatchMapping;
 
-
 @RestController
 @RequestMapping("/bank-accounts")
 public class BankAccountController {
@@ -54,12 +53,12 @@ public class BankAccountController {
         BankAccountOverviewResponse bankAccounts = bankAccountService.getAllBankAccounts(pageable);
         return ResponseEntity.ok(bankAccounts);
     }
+
     @GetMapping("/{iban}/transactions")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
     public ResponseEntity<?> getTransactionsByIban(@PathVariable String iban,@PageableDefault(page = 0, size = 20) Pageable pageable) {
         return ResponseEntity.ok(transactionService.getTransactionsByIban(iban, pageable));
     }
-    
 
     @GetMapping("/{iban}")
     public ResponseEntity<BankAccountResponse> getBankAccountByIban(@PathVariable String iban) {

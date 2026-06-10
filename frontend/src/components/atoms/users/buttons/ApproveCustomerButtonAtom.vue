@@ -1,17 +1,19 @@
 <script setup>
 const props = defineProps({
-  userId: {
-    type: Number,
+  user: {
+    type: Object,
     required: true
   }
 })
+
+const emits = defineEmits(['approveCustomer']);
 </script>
 
 <template>
   <td>
-  <RouterLink
+  <RouterLink @click="$emit('approveCustomer', user.userId)"
     :to="{
-      path: `/users/${userId}/bank-accounts`
+      path: `/users/${user.userId}/bank-accounts`
     }"
   >
     Approve Customer

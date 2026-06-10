@@ -3,6 +3,7 @@
 
 <template>
     <li class="nav-item">
-        <a href="/transactions" class="nav-link">Transaction Overview</a>
+        <RouterLink :to="{
+            path: '/transactions' }" class="nav-link">Transaction Overview</RouterLink>
     </li>
 </template>
