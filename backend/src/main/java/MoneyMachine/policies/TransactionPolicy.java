@@ -18,12 +18,7 @@ public class TransactionPolicy {
         enforceNotSameAccountTransfer(fromBankAccount, toBankAccount);
         enforceNotDifferentUserSavingsTransfer(fromBankAccount, toBankAccount);
         enforceWithinAbsoluteLimit(fromBankAccount, amount);
-        boolean isSameUser = fromBankAccount.getUser().getId() == toBankAccount.getUser().getId();
-        if (!isSameUser) 
-        { 
-            enforceNotOverDailyLimit(amount, todayTransferredAmount, fromBankAccount.getDailyTransferLimit()); 
-            enforceWithinSingleTransferLimit(fromBankAccount, amount); 
-        }     
+        enforceLimitsIfNessecary(fromBankAccount, toBankAccount, amount, todayTransferredAmount);    
     }
 
     public void enforceTransactionWithdrawPolicy(User user, BigDecimal amount, BankAccount fromBankAccount) {
@@ -47,6 +42,16 @@ public class TransactionPolicy {
         }
         enforcePositiveAmount(amount);
         enforceWithinSingleTransferLimit(bankAccount, amount);
+    }
+    private void enforceLimitsIfNessecary(BankAccount fromBankAccount, BankAccount toBankAccount, BigDecimal amount, BigDecimal todayTransferredAmount) {
+         boolean isSameUser = fromBankAccount.getUser().getId() == toBankAccount.getUser().getId();
+        if (!isSameUser) 
+        { 
+            enforceNotOverDailyLimit(amount, todayTransferredAmount, fromBankAccount.getDailyTransferLimit()); 
+            enforceWithinSingleTransferLimit(fromBankAccount, amount); 
+        } 
+
+       
     }
 
     private void enforceUserOwnsBankAccountAccount(User user, BankAccount fromAccount) {
