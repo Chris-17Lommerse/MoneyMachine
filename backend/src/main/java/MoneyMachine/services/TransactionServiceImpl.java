@@ -100,8 +100,13 @@ public class TransactionServiceImpl implements TransactionService {
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
+        List<Transaction> todayTransactions = transactionRepository.findTransactionsForIbanBetweentimes(fromIban, java.time.LocalDateTime.now().toLocalDate().atStartOfDay(), java.time.LocalDateTime.now().toLocalDate().atTime(23, 59, 59));
+        BigDecimal todayTransferredAmount = BigDecimal.ZERO;
+        for (Transaction t : todayTransactions) { 
+           todayTransferredAmount.add(t.getAmount()); 
+        }
         
-        transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount);
+        transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount, todayTransferredAmount);
         bankAccountRepository.decrementBalanceByIban(fromIban, amount);
         bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
@@ -122,7 +127,7 @@ public class TransactionServiceImpl implements TransactionService {
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
 
-        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, toBankAccount);
+        transactionPolicy.enforceTransactionDepositPolicy(loggedInUser, amount, toBankAccount);
         bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
         DepositTransaction depositTransaction = new DepositTransaction();

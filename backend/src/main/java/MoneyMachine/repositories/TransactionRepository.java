@@ -15,5 +15,6 @@ import MoneyMachine.models.Transaction;
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query("SELECT t FROM Transaction t WHERE t.fromBankAccount.iban = :iban OR t.toBankAccount.iban = :iban")
     Page<Transaction> findAllByToOrFromIban(String iban,Pageable pageable);
-    List<Transaction> findByFromIbanAndDateTimeGreaterThanEqualAndDateTimeLessThan(String fromIban,LocalDateTime start,LocalDateTime end);
+    @Query("SELECT t FROM TransferTransaction t WHERE t.dateTime BETWEEN :start AND :end AND t.fromBankAccount.iban = :iban")
+    List<Transaction> findTransactionsForIbanBetweentimes(String iban,LocalDateTime start,LocalDateTime end);
 }

@@ -91,7 +91,7 @@ public class TransactionServiceImplTest {
         assertNotNull(result);
         verify(authenticationService).getLoggedInUser();
         verify(bankAccountService).getBankAccountEntityByIban(bankAccount.getIban());
-        verify(transactionPolicy).enforceTransactionPolicy(user, amount, bankAccount);
+        verify(transactionPolicy).enforceTransactionDepositPolicy(user, amount, bankAccount);
         verify(bankAccountRepository).incrementBalanceByIban(bankAccount.getIban(), amount);
         verify(transactionRepository).save(any(DepositTransaction.class));
         verify(transactionMapper).toDepositTransactionResponse(any(DepositTransaction.class));
@@ -104,7 +104,7 @@ public class TransactionServiceImplTest {
 
         when(authenticationService.getLoggedInUser()).thenReturn(user);
         when(bankAccountService.getBankAccountEntityByIban(bankAccount.getIban())).thenReturn(bankAccount);
-        doThrow(new RuntimeException("Policy violation")).when(transactionPolicy).enforceTransactionPolicy(user, amount, bankAccount);
+        doThrow(new RuntimeException("Policy violation")).when(transactionPolicy).enforceTransactionDepositPolicy(user, amount, bankAccount);
 
         assertThrows(RuntimeException.class, () -> 
             transactionService.depositAmountIntoBankAccount(bankAccount.getIban(), amount)

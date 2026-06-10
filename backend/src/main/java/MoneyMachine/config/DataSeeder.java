@@ -127,6 +127,18 @@ public class DataSeeder implements ApplicationRunner {
         user6.setIsApproved(false);
 
         userRepository.save(user6);
+        User user7 = new User();
+        user7.setFirstName("will");
+        user7.setLastName("quinlan");
+        user7.setEmail("will@quinlan.com");
+        user7.setBsn("456789012");
+        user7.setPhoneNumber("+31 6 34 56 78 90");
+        user7.setRole(Role.USER);
+        user7.setPassword(authenticationService.getHashedPassword("password"));
+        user7.setIsActive(true);
+        user7.setIsApproved(true);
+
+        userRepository.save(user7);
 
         BankAccount checkingBankAccount = new BankAccount();
         checkingBankAccount.setIban("NL91ABNA0417164300");
@@ -199,6 +211,18 @@ public class DataSeeder implements ApplicationRunner {
         user4CheckingAccount.setIsActive(true);
 
         bankAccountRepository.save(user4CheckingAccount);
+
+        BankAccount user7CheckingAccount = new BankAccount();
+        user7CheckingAccount.setIban("NL62INHO0123456789");
+        user7CheckingAccount.setUser(user7);
+        user7CheckingAccount.setBalance(new BigDecimal("300.00"));
+        user7CheckingAccount.setAbsoluteLimit(new BigDecimal("0"));
+        user7CheckingAccount.setSingleTransferLimit(new BigDecimal("100"));
+        user7CheckingAccount.setDailyTransferLimit(new BigDecimal("80"));
+        user7CheckingAccount.setBankAccountType(BankAccountType.CHECKING);
+        user7CheckingAccount.setIsActive(true);
+
+        bankAccountRepository.save(user7CheckingAccount);
 
         BankAccount employeeCheckingAccount = new BankAccount();
         employeeCheckingAccount.setIban("NL55ABNA0987654321");
