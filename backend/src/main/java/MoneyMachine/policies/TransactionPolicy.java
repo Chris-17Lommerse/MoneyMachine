@@ -8,17 +8,24 @@ import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.Role;
+import MoneyMachine.repositories.TransactionRepository;
 
 @Component
 public class TransactionPolicy {
+    private TransactionRepository transactionRepository;
+    public TransactionPolicy(TransactionRepository transactionRepository)
+    {
+       this.transactionRepository=transactionRepository;
 
-    public void enforceTransactionTransferPolicy(User user, BigDecimal amount, BankAccount fromBankAccount, BankAccount toBankAccount,BigDecimal todayTransferredAmount) {
+    }
+
+    public void enforceTransactionTransferPolicy(User user, BigDecimal amount, BankAccount fromBankAccount, BankAccount toBankAccount) {
         
         enforceTransactionPolicy(user, amount, fromBankAccount);
         enforceNotSameAccountTransfer(fromBankAccount, toBankAccount);
         enforceNotDifferentUserSavingsTransfer(fromBankAccount, toBankAccount);
         enforceWithinAbsoluteLimit(fromBankAccount, amount);
-        enforceLimitsIfNessecary(fromBankAccount, toBankAccount, amount, todayTransferredAmount);    
+        enforceLimitsIfNessecary(fromBankAccount, toBankAccount, amount);    
     }
 
     public void enforceTransactionWithdrawPolicy(User user, BigDecimal amount, BankAccount fromBankAccount) {
@@ -43,10 +50,14 @@ public class TransactionPolicy {
         enforcePositiveAmount(amount);
         enforceWithinSingleTransferLimit(bankAccount, amount);
     }
-    private void enforceLimitsIfNessecary(BankAccount fromBankAccount, BankAccount toBankAccount, BigDecimal amount, BigDecimal todayTransferredAmount) {
-         boolean isSameUser = fromBankAccount.getUser().getId() == toBankAccount.getUser().getId();
-        if (!isSameUser) 
+    private void enforceLimitsIfNessecary(BankAccount fromBankAccount, BankAccount toBankAccount, BigDecimal amount) {
+        if (fromBankAccount.getUser().getId() != toBankAccount.getUser().getId()) 
         { 
+            BigDecimal todayTransferredAmount = transactionRepository.findSpendAmountForIbanBetweentimes(fromBankAccount.getIban(), java.time.LocalDateTime.now().toLocalDate().atStartOfDay(), java.time.LocalDateTime.now().toLocalDate().atTime(23, 59, 59));
+            if(todayTransferredAmount==null)
+            {
+                todayTransferredAmount=BigDecimal.ZERO;
+            }
             enforceNotOverDailyLimit(amount, todayTransferredAmount, fromBankAccount.getDailyTransferLimit()); 
             enforceWithinSingleTransferLimit(fromBankAccount, amount); 
         } 
