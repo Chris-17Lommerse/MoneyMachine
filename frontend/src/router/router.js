@@ -202,7 +202,8 @@ const routes = [
     {
         path: '/bank-accounts/temporary',
         component: temporaryAccountPage
-    }
+    },
+
 ]
 
 const router = createRouter({

@@ -44,7 +44,7 @@ public class TransactionPolicy {
         enforceWithinSingleTransferLimit(bankAccount, amount);
     }
     private void enforceLimitsIfNessecary(BankAccount fromBankAccount, BankAccount toBankAccount, BigDecimal amount, BigDecimal todayTransferredAmount) {
-         boolean isSameUser = fromBankAccount.getUser().getId() == toBankAccount.getUser().getId();
+        boolean isSameUser = fromBankAccount.getUser().getId() == toBankAccount.getUser().getId();
         if (!isSameUser) 
         { 
             enforceNotOverDailyLimit(amount, todayTransferredAmount, fromBankAccount.getDailyTransferLimit()); 

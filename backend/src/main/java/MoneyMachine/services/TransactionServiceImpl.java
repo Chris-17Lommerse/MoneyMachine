@@ -1,8 +1,10 @@
 package MoneyMachine.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
 import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ import MoneyMachine.repositories.TransactionRepository;
 import MoneyMachine.services.interfaces.AuthenticationService;
 import MoneyMachine.services.interfaces.BankAccountService;
 import MoneyMachine.services.interfaces.TransactionService;
-
+import MoneyMachine.models.dtos.requests.FilterRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.models.dtos.responses.BankAccountResponse;
 
@@ -54,15 +56,60 @@ public class TransactionServiceImpl implements TransactionService {
         this.transactionPolicy = transactionPolicy;
     }
 
-    public TransactionOverviewResponse getAllTransactions(Pageable pageable){
-        
-        Page<Transaction> page = transactionRepository.findAll(pageable);
+    public TransactionOverviewResponse getAllTransactions(Pageable pageable, FilterRequest filter){
+         Page<Transaction> page =null;
+        if (filter.getFilterName() == null)
+        {
+            page = transactionRepository.findAll(pageable);
+        }
+        else
+        {
+            page = getTransactionsByfilter(pageable, filter);
+        }
         List<Transaction> transferTransactions = page.getContent();
         List<ITransactionResponse> items = mapper.getAllTransactions(transferTransactions);
         TransactionOverviewResponse response = new TransactionOverviewResponse(items,page.getNumber(),page.getSize());
         
         return response;
     }
+
+    private Page<Transaction> getTransactionsByfilter( Pageable pageable,FilterRequest filter) 
+    {
+        switch (filter.getFilterName()) {
+            case "fromIban":
+                return  transactionRepository.getTransactionsByFromIban(filter.getFilterValue(), pageable);
+            case "toIban":
+                return  transactionRepository.getTransactionsByToIban(filter.getFilterValue(), pageable);
+            case "higherThanAmount":
+                return  transactionRepository.getTransactionsByHigherThanAmount(new BigDecimal(filter.getFilterValue()), pageable);
+            case "lowerThanAmount":
+                return  transactionRepository.getTransactionsByLowerThanAmount(new BigDecimal(filter.getFilterValue()), pageable);
+            case "exactAmount":
+                return  transactionRepository.getTransactionsByAmount(new BigDecimal(filter.getFilterValue()), pageable);
+            case "dateAfter":{
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                LocalDateTime date = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
+                return  transactionRepository.getTransactionsByDateAfter(date, pageable);
+            }
+            case "dateBefore": {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                LocalDateTime date = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
+                return  transactionRepository.getTransactionsByDateBefore(date, pageable);}
+            case "exactDate": {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+               LocalDateTime start = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
+                LocalDateTime end = start.plusDays(1);
+                return  transactionRepository.getTransactionsByDate(start, end, pageable);}
+            case "initiatingUserId":
+                return  transactionRepository.getTransactionsByinitiatingUserId(Long.parseLong(filter.getFilterValue()), pageable);
+            case "reset":
+                return transactionRepository.findAll(pageable);
+            default:
+                throw new IllegalArgumentException("Invalid filter name: " + filter.getFilterName());
+        }
+    }
+        
+    
 
     public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable){
         
