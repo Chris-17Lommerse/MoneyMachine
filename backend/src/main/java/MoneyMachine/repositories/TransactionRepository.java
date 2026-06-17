@@ -18,9 +18,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> findAllByToOrFromIban(@Param("iban")String iban,Pageable pageable);
     @Query("SELECT t FROM TransferTransaction t WHERE t.dateTime BETWEEN :start AND :end AND t.fromBankAccount.iban = :iban")
     List<Transaction> findTransactionsForIbanBetweentimes(@Param("iban")String iban,@Param("start")LocalDateTime start,@Param("end")LocalDateTime end);
-     @Query("SELECT t FROM Transaction t WHERE t.fromBankAccount.iban = :iban")
+    @Query("SELECT t FROM Transaction t WHERE t.fromBankAccount.iban = :iban")
     Page<Transaction> getTransactionsByFromIban(@Param("iban")String filterValue, Pageable pageable);
-     @Query("SELECT t FROM Transaction t WHERE t.toBankAccount.iban = :iban")
+    @Query("SELECT t FROM Transaction t WHERE t.toBankAccount.iban = :iban")
     Page<Transaction> getTransactionsByToIban(@Param("iban")String filterValue, Pageable pageable);
     @Query("SELECT t FROM Transaction t WHERE t.amount > :amount")
     Page<Transaction> getTransactionsByHigherThanAmount(@Param("amount")BigDecimal bigDecimal, Pageable pageable);
