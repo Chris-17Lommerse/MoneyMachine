@@ -36,4 +36,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Page<Transaction> getTransactionsByDate(@Param("start") LocalDateTime start,@Param("end") LocalDateTime end,Pageable pageable);
     @Query("SELECT t FROM Transaction t WHERE t.initiatingUser.id = :userId")
     Page<Transaction> getTransactionsByinitiatingUserId(@Param("userId")long userId, Pageable pageable);
+    @Query("SELECT SUM(amount) FROM TransferTransaction t WHERE t.dateTime BETWEEN :start AND :end AND t.fromBankAccount.iban = :iban")
+    BigDecimal findSpendAmountForIbanBetweentimes(@Param("iban")String iban, @Param("start")LocalDateTime start,@Param("end")LocalDateTime end);
 }
