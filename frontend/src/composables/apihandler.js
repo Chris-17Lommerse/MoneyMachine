@@ -11,6 +11,7 @@ export function useApiHandler() {
 
     } catch (error) {
       console.log("FULL ERROR OBJECT:", error)
+       return []
     }
   
   }

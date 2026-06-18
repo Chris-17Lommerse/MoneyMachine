@@ -2,7 +2,10 @@ package MoneyMachine.Specification;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import MoneyMachine.models.DepositTransaction;
 import MoneyMachine.models.Transaction;
+import MoneyMachine.models.TransferTransaction;
+import MoneyMachine.models.WithdrawTransaction;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -13,20 +16,54 @@ import java.time.LocalDateTime;
 public class TransactionSpecification {
 
     public Specification<Transaction> hasIban(String iban) {
-        return (root, query, cb) -> cb.or(
-                cb.equal(root.get("fromBankAccount").get("iban"), iban),
-                cb.equal(root.get("toBankAccount").get("iban"), iban)
-        );
+        return (root, query, cb) -> {
+
+            var transfer = cb.treat(root, TransferTransaction.class);
+            var deposit = cb.treat(root, DepositTransaction.class);
+            var withdraw = cb.treat(root, WithdrawTransaction.class);
+
+            return cb.or
+            (
+                // transfer: from + to
+                cb.or
+                (
+                    cb.equal(transfer.get("fromBankAccount").get("iban"), iban),
+                    cb.equal(transfer.get("toBankAccount").get("iban"), iban)
+                ),
+
+                // deposit: only to
+                cb.equal(deposit.get("toBankAccount").get("iban"), iban),
+
+                // withdraw: only from
+                cb.equal(withdraw.get("fromBankAccount").get("iban"), iban)
+            );
+        };
     }
 
     public Specification<Transaction> fromIban(String iban) {
-        return (root, query, cb) ->
-                cb.equal(root.get("fromBankAccount").get("iban"), iban);
+        return (root, query, cb) -> {
+
+            var transfer = cb.treat(root, TransferTransaction.class);
+            var withdraw = cb.treat(root, WithdrawTransaction.class);
+
+            return cb.or(
+                cb.equal(transfer.get("fromBankAccount").get("iban"), iban),
+                cb.equal(withdraw.get("fromBankAccount").get("iban"), iban)
+            );
+        };
     }
 
-    public Specification<Transaction> toIban(String iban) {
-        return (root, query, cb) ->
-                cb.equal(root.get("toBankAccount").get("iban"), iban);
+   public Specification<Transaction> toIban(String iban) {
+        return (root, query, cb) -> {
+
+            var transfer = cb.treat(root, TransferTransaction.class);
+            var deposit = cb.treat(root, DepositTransaction.class);
+
+            return cb.or(
+                cb.equal(transfer.get("toBankAccount").get("iban"), iban),
+                cb.equal(deposit.get("toBankAccount").get("iban"), iban)
+            );
+        };
     }
 
     public Specification<Transaction> amountGreaterThan(BigDecimal amount) {
