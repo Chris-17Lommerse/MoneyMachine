@@ -1,17 +1,17 @@
 package MoneyMachine.services;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.util.List;
 import java.util.ArrayList;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import MoneyMachine.models.enums.Role;
+import MoneyMachine.Specification.SpecificationBuilder;
 import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.policies.TransactionPolicy;
 import MoneyMachine.mappers.TransactionMapper;
@@ -38,6 +38,7 @@ import MoneyMachine.models.dtos.responses.BankAccountResponse;
 @Service
 public class TransactionServiceImpl implements TransactionService {
     
+  
     private final TransactionPolicy transactionPolicy;
     private final TransactionMapperService mapper;
     private final BankAccountService bankAccountService;
@@ -45,8 +46,9 @@ public class TransactionServiceImpl implements TransactionService {
     private final TransactionRepository transactionRepository;
     private final TransactionMapper transactionMapper;
     private final BankAccountRepository bankAccountRepository;
+    private SpecificationBuilder specificationBuilder;
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper, BankAccountService bankAccountService, AuthenticationService authenticationService, TransactionMapper transactionMapper, TransactionPolicy transactionPolicy) {
+    public TransactionServiceImpl(TransactionRepository transactionRepository, BankAccountRepository bankAccountRepository, TransactionMapperService mapper, BankAccountService bankAccountService, AuthenticationService authenticationService, TransactionMapper transactionMapper, TransactionPolicy transactionPolicy, SpecificationBuilder specificationBuilder) {
         this.mapper = mapper;
         this.bankAccountRepository = bankAccountRepository;
         this.transactionRepository = transactionRepository;
@@ -54,18 +56,14 @@ public class TransactionServiceImpl implements TransactionService {
         this.authenticationService = authenticationService;
         this.transactionMapper = transactionMapper;
         this.transactionPolicy = transactionPolicy;
+        this.specificationBuilder = specificationBuilder;
     }
 
     public TransactionOverviewResponse getAllTransactions(Pageable pageable, FilterRequest filter){
-         Page<Transaction> page =null;
-        if (filter.getFilterName() == null)
-        {
-            page = transactionRepository.findAll(pageable);
-        }
-        else
-        {
-            page = getTransactionsByfilter(pageable, filter);
-        }
+        Page<Transaction> page =null;
+        Specification<Transaction> spec = specificationBuilder.build(filter);
+
+        page = transactionRepository.findAll(spec,pageable);
         List<Transaction> transferTransactions = page.getContent();
         List<ITransactionResponse> items = mapper.getAllTransactions(transferTransactions);
         TransactionOverviewResponse response = new TransactionOverviewResponse(items,page.getNumber(),page.getSize());
@@ -73,51 +71,29 @@ public class TransactionServiceImpl implements TransactionService {
         return response;
     }
 
-    private Page<Transaction> getTransactionsByfilter( Pageable pageable,FilterRequest filter) 
-    {
-        switch (filter.getFilterName()) {
-            case "fromIban":
-                return  transactionRepository.getTransactionsByFromIban(filter.getFilterValue(), pageable);
-            case "toIban":
-                return  transactionRepository.getTransactionsByToIban(filter.getFilterValue(), pageable);
-            case "higherThanAmount":
-                return  transactionRepository.getTransactionsByHigherThanAmount(new BigDecimal(filter.getFilterValue()), pageable);
-            case "lowerThanAmount":
-                return  transactionRepository.getTransactionsByLowerThanAmount(new BigDecimal(filter.getFilterValue()), pageable);
-            case "exactAmount":
-                return  transactionRepository.getTransactionsByAmount(new BigDecimal(filter.getFilterValue()), pageable);
-            case "dateAfter":{
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                LocalDateTime date = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
-                return  transactionRepository.getTransactionsByDateAfter(date, pageable);
-            }
-            case "dateBefore": {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                LocalDateTime date = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
-                return  transactionRepository.getTransactionsByDateBefore(date, pageable);}
-            case "exactDate": {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-               LocalDateTime start = LocalDate.parse(filter.getFilterValue(), formatter).atStartOfDay();
-                LocalDateTime end = start.plusDays(1);
-                return  transactionRepository.getTransactionsByDate(start, end, pageable);}
-            case "initiatingUserId":
-                return  transactionRepository.getTransactionsByinitiatingUserId(Long.parseLong(filter.getFilterValue()), pageable);
-            case "reset":
-                return transactionRepository.findAll(pageable);
-            default:
-                throw new IllegalArgumentException("Invalid filter name: " + filter.getFilterName());
-        }
-    }
-        
     
 
-    public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable){
+    public TransactionOverviewResponse getTransactionsByIban(String iban,Pageable pageable,FilterRequest filter){
         
         throwIfUserCannotInteractWithBankAccount(authenticationService.getLoggedInUser(), bankAccountService.getBankAccountEntityByIban(iban));
-        
-        Page<Transaction> page = transactionRepository.findAllByToOrFromIban(iban,pageable);
+        Specification<Transaction> spec = specificationBuilder.findByIban(iban);
+        Page<Transaction> page = transactionRepository.findAll(spec,pageable);
         List<Transaction> transferTransactions = page.getContent();
-        List<ITransactionResponse> items = mapper.getAllTransactions(transferTransactions);
+        TransactionOverviewResponse allFilterdTransactions=this.getAllTransactions(pageable, filter);
+        List<Transaction> allFilteredTransactionsByIban =new ArrayList<Transaction>();
+
+        for (ITransactionResponse transactionResponse : allFilterdTransactions.getTransactions()) {
+            for(Transaction transaction:transferTransactions)
+            {
+                if(transactionResponse.getTransactionId()==transaction.getTransactionId())
+                {
+                    allFilteredTransactionsByIban.add(transaction);
+
+                }
+
+            }
+        }
+        List<ITransactionResponse> items = mapper.getAllTransactions(allFilteredTransactionsByIban);
         TransactionOverviewResponse response = new TransactionOverviewResponse(items,page.getNumber(),page.getSize());
         
         return response;
@@ -127,10 +103,6 @@ public class TransactionServiceImpl implements TransactionService {
         if (user.getRole() != Role.EMPLOYEE && bankAccount.getUser().getId() != user.getId()) {
             throw new NotAuthorizedException(String.format("You cannot perform actions on bank account: %s.", bankAccount.getIban()));
         }
-    }
-
-    public ITransactionResponse getTransactionByid(long id){
-       return mapper.toResponse(transactionRepository.findById(id).orElseThrow());
     }
 
     private void fillCommonTransactionProperties(Transaction transaction, User initiatingUser, BigDecimal amount, String message) {
@@ -200,7 +172,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionOverviewResponse getTransactionsByUserId(Long id, Pageable pageable){
+    public TransactionOverviewResponse getTransactionsByUserId(Long id, Pageable pageable, FilterRequest filter){
 
         BankAccountOverviewResponse bankAccountOverviewResponse = bankAccountService.getAllBankAccountsByUserId(id, pageable);
         List<BankAccountResponse> bankAccounts = bankAccountOverviewResponse.getItems();
@@ -209,7 +181,7 @@ public class TransactionServiceImpl implements TransactionService {
         for(BankAccountResponse bankAccount : bankAccounts){
 
             String iban = bankAccount.getIban();
-            TransactionOverviewResponse overview = getTransactionsByIban(iban, pageable);
+            TransactionOverviewResponse overview = getTransactionsByIban(iban, pageable,filter);
 
             for (ITransactionResponse transactionResponse : overview.getTransactions()) {
 

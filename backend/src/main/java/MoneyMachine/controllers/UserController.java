@@ -1,7 +1,8 @@
 package MoneyMachine.controllers;
 
-import MoneyMachine.services.interfaces.TransactionService;
 import org.springframework.http.ResponseEntity;
+
+import MoneyMachine.models.dtos.requests.FilterRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import MoneyMachine.exception.NotFoundException;
 import MoneyMachine.models.dtos.responses.TransactionOverviewResponse;
@@ -50,9 +51,9 @@ public class UserController {
     
     @GetMapping("/{id}/transactions")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long id, Pageable pageable) throws Exception {
+    public ResponseEntity<?> getTransactionsByUserId(@PathVariable Long id, Pageable pageable, @ModelAttribute FilterRequest filter) throws Exception {
         
-        TransactionOverviewResponse transactions = transactionService.getTransactionsByUserId(id, pageable);
+        TransactionOverviewResponse transactions = transactionService.getTransactionsByUserId(id, pageable,filter);
 
         return ResponseEntity.status(200).body(transactions);
     }

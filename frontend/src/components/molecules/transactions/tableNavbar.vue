@@ -1,6 +1,9 @@
 <script setup>
     import NavLink from '@/components/atoms/nav/NavLink.vue'
     import FilterButton from '@/components/atoms/transactions/filterButton.vue'
+    import { useTransactionFilterStore } from '@/stores/transactionFilterStore'
+
+    const store = useTransactionFilterStore()
     const emit = defineEmits(["filter-change"])
     const props = defineProps({
    filter:{
@@ -14,9 +17,17 @@
 
     
 })
-function handleFilter(payload) 
-{
-  emit("filter-change", payload);
+
+function handleFilter(payload) {
+
+  if (payload.filterName === 'reset') {
+    store.resetFilters()
+    emit("filter-change")
+    return
+  }
+
+  store.setFilter(payload.filterName, payload.filterValue)
+   emit("filter-change")
 }
 </script>
 
@@ -52,12 +63,12 @@ function handleFilter(payload)
         <div class="group">
             <FilterButton
                 label="Amount >"
-                filterName="higherThanAmount"
+                filterName="minAmount"
                 @filter-change="handleFilter"
             />
             <FilterButton
                 label="Amount <"
-                filterName="lowerThanAmount"
+                filterName="maxAmount"
                 @filter-change="handleFilter"
             />
             <FilterButton
@@ -71,12 +82,12 @@ function handleFilter(payload)
         <div class="group">
             <FilterButton
                 label="Before"
-                filterName="dateBefore"
+                filterName="startDate"
                 @filter-change="handleFilter"
             />
             <FilterButton
                 label="After"
-                filterName="dateAfter"
+                filterName="endDate"
                 @filter-change="handleFilter"
             />
             <FilterButton
@@ -90,7 +101,7 @@ function handleFilter(payload)
         <div class="group">
             <FilterButton
                 label="User"
-                filterName="initiatingUserId"
+                filterName="userId"
                 @filter-change="handleFilter"
             />
         </div>
