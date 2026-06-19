@@ -1,13 +1,13 @@
 package MoneyMachine.Specification;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-
 import MoneyMachine.models.DepositTransaction;
 import MoneyMachine.models.Transaction;
 import MoneyMachine.models.TransferTransaction;
 import MoneyMachine.models.WithdrawTransaction;
+import jakarta.persistence.criteria.Root;
 import lombok.Getter;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,9 +18,9 @@ public class TransactionSpecification {
     public Specification<Transaction> hasIban(String iban) {
         return (root, query, cb) -> {
 
-            var transfer = cb.treat(root, TransferTransaction.class);
-            var deposit = cb.treat(root, DepositTransaction.class);
-            var withdraw = cb.treat(root, WithdrawTransaction.class);
+            Root<TransferTransaction> transfer = cb.treat(root, TransferTransaction.class);
+            Root<DepositTransaction> deposit = cb.treat(root, DepositTransaction.class);
+            Root<WithdrawTransaction> withdraw = cb.treat(root, WithdrawTransaction.class);
 
             return cb.or
             (
@@ -43,8 +43,8 @@ public class TransactionSpecification {
     public Specification<Transaction> fromIban(String iban) {
         return (root, query, cb) -> {
 
-            var transfer = cb.treat(root, TransferTransaction.class);
-            var withdraw = cb.treat(root, WithdrawTransaction.class);
+            Root<TransferTransaction> transfer = cb.treat(root, TransferTransaction.class);
+            Root<WithdrawTransaction> withdraw = cb.treat(root, WithdrawTransaction.class);
 
             return cb.or(
                 cb.equal(transfer.get("fromBankAccount").get("iban"), iban),
@@ -56,8 +56,9 @@ public class TransactionSpecification {
    public Specification<Transaction> toIban(String iban) {
         return (root, query, cb) -> {
 
-            var transfer = cb.treat(root, TransferTransaction.class);
-            var deposit = cb.treat(root, DepositTransaction.class);
+            Root<TransferTransaction> transfer = cb.treat(root, TransferTransaction.class);
+            Root<DepositTransaction> deposit = cb.treat(root, DepositTransaction.class);
+           
 
             return cb.or(
                 cb.equal(transfer.get("toBankAccount").get("iban"), iban),
