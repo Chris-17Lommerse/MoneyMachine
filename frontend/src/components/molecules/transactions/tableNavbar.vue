@@ -1,6 +1,7 @@
 <script setup>
     import NavLink from '@/components/atoms/nav/NavLink.vue'
-    import FilterButton from '@/components/atoms/transactions/filterButton.vue'
+    import FilterButton from '@/components/atoms/transactions/FilterButton.vue'
+    import DateFilterButton from '@/components/atoms/transactions/DateFilterButton.vue'
     import { useTransactionFilterStore } from '@/stores/transactionFilterStore'
 
     const store = useTransactionFilterStore()
@@ -80,17 +81,17 @@ function handleFilter(payload) {
 
     
         <div class="group">
-            <FilterButton
+            <DateFilterButton
                 label="Before"
                 filterName="startDate"
                 @filter-change="handleFilter"
             />
-            <FilterButton
+            <DateFilterButton
                 label="After"
                 filterName="endDate"
                 @filter-change="handleFilter"
             />
-            <FilterButton
+            <DateFilterButton
                 label="Exact"
                 filterName="exactDate"
                 @filter-change="handleFilter"
