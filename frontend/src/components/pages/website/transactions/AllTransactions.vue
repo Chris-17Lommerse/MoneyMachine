@@ -1,45 +1,25 @@
 <script setup>
-import apiClient from '@/utils/axios.js';
-import TransactionsTable from "@/components/organisms/TransactionsTable.vue";
+import TransactionsTable from "@/components/organisms/transactions/TransactionsTable.vue";
 import { ref, onMounted } from 'vue';
+import { useTransactionFilterStore } from '@/stores/transactionFilterStore'
+import { useApiHandler } from '@/composables/apihandler'
+
+const { getFilteredTransactions } = useApiHandler()
 const transactions = ref([])
-onMounted(async () => {
-    try {
+const filterStore = useTransactionFilterStore()
+const url="/transactions"
 
-        const response = await apiClient.get("/transactions")
+onMounted(handleFilterChange)
+async function handleFilterChange() {
+  transactions.value = await getFilteredTransactions(url)
+}
 
-         console.log("RESPONSE:", response)
-
-        if (response.status === 200) {
-
-            transactions.value = response.data.transactions
-            console.log(transactions)
-
-
-        }
-
-    }catch (error) {
-    console.log("FULL ERROR OBJECT:", error)
-
-    console.log("RESPONSE:", error.response)
-    console.log("DATA:", error.response?.data)
-
-    console.log("MESSAGE:", error.response?.data?.message)
-    console.log("TYPE:", error.response?.data?.errorType)
-    console.log("CODE:", error.response?.data?.code)
-    console.log("LOCATION:", error.response?.data?.location)
-
-    console.log("STRINGIFIED:", JSON.stringify(error.response?.data))
-   
-
-    }
-})
 </script>
 
 <template>
     <div class="text-center">
         <h1 class="display-4">All transactions</h1>
         <router-link to="/transactions/create/employee" class="btn btn-primary mb-3">add transaction</router-link>
-        <TransactionsTable :transactions="transactions" />
+        <TransactionsTable :transactions="transactions" @filter-change="handleFilterChange" />
     </div>
 </template>

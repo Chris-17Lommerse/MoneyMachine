@@ -2,6 +2,7 @@ package MoneyMachine.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import MoneyMachine.models.dtos.requests.BankAccountCreationRequest;
+import MoneyMachine.models.dtos.requests.FilterRequest;
 import MoneyMachine.models.dtos.requests.PatchRequest;
 import MoneyMachine.models.dtos.responses.BankAccountOverviewResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,8 +58,8 @@ public class BankAccountController {
 
     @GetMapping("/{iban}/transactions")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> getTransactionsByIban(@PathVariable String iban,@PageableDefault(page = 0, size = 20) Pageable pageable) {
-        return ResponseEntity.ok(transactionService.getTransactionsByIban(iban, pageable));
+    public ResponseEntity<?> getTransactionsByIban(@PathVariable String iban,@PageableDefault(page = 0, size = 20) Pageable pageable, @ModelAttribute FilterRequest filter) {
+        return ResponseEntity.ok(transactionService.getTransactionsByIban(iban, pageable,filter));
     }
 
     @GetMapping("/{iban}")
