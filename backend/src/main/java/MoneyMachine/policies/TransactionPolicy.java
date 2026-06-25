@@ -8,22 +8,36 @@ import MoneyMachine.exception.NotAuthorizedException;
 import MoneyMachine.models.BankAccount;
 import MoneyMachine.models.User;
 import MoneyMachine.models.enums.Role;
+import MoneyMachine.repositories.TransactionRepository;
 
 @Component
 public class TransactionPolicy {
+    private TransactionRepository transactionRepository;
+    public TransactionPolicy(TransactionRepository transactionRepository)
+    {
+       this.transactionRepository=transactionRepository;
+
+    }
 
     public void enforceTransactionTransferPolicy(User user, BigDecimal amount, BankAccount fromBankAccount, BankAccount toBankAccount) {
         
         enforceTransactionPolicy(user, amount, fromBankAccount);
         enforceNotSameAccountTransfer(fromBankAccount, toBankAccount);
         enforceNotDifferentUserSavingsTransfer(fromBankAccount, toBankAccount);
-        enforceWithinAbsoluteLimit(fromBankAccount, amount); 
+        enforceWithinAbsoluteLimit(fromBankAccount, amount);
+        enforceLimitsIfNessecary(fromBankAccount, toBankAccount, amount);    
     }
 
     public void enforceTransactionWithdrawPolicy(User user, BigDecimal amount, BankAccount fromBankAccount) {
         
         enforceTransactionPolicy(user, amount, fromBankAccount);
-        enforceWithinAbsoluteLimit(fromBankAccount, amount); 
+        enforceWithinAbsoluteLimit(fromBankAccount, amount);
+        enforceWithinSingleTransferLimit(fromBankAccount, amount); 
+    }
+    public void enforceTransactionDepositPolicy(User user, BigDecimal amount, BankAccount fromBankAccount) {
+        
+        enforceTransactionPolicy(user, amount, fromBankAccount);
+        enforceWithinSingleTransferLimit(fromBankAccount, amount);
     }
 
     public void enforceTransactionPolicy(User user, BigDecimal amount, BankAccount bankAccount) {
@@ -33,9 +47,22 @@ public class TransactionPolicy {
             enforceUserIsActive(user);
             enforceUserOwnsBankAccountAccount(user, bankAccount);
         }
-
         enforcePositiveAmount(amount);
-        enforceWithinSingleTransferLimit(bankAccount, amount);   
+        enforceWithinSingleTransferLimit(bankAccount, amount);
+    }
+    private void enforceLimitsIfNessecary(BankAccount fromBankAccount, BankAccount toBankAccount, BigDecimal amount) {
+        if (fromBankAccount.getUser().getId() != toBankAccount.getUser().getId()) 
+        { 
+            BigDecimal todayTransferredAmount = transactionRepository.findSpendAmountForIbanBetweentimes(fromBankAccount.getIban(), java.time.LocalDateTime.now().toLocalDate().atStartOfDay(), java.time.LocalDateTime.now().toLocalDate().atTime(23, 59, 59));
+            if(todayTransferredAmount==null)
+            {
+                todayTransferredAmount=BigDecimal.ZERO;
+            }
+            enforceNotOverDailyLimit(amount, todayTransferredAmount, fromBankAccount.getDailyTransferLimit()); 
+            enforceWithinSingleTransferLimit(fromBankAccount, amount); 
+        } 
+
+       
     }
 
     private void enforceUserOwnsBankAccountAccount(User user, BankAccount fromAccount) {
@@ -91,6 +118,11 @@ public class TransactionPolicy {
         
         if (fromAccount.getUser().getId() != toAccount.getUser().getId() && ( fromAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS || toAccount.getBankAccountType() == MoneyMachine.models.enums.BankAccountType.SAVINGS)) {
             throw new IllegalArgumentException("Transfer between different users' savings accounts is not allowed.");
+        }
+    }
+    private void enforceNotOverDailyLimit( BigDecimal amount,BigDecimal todayTransferredAmount, BigDecimal dailyTransferLimit) {
+        if (todayTransferredAmount.add(amount).compareTo(dailyTransferLimit) > 0) {
+            throw new IllegalArgumentException("Transfer amount exceeds daily transfer limit.");
         }
     }
 }

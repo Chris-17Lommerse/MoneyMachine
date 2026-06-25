@@ -100,7 +100,6 @@ public class TransactionServiceImpl implements TransactionService {
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount fromBankAccount = bankAccountService.getBankAccountEntityByIban(fromIban);
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
-        
         transactionPolicy.enforceTransactionTransferPolicy(loggedInUser, amount, fromBankAccount, toBankAccount);
         bankAccountRepository.decrementBalanceByIban(fromIban, amount);
         bankAccountRepository.incrementBalanceByIban(toIban, amount);
@@ -122,7 +121,7 @@ public class TransactionServiceImpl implements TransactionService {
         User loggedInUser = authenticationService.getLoggedInUser();
         BankAccount toBankAccount = bankAccountService.getBankAccountEntityByIban(toIban);
 
-        transactionPolicy.enforceTransactionPolicy(loggedInUser, amount, toBankAccount);
+        transactionPolicy.enforceTransactionDepositPolicy(loggedInUser, amount, toBankAccount);
         bankAccountRepository.incrementBalanceByIban(toIban, amount);
 
         DepositTransaction depositTransaction = new DepositTransaction();
