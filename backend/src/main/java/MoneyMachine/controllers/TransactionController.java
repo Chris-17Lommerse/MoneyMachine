@@ -5,11 +5,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import MoneyMachine.models.dtos.requests.DepositRequest;
+import MoneyMachine.models.dtos.requests.FilterRequest;
 import MoneyMachine.models.dtos.requests.TransferRequest;
 import MoneyMachine.models.dtos.requests.WithdrawRequest;
 import MoneyMachine.models.dtos.responses.DepositTransactionResponse;
@@ -30,8 +32,8 @@ public class TransactionController {
 
     @GetMapping("")
     @PreAuthorize("hasRole('EMPLOYEE') && @authorizationService.isLoggedIntoLoginType('WEBSITE')")
-    public ResponseEntity<?> getTransactions(@PageableDefault(page = 0, size = 20)Pageable pageable) {
-        return ResponseEntity.ok(transactionService.getAllTransactions(pageable));  
+    public ResponseEntity<?> getTransactions(@PageableDefault(page = 0, size = 20)Pageable pageable, @ModelAttribute FilterRequest filter) {
+        return ResponseEntity.ok(transactionService.getAllTransactions(pageable,filter));  
     }
     @PostMapping("transfer")
     @PreAuthorize("@authorizationService.isLoggedIntoLoginType('WEBSITE')")

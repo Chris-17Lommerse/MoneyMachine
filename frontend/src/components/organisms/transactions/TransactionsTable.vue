@@ -1,9 +1,18 @@
 <script setup>
 import { ref} from 'vue';
+import tableNavbar from "@/components/molecules/transactions/tableNavbar.vue";
 const props = defineProps({
     transactions: {
         type: Array,
         required: true
+    },
+    filter: {
+        type: Object,
+        required: false,
+        default: () => ({
+            filterName: "",
+            filterValue: ""
+        })
     }
 })
 function formatDateTime(dateString) {
@@ -20,10 +29,12 @@ function formatDateTime(dateString) {
         second: "2-digit"
     })
 }
-
+const emits = defineEmits(['filter-change'])
 </script>
 
 <template>
+    <tableNavbar :filter="filter" @filter-change="emits('filter-change', $event)" />
+
     <table class="table table-bordered table-striped table-hover">
         <thead>
             <tr>
